@@ -1,0 +1,8 @@
+string group_id
+string destination
+string[] path
+---
+string status
+string details
+---
+string current_node
