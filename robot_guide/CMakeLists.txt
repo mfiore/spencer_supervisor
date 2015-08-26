@@ -6,7 +6,7 @@ project(robot_guide)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED roscpp rospy supervision_msgs  actionlib actionlib_msgs
    spencer_control_msgs appl situation_assessment_msgs 
-spencer_status robot_navigation )
+spencer_status robot_navigation spencer_nav_msgs )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system thread)
@@ -80,7 +80,7 @@ spencer_status robot_navigation )
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES robot_guide
-  CATKIN_DEPENDS roscpp rospy supervision_msgs  actionlib actionlib_msgs spencer_control_msgs  appl  spencer_status situation_assessment_msgs robot_navigation
+  CATKIN_DEPENDS roscpp rospy supervision_msgs  actionlib actionlib_msgs spencer_control_msgs  appl  spencer_status situation_assessment_msgs robot_navigation spencer_nav_msgs
   #DEPENDS Boost
 )
 

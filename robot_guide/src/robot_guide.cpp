@@ -24,7 +24,7 @@ Main file for the spencer supervisor, which guides groups of passengers to a des
 //services
 //#include <spencer_control_msgs/SetMaxVelocity.h>
 #include <supervision_msgs/EmptyRequest.h>
-
+#include <spencer_nav_msgs/SetDrivingDirection.srv>
 
 
 
@@ -71,7 +71,8 @@ int current_node_in_plan;
 
 //ros services
 ros::ServiceClient control_speed_client;
-ros::ServiceClient switch_map_client;
+
+
 
 //publishers
 ros::Publisher status_pub;
@@ -104,7 +105,8 @@ void moveToFeedbackCb(const supervision_msgs::MoveToFeedbackConstPtr& feedback)
 //guide action callback
 void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer* guide_action_server,
 	MoveToClient* move_to_client, ApproachClient* approach_client, ObservationManager* observation_manager,
-	GuidePomdp* guide_pomdp, ControlSpeedPomdp* control_speed_pomdp) {
+	GuidePomdp* guide_pomdp, ControlSpeedPomdp* control_speed_pomdp, 
+	ros::ServiceClient* set_driving_direction_client) {
 	//supervision will publish on a status topic as well as giving feedback for the actionn	
 	supervision_msgs::GuideGroupFeedback feedback;
 	supervision_msgs::GuideGroupResult result;
@@ -132,6 +134,17 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 	bool task_completed=false;
 	bool got_error=false;
 	bool is_preempted=false;
+
+	ROS_INFO("Setting driving direction to backward")
+	spencer_nav_msgs::SetDrivingDirection set_driving_direction_srv;
+	set_driving_direction_srv.request.backward=true;
+	if (set_driving_direction_client->call(set_driving_direction_srv)){
+		ROS_INFO("Done");
+	}
+	else {
+		ROS_WARNING("Couldn't switch driving direction");
+	}
+
 
 	ROS_INFO("Starting POMDPs");
 	//start pomdps
@@ -244,6 +257,15 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 				observation_manager->getOrientation(),
 				observation_manager->getGroupIsMoving());
 	}
+	ROS_INFO("Setting driving direction to forward")
+	spencer_nav_msgs::SetDrivingDirection set_driving_direction_srv;
+	set_driving_direction_srv.request.backward=false;
+	if (set_driving_direction_client->call(set_driving_direction_srv)){
+		ROS_INFO("Done");
+	}
+	else {
+		ROS_WARNING("Couldn't switch driving direction");
+	}
 
 
 	if (task_completed) {
@@ -294,7 +316,17 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 
 
 void approach(const supervision_msgs::ApproachGoalConstPtr &goal, ApproachServer* approach_action_server,
-	MoveBaseClient* move_base_client) {
+	MoveBaseClient* move_base_client, ros::ServiceClient* set_driving_direction_client) {
+
+	ROS_INFO("Setting driving direction to forward")
+	spencer_nav_msgs::SetDrivingDirection set_driving_direction_srv;
+	set_driving_direction_srv.request.backward=false;
+	if (set_driving_direction_client->call(set_driving_direction_srv)){
+		ROS_INFO("Done");
+	}
+	else {
+		ROS_WARNING("Couldn't switch driving direction");
+	}
 
 }
 
@@ -353,6 +385,11 @@ int main(int argc, char **argv) {
 		return 0;
 	}
 
+	ROS_INFO<<"Connecting to set driving direction service\n";
+	ros::ServiceClient set_driving_direction_client=n.serviceClient<spencer_nav_msgs>("/spencer/navigation/set_driving_direction",true);
+	set_driving_direction.waitForExistence();
+	ROS_INFO<<"Connected\n";
+
 	ROS_INFO("Waiting for move_base");
 	MoveBaseClient move_base_client("move_base",true);
 	if (!simulation_mode) {
@@ -365,7 +402,8 @@ int main(int argc, char **argv) {
 	status_pub=n.advertise<supervision_msgs::SupervisionStatus>("supervision/status",1000);
 
 	ApproachServer approach_action_server(n,"supervision/approach",
-		boost::bind(&approach,_1,&approach_action_server,&move_base_client),false);
+		boost::bind(&approach,_1,&approach_action_server,
+			&move_base_client,&set_driving_direction_client),false);
 	approach_action_server.start();
 	ROS_INFO("Started action server Approach");
 
@@ -374,7 +412,7 @@ int main(int argc, char **argv) {
 
 	GuideServer guide_action_server(n,"supervision/guide_group",
 		boost::bind(&guideGroup,_1,&guide_action_server,&move_to_client, &approach_client, &observation_manager,
-			&guide_pomdp,&control_speed_pomdp),false);
+			&guide_pomdp,&control_speed_pomdp, &set_driving_direction_client),false);
 	guide_action_server.start();
 
 	ROS_INFO("Started action server GuideGroup");
