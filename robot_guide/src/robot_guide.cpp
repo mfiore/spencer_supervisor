@@ -24,7 +24,7 @@ Main file for the spencer supervisor, which guides groups of passengers to a des
 //services
 //#include <spencer_control_msgs/SetMaxVelocity.h>
 #include <supervision_msgs/EmptyRequest.h>
-#include <spencer_nav_msgs/SetDrivingDirection.srv>
+#include <spencer_nav_msgs/SetDrivingDirection.h>
 
 
 
@@ -135,14 +135,16 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 	bool got_error=false;
 	bool is_preempted=false;
 
-	ROS_INFO("Setting driving direction to backward")
+	ROS_INFO("Setting driving direction to backward");
 	spencer_nav_msgs::SetDrivingDirection set_driving_direction_srv;
 	set_driving_direction_srv.request.backward=true;
-	if (set_driving_direction_client->call(set_driving_direction_srv)){
-		ROS_INFO("Done");
-	}
-	else {
-		ROS_WARNING("Couldn't switch driving direction");
+	if (!simulation_mode) {
+		if (set_driving_direction_client->call(set_driving_direction_srv)){
+			ROS_INFO("Done");
+		}
+		else {
+			ROS_WARN("Couldn't switch driving direction");
+		}
 	}
 
 
@@ -257,14 +259,15 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 				observation_manager->getOrientation(),
 				observation_manager->getGroupIsMoving());
 	}
-	ROS_INFO("Setting driving direction to forward")
-	spencer_nav_msgs::SetDrivingDirection set_driving_direction_srv;
+	ROS_INFO("Setting driving direction to forward");
 	set_driving_direction_srv.request.backward=false;
-	if (set_driving_direction_client->call(set_driving_direction_srv)){
-		ROS_INFO("Done");
-	}
-	else {
-		ROS_WARNING("Couldn't switch driving direction");
+	if (!simulation_mode) {
+		if (set_driving_direction_client->call(set_driving_direction_srv)){
+			ROS_INFO("Done");
+		}
+		else {
+			ROS_WARN("Couldn't switch driving direction");
+		}
 	}
 
 
@@ -318,14 +321,16 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 void approach(const supervision_msgs::ApproachGoalConstPtr &goal, ApproachServer* approach_action_server,
 	MoveBaseClient* move_base_client, ros::ServiceClient* set_driving_direction_client) {
 
-	ROS_INFO("Setting driving direction to forward")
+	ROS_INFO("Setting driving direction to forward");
 	spencer_nav_msgs::SetDrivingDirection set_driving_direction_srv;
 	set_driving_direction_srv.request.backward=false;
-	if (set_driving_direction_client->call(set_driving_direction_srv)){
-		ROS_INFO("Done");
-	}
-	else {
-		ROS_WARNING("Couldn't switch driving direction");
+	if (!simulation_mode) {
+		if (set_driving_direction_client->call(set_driving_direction_srv)){
+			ROS_INFO("Done");
+		}
+		else {
+			ROS_WARN("Couldn't switch driving direction");
+		}
 	}
 
 }
@@ -373,7 +378,7 @@ int main(int argc, char **argv) {
 
 	//set the starting speed of the robot
 	// spencer_control_msgs::SetMaxVelocity srv;
-	// srv.request.max_linear_velocity=starting_speed;
+	// srv.request.max_linear_velocit::SetDrivingDirectiony=starting_speed;
 	// srv.request.max_angular_velocity=angular_velocity;
 	// control_speed_client.call(srv);
 	// cout<<"Starting speed is "<<starting_speed<<"\n";
@@ -385,10 +390,12 @@ int main(int argc, char **argv) {
 		return 0;
 	}
 
-	ROS_INFO<<"Connecting to set driving direction service\n";
-	ros::ServiceClient set_driving_direction_client=n.serviceClient<spencer_nav_msgs>("/spencer/navigation/set_driving_direction",true);
-	set_driving_direction.waitForExistence();
-	ROS_INFO<<"Connected\n";
+	ROS_INFO("Connecting to set driving direction service\n");
+	ros::ServiceClient set_driving_direction_client=n.serviceClient<spencer_nav_msgs::SetDrivingDirection>("/spencer/navigation/set_driving_direction",true);
+	if (!simulation_mode) {
+		set_driving_direction_client.waitForExistence();
+		ROS_INFO("Connected\n");
+	}
 
 	ROS_INFO("Waiting for move_base");
 	MoveBaseClient move_base_client("move_base",true);
