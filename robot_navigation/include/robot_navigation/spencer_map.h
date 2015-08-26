@@ -21,7 +21,7 @@
 #include <utility>
 
 //self
-#include "robot_guide/map_info.h"
+#include "robot_navigation/map_info.h"
 #include "tinyxml2.h"
 
  //boost

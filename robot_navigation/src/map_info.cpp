@@ -5,7 +5,7 @@
  *      Author: mfiore
  */
 
-#include "robot_guide/map_info.h"
+#include "robot_navigation/map_info.h"
 
 MapInfo::MapInfo() {
 	// TODO Auto-generated constructor stub

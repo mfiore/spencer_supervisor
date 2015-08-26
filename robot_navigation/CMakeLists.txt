@@ -1,15 +1,13 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(robot_guide)
+project(robot_navigation)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED roscpp rospy supervision_msgs  actionlib actionlib_msgs
-   spencer_control_msgs appl situation_assessment_msgs 
-spencer_status robot_navigation )
+find_package(catkin REQUIRED COMPONENTS roscpp rospy situation_assessment_msgs supervision_msgs spencer_status tf geometry_msgs )
 
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system thread)
+# find_package(Boost REQUIRED COMPONENTS system)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -65,7 +63,7 @@ spencer_status robot_navigation )
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
+#   situation_assessment_msgs#   supervision_msgs
 # )
 
 ###################################
@@ -78,10 +76,11 @@ spencer_status robot_navigation )
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS include
-#  LIBRARIES robot_guide
-  CATKIN_DEPENDS roscpp rospy supervision_msgs  actionlib actionlib_msgs spencer_control_msgs  appl  spencer_status situation_assessment_msgs robot_navigation
-  #DEPENDS Boost
+#  INCLUDE_DIRS include
+#  LIBRARIES robot_navigation
+#  CATKIN_DEPENDS roscpp rospy situation_assessment_msgs supervision_msgs spencer_status geometry_msgs
+
+#  DEPENDS system_lib
 )
 
 ###########
@@ -90,29 +89,27 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
- include_directories(
- src
+# include_directories(include)
+include_directories(
  include
-# /home/mfiore/devel/src/boost_1_58_0
- ${catkin_INCLUDE_DIRS} 
+  ${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a cpp library
-# add_library(robot_guide
-#   src/${PROJECT_NAME}/robot_guide.cpp
+# add_library(robot_navigation
+#   src/${PROJECT_NAME}/robot_navigation.cpp
 # )
 
 ## Declare a cpp executable
- add_executable(robot_guide src/pomdp_interface.cpp src/guide_pomdp.cpp src/control_speed_pomdp.cpp src/robot_guide.cpp src/observation_manager )
+ add_executable(robot_navigation src/robot_navigation.cpp src/spencer_map.cpp src/map_info.cpp src/tinyxml2.cpp )
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
- add_dependencies(robot_guide supervision_msgs_generate_messages_cpp situation_assessment_msgs_generate_messages_cpp appl_generate_messages_cpp)
+add_dependencies(robot_navigation supervision_msgs_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
- target_link_libraries(robot_guide
+ target_link_libraries(robot_navigation
    ${catkin_LIBRARIES}
-
  )
 
 #############
@@ -130,7 +127,7 @@ catkin_package(
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS robot_guide robot_guide_node
+# install(TARGETS robot_navigation robot_navigation_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -155,7 +152,7 @@ catkin_package(
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_robot_guide.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_robot_navigation.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

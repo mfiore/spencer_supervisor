@@ -4,7 +4,7 @@ author Michelangelo Fiore
 
 */
 
-#include "robot_guide/spencer_map.h"
+#include "robot_navigation/spencer_map.h"
 
 SpencerMap::SpencerMap(ros::NodeHandle node_handle, string doc_path, string doc_name):node_handle_(node_handle),doc_path_(doc_path),doc_name_(doc_name) {
 	 ROS_INFO("Connecting to Add Area");

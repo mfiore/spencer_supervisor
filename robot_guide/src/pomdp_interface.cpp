@@ -13,7 +13,7 @@ PomdpInterface::PomdpInterface(ros::NodeHandle node_handle):node_handle_(node_ha
 
 
 string PomdpInterface::updatePomdp(string command, string x_state, string obs) {
-	appl::ApplRequest srv;
+	appl::GetAction srv;
 	if (command=="start") {
 		srv.request.cmd=1;
 	}

@@ -43,6 +43,7 @@ find_package(catkin REQUIRED  message_generation message_runtime std_msgs action
 add_message_files(
   FILES
   SupervisionStatus.msg
+  SupervisionStopped.msg
 )
 
 ## Generate services in the 'srv' folder

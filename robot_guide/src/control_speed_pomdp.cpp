@@ -7,7 +7,7 @@
 
 ControlSpeedPomdp::ControlSpeedPomdp(ros::NodeHandle node_handle):PomdpInterface(node_handle) {
 	ROS_INFO("Waiting for Control Speed Pomdp");
-	pomdp_client_=node_handle_.serviceClient<appl::ApplRequest>("appl_request/controlSpeed");
+	pomdp_client_=node_handle_.serviceClient<appl::GetAction>("appl_request/controlSpeed");
 	pomdp_client_.waitForExistence();
 	ROS_INFO("Connected to Control Speed Pomdp");
 
