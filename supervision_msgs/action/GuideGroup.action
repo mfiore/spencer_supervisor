@@ -1,6 +1,7 @@
 string group_id
 string destination
 string[] path
+geometry_msgs/Pose[] coordinates
 ---
 string status
 string details

@@ -6,7 +6,6 @@
 //msgs
 #include <move_base_msgs/MoveBaseAction.h>
 #include <supervision_msgs/MoveToAction.h>
-#include <supervision_msgs/MoveToPoseAction.h>
 
 #include <tf/transform_datatypes.h> 
 #include <tf/transform_broadcaster.h>
@@ -29,8 +28,6 @@
 
 //some useful typedefs
 typedef actionlib::SimpleActionServer<supervision_msgs::MoveToAction> MoveToServer;
-typedef actionlib::SimpleActionServer<supervision_msgs::MoveToPoseAction> MoveToPoseServer;
-typedef actionlib::SimpleActionServer<supervision_msgs::MoveToPoseAction> MoveToPoseServer;
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
 //services
@@ -102,85 +99,6 @@ bool switchMap(string node1, string node2) {
 }
 
 
-void moveToPose(const supervision_msgs::MoveToPoseGoalConstPtr &goal, MoveToPoseServer* move_to_pose_action_server,
-	MoveBaseClient* move_base_client) {
-	supervision_msgs::MoveToPoseResult result;
-	supervision_msgs::SupervisionStatus status_msg;
-
-	ROS_INFO("Received request to move to %f %f",goal->pose.position.x,goal->pose.position.y);
-
-	bool is_moving=false;
-
-	sendMoveBaseGoal(goal->pose,move_base_client);
-	
-	ros::Rate r(3);
-	bool got_error, has_arrived,move_base_error,is_preempted;
-	got_error=check_status->isBatteryLow()||check_status->isBumperPressed() || check_status->isStopped() ||
-	!ros::ok();
-	has_arrived=false;
-	move_base_error=false;
-	is_preempted=false;
-	is_moving=true;
-
-	while (!got_error && !has_arrived && !move_base_error) {
-		has_arrived=move_base_client->getState()==actionlib::SimpleClientGoalState::SUCCEEDED;
-		got_error=check_status->isBatteryLow()||check_status->isBumperPressed() || check_status->isStopped() 
-		|| !ros::ok();
-		is_preempted=move_to_pose_action_server->isPreemptRequested();
-		move_base_error=hasMoveBaseError(move_base_client);
-
-		r.sleep();
-	}
-
-	if (has_arrived) {
-		status_msg.status="Task Completed";
-		status_msg.details="";
-
-		ROS_INFO("Task completed");
-		result.status="OK";
-		status_pub.publish(status_msg);
-		move_to_pose_action_server->setSucceeded(result);
-	}
-	else {
-		ROS_INFO("Task Failed");
-
-		status_msg.status="Task Failed";
-
-		if (is_preempted) {
-			status_msg.details="Preempted";
-		}
-		else if (move_base_error) {
-			status_msg.details="Navigation error";
-			is_moving=false;
-		}
-		else {
-			status_msg.details=check_status->getCommonErrorString();
-		}
-		status_pub.publish(status_msg);
-
-
-		if (is_moving) {
-			ROS_INFO("Supervision is stopped");
-			move_base_client->cancelGoal();
-			is_moving=false;
-		}
-
-
-		result.status="FAILURE";
-		result.details=status_msg.details;
-		ROS_INFO("Supervision is stopped");
-		move_base_client->cancelGoal();
-
-		if (is_preempted) {
-			move_to_pose_action_server->setPreempted(result);
-		}
-		else {
-			move_to_pose_action_server->setAborted(result);
-		} 
-	}
-
-}
-
 
 void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_to_action_server,MoveBaseClient* move_base_client) {
 	//supervision will publish on a status topic as well as giving feedback for the actionn	
@@ -188,26 +106,48 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 	supervision_msgs::MoveToResult result;
 	supervision_msgs::SupervisionStatus status_msg; 
 
+	bool symbolic_navigation=false;
+
 	if (goal->destination!="") {
 		ROS_INFO("Received request to move to %s",goal->destination.c_str());
+		symbolic_navigation=true;
 	}
 	else if (goal->path.size()!=0) {
 		ROS_INFO("Received request to move to %s",goal->path[goal->path.size()-1].c_str());
+		symbolic_navigation=true;
+	}
+	else if (goal->coordinates.size()>0) {
+		geometry_msgs::Pose last_pose=goal->coordinates[goal->coordinates.size()-1];
+		ROS_INFO("Received request to move to %f %f",last_pose.position.x,last_pose.position.y);
+	}
+	else {
+		ROS_WARN("No path or destination given");
+		result.status="no path or destination given";
+		move_to_action_server->setAborted(result);
 	}
 
 	string destination=goal->destination;
 	//get plan for destiantion
 	vector<string> nodes; //list of nodes to traverse
+	vector<geometry_msgs::Pose> poses; 
+	int n_nodes;
+
+	int current_node=0; 
 
 	//get plan for destination (TODO)
 	if (goal->path.size()!=0) {
 		nodes=goal->path;
+		n_nodes=goal->path.size();
 	}
 	else if (destination!=""){
 
 	}
+	else {
+		poses=goal->coordinates;
+		n_nodes=goal->coordinates.size();
+		current_node=-1;
+	}
 
-	int current_node=0; 
 
 	ros::Rate r(3); 
 
@@ -217,7 +157,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 
 	got_error=check_status->isBatteryLow()||check_status->isBumperPressed() || !ros::ok();
 
-	if (current_node<nodes.size()) {
+	if (current_node<n_nodes && symbolic_navigation==true) {
 		ROS_INFO("Switching to map %s %s",nodes[current_node].c_str(),nodes[current_node+1].c_str());
 		bool switch_map_error=switchMap(nodes[current_node],nodes[current_node+1]);
 		if (!switch_map_error) { 
@@ -231,18 +171,33 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		geometry_msgs::Pose goal_pose;
 	
 		double goal_x,goal_y;
-		spencer_map->getMapCenter(nodes[current_node+1],&goal_x,&goal_y);
+		if (symbolic_navigation==true) {
+			spencer_map->getMapCenter(nodes[current_node+1],&goal_x,&goal_y);
+		}
+		else {
+			goal_x=poses[current_node].position.x;
+			goal_y=poses[current_node].position.y;
+		}
 		goal_pose.position.x=goal_x;
-		goal_pose.position.y=goal_y;		
+		goal_pose.position.y=goal_y;	
+
 		goal_pose.orientation.w=1.0;
 		
 		sendMoveBaseGoal(goal_pose,move_base_client);
 
 		is_moving=true;
 
-		ROS_INFO("Starting to move to %s",nodes[current_node+1].c_str());
-
-		status_msg.status="Moving to "+nodes[current_node+1];
+		if (symbolic_navigation) {
+			ROS_INFO("Starting to move to %s",nodes[current_node+1].c_str());
+			status_msg.status="Moving to "+nodes[current_node+1];
+		}
+		else {
+			ROS_INFO("Starting to move to %f %f",poses[current_node+1].position.x,
+				poses[current_node+1].position.y);
+		    status_msg.status="Moving to "+
+		    boost::lexical_cast<string>(poses[current_node+1].position.x)+" "+
+		    boost::lexical_cast<string>(poses[current_node+1].position.y);
+		}
 		status_msg.details="";
 		status_pub.publish(status_msg);
 
@@ -257,32 +212,39 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 			if (!simulation_mode) {
 				move_base_arrived=move_base_client->getState()==actionlib::SimpleClientGoalState::SUCCEEDED;
 			}
-			if (!got_error) {
+			if (!got_error && symbolic_navigation==true) {
 				mutex_location.lock();
-				robot_arrived=robot_location==nodes[current_node+1] && (current_node+1)!=nodes.size()-1;
+				robot_arrived=robot_location==nodes[current_node+1] && (current_node+1)!=n_nodes-1;
 				mutex_location.unlock();
 			}
 
 			r.sleep();
 		}
 
-		if (robot_arrived || move_base_arrived && (current_node+1!=nodes.size()-1)) {
+		if (robot_arrived || move_base_arrived && (current_node+1!=n_nodes-1)) {
 			if (!simulation_mode) {
 				move_base_client->cancelGoal();
 			}
 			is_moving=false;
 
 			current_node++;
-			ROS_INFO("Reached node %s",nodes[current_node].c_str());
-
-			ROS_INFO("Switching to new map %s %s",nodes[current_node].c_str(),nodes[current_node+1].c_str());
-			if(switchMap(nodes[current_node],nodes[current_node+1])){
-				feedback.current_node=nodes[current_node];
-				move_to_action_server->publishFeedback(feedback);	
+			if (symbolic_navigation) {
+				ROS_INFO("Reached node %s",nodes[current_node].c_str());
+			
+				ROS_INFO("Switching to new map %s %s",nodes[current_node].c_str(),nodes[current_node+1].c_str());
+				if(switchMap(nodes[current_node],nodes[current_node+1])){
+					feedback.current_node=nodes[current_node];
+					move_to_action_server->publishFeedback(feedback);	
+				}
+				else {
+					ROS_INFO("Error when switching map");
+					got_error=true;
+				}
 			}
 			else {
-				ROS_INFO("Error when switching map");
-				got_error=true;
+				ROS_INFO("Reached pose %f %f",poses[current_node].position.x,poses[current_node].position.y);
+				feedback.current_pose=poses[current_node];
+				move_to_action_server->publishFeedback(feedback);	
 			}
 		} 
 		else if (move_base_arrived && (current_node+1)==nodes.size()-1) {
@@ -435,11 +397,6 @@ int main(int argc,char** argv) {
 	move_to_action_server.start();
 	ROS_INFO("Started action server MoveTo");
 	
-	MoveToPoseServer move_to_pose_action_server(n,"supervision/move_to_pose",
-		boost::bind(&moveToPose,_1,&move_to_pose_action_server,&move_base_client),false);
-	move_to_pose_action_server.start();
-	ROS_INFO("Started action server MoveToPose"); 
-
 
 	ROS_INFO("Ready");
 

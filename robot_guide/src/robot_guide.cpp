@@ -97,7 +97,13 @@ bool hasMoveBaseError(MoveBaseClient* move_base_client) {
 // Called every time feedback is received for the goal
 void moveToFeedbackCb(const supervision_msgs::MoveToFeedbackConstPtr& feedback)
 {
-  ROS_INFO("Move to as arrived in %s", feedback->current_node.c_str());
+	if (feedback->current_node!="") {
+  		ROS_INFO("Move to has arrived in %s", feedback->current_node.c_str());
+  	}
+  	else {
+  		ROS_INFO("Move to has arrived in %f %f",feedback->current_pose.position.x,
+  												feedback->current_pose.position.y);
+  	}
   current_node_in_plan++;
 }
 
@@ -112,18 +118,51 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 	supervision_msgs::GuideGroupResult result;
 	supervision_msgs::SupervisionStatus status_msg; 
 
-	string destination=goal->destination;
 	string group_id=goal->group_id;
+	string destination;
+	geometry_msgs::Pose last_pose;
 
-	ROS_INFO("Received request to guide group %s to %s",group_id.c_str(),destination.c_str());
+	if (group_id=="") {
+		ROS_WARN("Group id missing from request");
+		result.status="FAILED";
+		result.details="group id is missing";
+		guide_action_server->setAborted(result);
+	}
 
+	if (goal->destination!="") {
+		destination=goal->destination;
+	}
+	else if (goal->path.size()>0) {
+		destination=goal->path[goal->path.size()-1];
+	} 
+	else if (goal->coordinates.size()>0) {
+		last_pose=goal->coordinates[goal->coordinates.size()-1];
+	}
+	else {
+		ROS_WARN("No destination or path given");
+		result.status="FAILED";
+		result.details="no destination or path given";
+		guide_action_server->setAborted();
+	}
+
+	if (destination!="") {
+		ROS_INFO("Received request to guide group %s to %s",group_id.c_str(),destination.c_str());
+	}
+	else {
+		ROS_INFO("Received request to guide group %s to %f %f",group_id.c_str(),last_pose.position.x,
+			last_pose.position.y);
+	}
 	observation_manager->setObservedGroup(group_id);
 	observation_manager->waitForGroup();
 
 	vector<string> nodes; //list of nodes to traverse
+	vector<geometry_msgs::Pose> poses; //list of nodes to traverse
 	//get plan for destination (TODO)
 	if (goal->path.size()) {
 		nodes=goal->path;
+	}
+	if (goal->coordinates.size()>0) {
+		poses=goal->coordinates;
 	}
 	current_node_in_plan=0;
 
@@ -175,13 +214,22 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 			if (is_moving==false) { 
 				supervision_msgs::MoveToGoal move_to_goal;
 				
+				vector<string> actual_path;
+				vector<geometry_msgs::Pose> actual_poses;
 				//we take the planner's path from current node to end. We do this if not the MoveTo action
 				//would replan everytime we stop the semantic path.
-				vector<string>::const_iterator first = nodes.begin() + current_node_in_plan;
-				vector<string>::const_iterator last = nodes.end();
-				vector<string> actual_path(first, last);
-
+				if (nodes.size()>0) {
+					vector<string>::const_iterator first = nodes.begin() + current_node_in_plan;
+					vector<string>::const_iterator last = nodes.end();
+					vector<string> actual_path(first, last);
+				}
+				if (poses.size()>0) {
+					vector<geometry_msgs::Pose>::const_iterator first = poses.begin() + current_node_in_plan;
+					vector<geometry_msgs::Pose>::const_iterator last = poses.end();
+					vector<geometry_msgs::Pose> actual_poses(first, last);
+				}
 				move_to_goal.path=actual_path;
+				move_to_goal.coordinates=actual_poses;
 				move_to_goal.destination=destination;
 								move_to_client->sendGoal(
 									move_to_goal,

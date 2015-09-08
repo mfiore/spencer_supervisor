@@ -1,3 +1,6 @@
+#ifndef OBSERVATION_MANAGER_H 
+#define OBSERVATION_MANAGER_H
+
 #include <ros/ros.h>
 #include <vector>
 #include <string>
@@ -54,3 +57,5 @@ private:
 
 	ros::Subscriber agent_sub_;
 };
+
+#endif

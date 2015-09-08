@@ -2,6 +2,11 @@
 	"folders":
 	[
 		{
+			"folder_exclude_patterns":
+			[
+				"devel",
+				"build"
+			],
 			"path": "/home/mfiore/ros_workspaces/my_spencer_ws"
 		}
 	]
