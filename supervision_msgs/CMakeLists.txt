@@ -51,8 +51,7 @@ add_message_files(
    FILES
     EmptyRequest.srv
     SetRobotSimStatus.srv
-#   Service1.srv
-#   Service2.srv
+    CalculatePath.srv
  )
 
 # Generate actions in the 'action' folder

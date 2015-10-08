@@ -1,0 +1,6 @@
+<launch>
+	<include file="$(find spencer_human_estimation)/launch/spencer_human_estimation.launch" />
+	<node name="navigation_planner" pkg="navigation_planner" type="navigation_planner" output="screen" />
+	<node name="robot_navigation" pkg="robot_navigation" type="robot_navigation" output="screen" />
+	<node name="spencer_status" pkg="spencer_status" type="spencer_status" />
+</launch>

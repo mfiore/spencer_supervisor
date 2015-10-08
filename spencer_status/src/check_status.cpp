@@ -37,8 +37,10 @@ CheckStatus::CheckStatus(ros::NodeHandle node_handle):node_handle_(node_handle) 
 void CheckStatus::bumperCallback(const spencer_control_msgs::SystemStatus& msg) {
 	boost::lock_guard<boost::mutex> guard(mutex_bumper_pressed_);
 	if (msg.software_emergency_stop || msg.hardware_emergency_stop) {
-		bumper_pressed_=true;
-		ROS_INFO("Emergency stop");
+		if (bumper_pressed_==false) {
+			bumper_pressed_=true;
+			ROS_INFO("Emergency stop");
+		}
 	}
 	else {
 		bumper_pressed_=false;
@@ -47,8 +49,10 @@ void CheckStatus::bumperCallback(const spencer_control_msgs::SystemStatus& msg) 
 void CheckStatus::batteryCallback(const std_msgs::Float32& msg) {
 	boost::lock_guard<boost::mutex> guard(mutex_battery_low_);
 	if (msg.data<10) {
-		battery_low_=true;
-		ROS_INFO("Battery level too low");
+		if (battery_low_==false) {
+			battery_low_=true;
+			ROS_INFO("Battery level too low");
+		}
 	}
 	else {
 		battery_low_=false;

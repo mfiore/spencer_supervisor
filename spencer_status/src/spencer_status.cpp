@@ -42,6 +42,7 @@ int main(int argc, char** argv) {
 
 	status_pub=n.advertise<supervision_msgs::SupervisionStopped>("supervision/is_stopped",1000);
 	
+	ros::Rate r(3);
 	while (ros::ok()) {
 		ros::spinOnce();
 
@@ -49,6 +50,8 @@ int main(int argc, char** argv) {
 		supervision_msgs::SupervisionStopped msg;
 		msg.is_stopped=stop_supervision;
 		status_pub.publish(msg);
+		stopped_mutex.unlock();
+		r.sleep();
 	}
-
+	return 0;
 }

@@ -1,0 +1,6 @@
+<launch>
+	<rosparam command="load" file="$(find supervision_parameters)/supervision_config.yaml" />
+	<include file="$(find spencer_human_estimation)/launch/spencer_human_estimation.launch" />	
+	<node name="navigation_planner" pkg="navigation_planner" type="navigation_planner" />
+	<node name="robot_navigation" pkg="robot_navigation" type="robot_navigation" />
+</launch>

@@ -24,6 +24,7 @@ Main file for the spencer supervisor, which guides groups of passengers to a des
 //services
 //#include <spencer_control_msgs/SetMaxVelocity.h>
 #include <supervision_msgs/EmptyRequest.h>
+#include <supervision_msgs/CalculatePath.h>
 #include <spencer_nav_msgs/SetDrivingDirection.h>
 
 
@@ -64,6 +65,7 @@ double angular_velocity;
 double actual_speed;
 
 
+bool use_driving_direction;
 
 //location of the robot
 int current_node_in_plan;
@@ -112,7 +114,7 @@ void moveToFeedbackCb(const supervision_msgs::MoveToFeedbackConstPtr& feedback)
 void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer* guide_action_server,
 	MoveToClient* move_to_client, ApproachClient* approach_client, ObservationManager* observation_manager,
 	GuidePomdp* guide_pomdp, ControlSpeedPomdp* control_speed_pomdp, 
-	ros::ServiceClient* set_driving_direction_client) {
+	ros::ServiceClient* set_driving_direction_client, ros::ServiceClient* calculate_path_client) {
 	//supervision will publish on a status topic as well as giving feedback for the actionn	
 	supervision_msgs::GuideGroupFeedback feedback;
 	supervision_msgs::GuideGroupResult result;
@@ -127,6 +129,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 		result.status="FAILED";
 		result.details="group id is missing";
 		guide_action_server->setAborted(result);
+		return;
 	}
 
 	if (goal->destination!="") {
@@ -143,6 +146,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 		result.status="FAILED";
 		result.details="no destination or path given";
 		guide_action_server->setAborted();
+		return;
 	}
 
 	if (destination!="") {
@@ -157,12 +161,26 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 
 	vector<string> nodes; //list of nodes to traverse
 	vector<geometry_msgs::Pose> poses; //list of nodes to traverse
-	//get plan for destination (TODO)
-	if (goal->path.size()) {
+	if (goal->path.size()!=0) {
 		nodes=goal->path;
 	}
 	if (goal->coordinates.size()>0) {
 		poses=goal->coordinates;
+	}
+	else {
+		supervision_msgs::CalculatePath path_request;
+		path_request.request.source=observation_manager->getRobotLocation();
+		path_request.request.dest=destination;
+		if (calculate_path_client->call(path_request)) {
+			nodes=path_request.response.path;
+		}
+		else {
+			ROS_ERROR("Failed to calculate path");
+			result.status="FAILED";
+			result.details="group id is missing";
+			guide_action_server->setAborted(result);
+			return;
+		}
 	}
 	current_node_in_plan=0;
 
@@ -177,7 +195,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 	ROS_INFO("Setting driving direction to backward");
 	spencer_nav_msgs::SetDrivingDirection set_driving_direction_srv;
 	set_driving_direction_srv.request.backward=true;
-	if (!simulation_mode) {
+	if (!simulation_mode && use_driving_direction) {
 		if (set_driving_direction_client->call(set_driving_direction_srv)){
 			ROS_INFO("Done");
 		}
@@ -226,7 +244,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 				if (poses.size()>0) {
 					vector<geometry_msgs::Pose>::const_iterator first = poses.begin() + current_node_in_plan;
 					vector<geometry_msgs::Pose>::const_iterator last = poses.end();
-					vector<geometry_msgs::Pose> actual_poses(first, last);
+					actual_poses.insert(actual_poses.begin(),first, last);
 				}
 				move_to_goal.path=actual_path;
 				move_to_goal.coordinates=actual_poses;
@@ -242,12 +260,12 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 			}
 			else {  //if it was already moving select a speed
 				//control speed update
+
 				string speed_action=control_speed_pomdp->update(
 					observation_manager->getHighestDensity(),
 					observation_manager->getInSlowArea());
 
 				if (speed_action=="accelerate"){
-					status_msg.details="Accelerating";
 
 					 double new_speed=min(actual_speed+0.1,max_speed);
 					// spencer_control_msgs::SetMaxVelocity srv;
@@ -257,10 +275,12 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
    	  				if (new_speed!=actual_speed) {
 					 	ROS_INFO("Switching speed to %f",new_speed);
 					 	actual_speed=new_speed;
+						status_msg.details="Accelerating";
+
 					}
 				}
+
 				else if (speed_action=="decelerate") {
-					status_msg.details="Decelerating";
 
 					 double new_speed=max(actual_speed-0.1,min_speed);
 					// spencer_control_msgs::SetMaxVelocity srv;
@@ -270,6 +290,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 					 if (new_speed!=actual_speed) {
 						ROS_INFO("Switching speed to %f",new_speed);
 						actual_speed=new_speed;
+						status_msg.details="Decelerating";
 					}
 				}
 				else if (speed_action=="continue") {
@@ -278,6 +299,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 			}
 		}
 		else if (guide_action=="wait") { //if the pomdp selects a wait stop move base
+
 			if (is_moving==true) {
 				status_msg.details="Waiting for users";
 
@@ -288,10 +310,13 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 				is_moving=false;
 			}
 		}
-		got_error=check_status->isBatteryLow() || check_status->isBumperPressed() || check_status->isStopped() ||
+
+		got_error=check_status->isBatteryLow() || check_status->isBumperPressed() || check_status->isStopped();
+		if (is_moving) {
                   move_to_client->getState()==actionlib::SimpleClientGoalState::ABORTED || 	
 			 	  move_to_client->getState()==actionlib::SimpleClientGoalState::LOST ||
 			      move_to_client->getState()==actionlib::SimpleClientGoalState::PREEMPTED;
+	    }		    
 	    is_preempted=guide_action_server->isPreemptRequested();
 
 		if (!simulation_mode)	{	
@@ -307,9 +332,11 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 				observation_manager->getOrientation(),
 				observation_manager->getGroupIsMoving());
 	}
+
+	if (!ros::ok()) return;
 	ROS_INFO("Setting driving direction to forward");
 	set_driving_direction_srv.request.backward=false;
-	if (!simulation_mode) {
+	if (!simulation_mode && use_driving_direction) {
 		if (set_driving_direction_client->call(set_driving_direction_srv)){
 			ROS_INFO("Done");
 		}
@@ -331,19 +358,21 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 		status_msg.status="Task Failed";
 
 		if (is_preempted) {
+			ROS_INFO("Guide preempted");
 			status_msg.details="Preempted";
 		}
 		else if (move_to_client->getState()==actionlib::SimpleClientGoalState::ABORTED || 	
 			 	 move_to_client->getState()==actionlib::SimpleClientGoalState::LOST ||
 			     move_to_client->getState()==actionlib::SimpleClientGoalState::PREEMPTED) {
 			status_msg.details="Navigation Error";
+		ROS_INFO("Navigation Error");
 		}
 		else  {
 			status_msg.details=check_status->getCommonErrorString();
 		}
 	
 
-		ROS_INFO("Task Failed");
+		ROS_INFO("Guide Task Failed");
 		result.status="FAILURE";
 		result.details=status_msg.details;
 		if (is_moving) {
@@ -400,6 +429,7 @@ int main(int argc, char **argv) {
 	n.getParam("/supervision/min_speed",min_speed);
 	n.getParam("/supervision/max_speed",max_speed);
 	n.getParam("supervision/simulation_mode",simulation_mode);
+	n.getParam("supervision/use_driving_direction",use_driving_direction);
 
 	ROS_INFO("Parameters are:");
 	ROS_INFO("robot name %s",robot_name.c_str());
@@ -440,10 +470,17 @@ int main(int argc, char **argv) {
 
 	ROS_INFO("Connecting to set driving direction service\n");
 	ros::ServiceClient set_driving_direction_client=n.serviceClient<spencer_nav_msgs::SetDrivingDirection>("/spencer/navigation/set_driving_direction",true);
-	if (!simulation_mode) {
+	if (!simulation_mode && use_driving_direction) {
 		set_driving_direction_client.waitForExistence();
 		ROS_INFO("Connected\n");
 	}
+
+	ROS_INFO("Connecting to calculate path service\n");
+	ros::ServiceClient calculate_path_client=n.serviceClient<supervision_msgs::CalculatePath>("/supervision/calculate_path",true);
+	calculate_path_client.waitForExistence();
+	ROS_INFO("Connected\n");
+
+
 
 	ROS_INFO("Waiting for move_base");
 	MoveBaseClient move_base_client("move_base",true);
@@ -467,7 +504,7 @@ int main(int argc, char **argv) {
 
 	GuideServer guide_action_server(n,"supervision/guide_group",
 		boost::bind(&guideGroup,_1,&guide_action_server,&move_to_client, &approach_client, &observation_manager,
-			&guide_pomdp,&control_speed_pomdp, &set_driving_direction_client),false);
+			&guide_pomdp,&control_speed_pomdp, &set_driving_direction_client,&calculate_path_client),false);
 	guide_action_server.start();
 
 	ROS_INFO("Started action server GuideGroup");

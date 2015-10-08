@@ -103,17 +103,19 @@ void ObservationManager::agentFactCallback(const situation_assessment_msgs::Fact
 			}
 			else group_distance_="outOfRange";
 
-			if (observed_group_==agents_in_group[0]) {
-				if (distance_num<1.5) {
-					num_sides++;
-					in_slow_area_="false";
-				}
-				else if (distance_num<3) {
-					num_behind++;
-					in_slow_area_="false";
-				}
-				else {
-					in_slow_area_="true";
+			if (agents_in_group.size()>0) {
+				if (observed_group_==agents_in_group[0]) {
+					if (distance_num<1.5) {
+						num_sides++;
+						in_slow_area_="false";
+					}
+					else if (distance_num<3) {
+						num_behind++;
+						in_slow_area_="false";
+					}
+					else {
+						in_slow_area_="true";
+					}
 				}
 			}
 		}

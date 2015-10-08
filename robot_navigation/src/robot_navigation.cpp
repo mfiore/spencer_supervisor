@@ -13,6 +13,11 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <supervision_msgs/SupervisionStatus.h>
 #include <situation_assessment_msgs/FactList.h>
+#include <situation_assessment_msgs/GetMap.h>
+#include <situation_assessment_msgs/Graph.h>
+#include <situation_assessment_msgs/Node.h>
+#include <supervision_msgs/CalculatePath.h>
+
 
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/locks.hpp> 
@@ -20,8 +25,6 @@
 //services
 #include <annotated_mapping/SwitchMap.h>
 
-//self includes
-#include <robot_navigation/spencer_map.h>
 
 //libraries
 #include <spencer_status/check_status.h>
@@ -34,10 +37,9 @@ typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseCl
 ros::ServiceClient switch_map_client;
 
 
-SpencerMap* spencer_map; //used to get the centroid of the sub maps
-
 //location of the robot
 string robot_location;
+bool use_map_switching;
 
 boost::mutex mutex_location;
 
@@ -52,6 +54,25 @@ CheckStatus *check_status;
 
 //publishers
 ros::Publisher status_pub;
+
+map<string,geometry_msgs::Point> node_centers_;
+
+bool getMap(ros::ServiceClient* get_symbolic_map_client) {
+	situation_assessment_msgs::GetMap get_map_request;
+	if (!get_symbolic_map_client->call(get_map_request)) {
+		return false;
+	}
+	else {
+		situation_assessment_msgs::Graph g=get_map_request.response.graph;
+		vector<situation_assessment_msgs::Node> node_list=g.nodes;
+		for (int i=0; i<node_list.size();i++) {
+			situation_assessment_msgs::Node n=node_list[i];
+			node_centers_[n.label]=n.center;
+
+		}
+	}
+	return true;
+}
 
 //returns true if there is a move base error. 
 bool hasMoveBaseError(MoveBaseClient* move_base_client) {
@@ -100,7 +121,8 @@ bool switchMap(string node1, string node2) {
 
 
 
-void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_to_action_server,MoveBaseClient* move_base_client) {
+void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_to_action_server,
+	MoveBaseClient* move_base_client, ros::ServiceClient* calculate_path_client) {
 	//supervision will publish on a status topic as well as giving feedback for the actionn	
 	supervision_msgs::MoveToFeedback feedback;
 	supervision_msgs::MoveToResult result;
@@ -109,14 +131,17 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 	bool symbolic_navigation=false;
 
 	if (goal->destination!="") {
+		ROS_INFO("Received destination");
 		ROS_INFO("Received request to move to %s",goal->destination.c_str());
 		symbolic_navigation=true;
 	}
 	else if (goal->path.size()!=0) {
+		ROS_INFO("Received path");
 		ROS_INFO("Received request to move to %s",goal->path[goal->path.size()-1].c_str());
 		symbolic_navigation=true;
 	}
 	else if (goal->coordinates.size()>0) {
+		ROS_INFO("Received coordinates");
 		geometry_msgs::Pose last_pose=goal->coordinates[goal->coordinates.size()-1];
 		ROS_INFO("Received request to move to %f %f",last_pose.position.x,last_pose.position.y);
 	}
@@ -124,6 +149,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		ROS_WARN("No path or destination given");
 		result.status="no path or destination given";
 		move_to_action_server->setAborted(result);
+		return;
 	}
 
 	string destination=goal->destination;
@@ -135,17 +161,29 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 	int current_node=0; 
 
 	//get plan for destination (TODO)
-	if (goal->path.size()!=0) {
+	if (goal->path.size()>0) {
 		nodes=goal->path;
 		n_nodes=goal->path.size();
 	}
-	else if (destination!=""){
-
-	}
-	else {
+	else if (goal->coordinates.size()>0) {
 		poses=goal->coordinates;
 		n_nodes=goal->coordinates.size();
 		current_node=-1;
+	}
+	else {
+		supervision_msgs::CalculatePath path_request;
+		path_request.request.source=robot_location;
+		path_request.request.dest=destination;
+		if (calculate_path_client->call(path_request)) {
+			nodes=path_request.response.path;
+		}
+		else {
+			ROS_ERROR("Failed to calculate path");
+			result.status="FAILED";
+			result.details="group id is missing";
+			move_to_action_server->setAborted(result);
+			return;
+		}
 	}
 
 
@@ -172,11 +210,13 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 	
 		double goal_x,goal_y;
 		if (symbolic_navigation==true) {
-			spencer_map->getMapCenter(nodes[current_node+1],&goal_x,&goal_y);
+			geometry_msgs::Point center=node_centers_[nodes[current_node+1]];
+			goal_x=center.x;
+			goal_y=center.y;
 		}
 		else {
-			goal_x=poses[current_node].position.x;
-			goal_y=poses[current_node].position.y;
+			goal_x=poses[current_node+1].position.x;
+			goal_y=poses[current_node+1].position.y;
 		}
 		goal_pose.position.x=goal_x;
 		goal_pose.position.y=goal_y;	
@@ -246,10 +286,11 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 				feedback.current_pose=poses[current_node];
 				move_to_action_server->publishFeedback(feedback);	
 			}
-		} 
-		else if (move_base_arrived && (current_node+1)==nodes.size()-1) {
+		}
+		else if (move_base_arrived && (current_node+1)==n_nodes-1) {
 			task_completed=true;
 		}
+	
 	}
 
 	if (task_completed) {
@@ -262,7 +303,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		move_to_action_server->setSucceeded(result);
 	}
 	else {
-		ROS_INFO("Task Failed");
+		ROS_INFO("Navigation Task Failed");
 
 		status_msg.status="Task Failed";
 
@@ -321,14 +362,12 @@ int main(int argc,char** argv) {
 
 	n.getParam("/robot/name",robot_name);
 	n.getParam("supervision/simulation_mode",simulation_mode);
-	n.getParam("/supervision/doc_path",doc_path);
-	n.getParam("/supervision/doc_name",doc_name);
+	n.getParam("supervision/use_map_switching",use_map_switching);
 
 	ROS_INFO("Parameters are:");
 	ROS_INFO("robot name %s",robot_name.c_str());
 	ROS_INFO("simulation_mode %d",simulation_mode);
-	ROS_INFO("doc path %s",doc_path.c_str());
-	ROS_INFO("doc name %s",doc_name.c_str());
+	ROS_INFO("use map switching %d",use_map_switching);
 
 
 	//fake map when we don't want to use spencer mapping
@@ -359,9 +398,6 @@ int main(int argc,char** argv) {
 	fake_map["3"]=pose_2;
 
 
-	spencer_map=new SpencerMap(n,doc_path,doc_name);
-	if (!spencer_map->calculateMapInfos()) return 0;
-
 
 	//connect to the action and servers
 	
@@ -369,8 +405,28 @@ int main(int argc,char** argv) {
 
 	ROS_INFO("Connecting for switch map client");
 	switch_map_client=n.serviceClient<annotated_mapping::SwitchMap>("switch_map");
-	switch_map_client.waitForExistence();
-	ROS_INFO("Connected");
+	if (use_map_switching) {
+		switch_map_client.waitForExistence();
+		ROS_INFO("Connected");
+	}
+
+
+	ROS_INFO("Connecting to calculate path service");
+	ros::ServiceClient calculate_path_client=n.serviceClient<supervision_msgs::CalculatePath>("/supervision/calculate_path",true);
+	calculate_path_client.waitForExistence();
+	ROS_INFO("Connected\n");
+
+	ROS_INFO("Connecting to get map service");
+		ros::ServiceClient get_symbolic_map_client=n.serviceClient<situation_assessment_msgs::GetMap>("/situation_assessment/get_symbolic_map",true);
+		get_symbolic_map_client.waitForExistence();
+		ROS_INFO("Connected\n");
+
+	if (!getMap(&get_symbolic_map_client)) {
+		ROS_ERROR("Can't get map");
+		ros::shutdown();
+	}
+
+
 
 	ROS_INFO("Waiting for move_base");
 	MoveBaseClient move_base_client("move_base",true);
@@ -393,7 +449,7 @@ int main(int argc,char** argv) {
 	status_pub=n.advertise<supervision_msgs::SupervisionStatus>("supervision/status",1000);
 
 	MoveToServer move_to_action_server(n,"supervision/move_to",
-		boost::bind(&moveTo,_1,&move_to_action_server,&move_base_client),false);
+		boost::bind(&moveTo,_1,&move_to_action_server,&move_base_client, &calculate_path_client),false);
 	move_to_action_server.start();
 	ROS_INFO("Started action server MoveTo");
 	

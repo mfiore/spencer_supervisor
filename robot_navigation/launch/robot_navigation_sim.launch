@@ -1,0 +1,5 @@
+<launch>
+	<node name="robot_status_simulator" pkg="robot_status_simulator" type="robot_status_simulator"/>
+	<include file="$(find robot_navigation)/launch/robot_navigation.launch" />
+
+</launch>

@@ -101,7 +101,7 @@ include_directories(
 # )
 
 ## Declare a cpp executable
- add_executable(robot_navigation src/robot_navigation.cpp src/spencer_map.cpp src/map_info.cpp src/tinyxml2.cpp )
+ add_executable(robot_navigation src/robot_navigation.cpp )
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes

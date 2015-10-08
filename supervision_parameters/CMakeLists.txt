@@ -1,16 +1,10 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(goal_manager)
+project(supervision_parameters)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS 
-  roscpp
-  rospy
-  message_runtime
-  situation_assessment_msgs
-  supervision_msgs
-)
+find_package(catkin REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -69,7 +63,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
-#   situation_assessment_msgs#   supervision_msgs
+#   std_msgs  # Or other packages containing msgs
 # )
 
 ###################################
@@ -82,9 +76,9 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS include
-#  LIBRARIES goal_manager
-  CATKIN_DEPENDS situation_assessment_msgs supervision_msgs roscpp rospy message_runtime
+#  INCLUDE_DIRS include
+#  LIBRARIES supervision_parameters
+#  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
 )
 
@@ -95,26 +89,23 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 # include_directories(include)
-include_directories(
-  ${catkin_INCLUDE_DIRS}
-)
 
 ## Declare a cpp library
-# add_library(goal_manager
-#   src/${PROJECT_NAME}/goal_manager.cpp
+# add_library(supervision_parameters
+#   src/${PROJECT_NAME}/supervision_parameters.cpp
 # )
 
 ## Declare a cpp executable
-add_executable(goal_manager src/goal_manager.cpp)
+# add_executable(supervision_parameters_node src/supervision_parameters_node.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(goal_manager_node goal_manager_generate_messages_cpp)
+# add_dependencies(supervision_parameters_node supervision_parameters_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
- target_link_libraries(goal_manager
-   ${catkin_LIBRARIES}
- )
+# target_link_libraries(supervision_parameters_node
+#   ${catkin_LIBRARIES}
+# )
 
 #############
 ## Install ##
@@ -131,7 +122,7 @@ add_executable(goal_manager src/goal_manager.cpp)
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS goal_manager goal_manager_node
+# install(TARGETS supervision_parameters supervision_parameters_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -156,7 +147,7 @@ add_executable(goal_manager src/goal_manager.cpp)
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_goal_manager.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_supervision_parameters.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

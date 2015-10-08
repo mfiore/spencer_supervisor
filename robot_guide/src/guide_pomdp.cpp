@@ -2,7 +2,7 @@
 
 GuidePomdp::GuidePomdp(ros::NodeHandle node_handle):PomdpInterface(node_handle) {
 	ROS_INFO("Waiting for Guide Pomdp");
-	pomdp_client_=node_handle_.serviceClient<appl::GetAction>("appl_request/guide");
+	pomdp_client_=node_handle_.serviceClient<appl::GetAction>("appl_request/guide_pomdp");
 	pomdp_client_.waitForExistence();
 	ROS_INFO("Connected to Guide Pomdp");
 
