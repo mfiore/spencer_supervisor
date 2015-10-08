@@ -1,7 +1,7 @@
 #include <robot_guide/observation_manager.h>
 
-ObservationManager::ObservationManager(ros::NodeHandle node_handle, string robot_name):
-node_handle_(node_handle),robot_name_(robot_name) {
+ObservationManager::ObservationManager(ros::NodeHandle node_handle, string robot_name, bool simple_mode):
+node_handle_(node_handle),robot_name_(robot_name),simple_mode_(simple_mode) {
 	ROS_INFO("creating observation_manager");
 	agent_sub_ = node_handle_.subscribe("/situation_assessment/agent_fact_list", 1000, 
 		&ObservationManager::agentFactCallback,this);
@@ -60,6 +60,10 @@ string ObservationManager::getTimer() {
 	return "ok";
 }
 
+bool ObservationManager::getSimpleGroupFollowing() {
+	boost::lock_guard<boost::mutex> lock(mutex_simple_group_following_);
+	return simple_group_following_;
+}
 
 //Collect observations for the task
 void ObservationManager::agentFactCallback(const situation_assessment_msgs::FactList::ConstPtr& msg) {
@@ -76,6 +80,13 @@ void ObservationManager::agentFactCallback(const situation_assessment_msgs::Fact
 	ros::Rate r(3);
 	vector<string> agents_in_group;
 	BOOST_FOREACH(situation_assessment_msgs::Fact f, fact_list) {
+		if (simple_mode_) {
+			if (f.predicate[0]=="isInArea" && f.value==robot_name_) {
+				mutex_simple_group_following_.lock();
+				simple_group_following_=true;
+				mutex_simple_group_following_.unlock();
+			}
+		}
 		if (f.subject==observed_group_ && f.predicate[0]=="contains") {
 			agents_in_group.push_back(f.value);
 		}

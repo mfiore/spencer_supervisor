@@ -13,4 +13,4 @@ supervision:
     control_speed_pomdp:
         appl_problem: /home/mfiore/pomdpModels/icsr/controlSpeed.pomdpx
         appl_policy: /home/mfiore/pomdpModels/icsr/controlSpeed.out
-
+    simple_mode: false

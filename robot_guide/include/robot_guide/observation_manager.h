@@ -20,7 +20,7 @@ using namespace std;
 
 class ObservationManager {
 public:
-	ObservationManager(ros::NodeHandle node_handle, string robot_name);
+	ObservationManager(ros::NodeHandle node_handle, string robot_name, bool simple_mode);
 
 	void setObservedGroup(string group);
 	void waitForGroup();
@@ -32,6 +32,7 @@ public:
 	string getInSlowArea();
 	string getRobotLocation();
 	string getTimer();
+	bool getSimpleGroupFollowing();
 
 private:
 	void agentFactCallback(const situation_assessment_msgs::FactList::ConstPtr& msg);
@@ -39,6 +40,8 @@ private:
 	boost::mutex mutex_observations_;
 	boost::mutex mutex_has_observed_group_;
 	boost::condition_variable condition_has_observed_group_;
+
+
 	bool has_observed_group_;
 
 
@@ -52,6 +55,11 @@ private:
 	string highest_density_;
 	string in_slow_area_;
 	string robot_location_;
+
+
+	boost::mutex mutex_simple_group_following_; 
+	bool simple_group_following_;
+	bool simple_mode_;
 
 	ros::NodeHandle node_handle_;
 

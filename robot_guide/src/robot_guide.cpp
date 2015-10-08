@@ -64,6 +64,7 @@ double starting_speed;
 double angular_velocity;
 double actual_speed;
 
+bool simple_mode;
 
 bool use_driving_direction;
 
@@ -204,19 +205,27 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 		}
 	}
 
+	string guide_action;
+	string speed_action;
 
 	ROS_INFO("Starting POMDPs");
+	if (!simple_mode) {
 	//start pomdps
-	string guide_action=guide_pomdp->update(
-		observation_manager->getTimer(),
-		observation_manager->getDeltaDistance(),
-		observation_manager->getGroupDistance(),
-		observation_manager->getOrientation(),
-		observation_manager->getGroupIsMoving());
+		string guide_action=guide_pomdp->update(
+			observation_manager->getTimer(),
+			observation_manager->getDeltaDistance(),
+			observation_manager->getGroupDistance(),
+			observation_manager->getOrientation(),
+			observation_manager->getGroupIsMoving());
 
-	string speed_action=control_speed_pomdp->update(
-		observation_manager->getHighestDensity(),
-		observation_manager->getInSlowArea());
+		string speed_action=control_speed_pomdp->update(
+			observation_manager->getHighestDensity(),
+			observation_manager->getInSlowArea());
+	}
+	else {
+		guide_action="continue";
+		speed_action="continue";
+	}
 
 	//check if there is already an error
 	got_error=check_status->isBatteryLow() || check_status->isBumperPressed() || check_status->isStopped();
@@ -258,7 +267,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 				status_msg.details="Starting to move";		
 				is_moving=true;
 			}
-			else {  //if it was already moving select a speed
+			else if (!simple_mode) {  //if it was already moving select a speed
 				//control speed update
 
 				string speed_action=control_speed_pomdp->update(
@@ -325,12 +334,20 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 
 		status_pub.publish(status_msg);
 		r.sleep();
-		guide_action=guide_pomdp->update(
-				observation_manager->getTimer(),
-				observation_manager->getDeltaDistance(),
-				observation_manager->getGroupDistance(),
-				observation_manager->getOrientation(),
-				observation_manager->getGroupIsMoving());
+		if (!simple_mode) {
+			guide_action=guide_pomdp->update(
+					observation_manager->getTimer(),
+					observation_manager->getDeltaDistance(),
+					observation_manager->getGroupDistance(),
+					observation_manager->getOrientation(),
+					observation_manager->getGroupIsMoving());
+		}
+		else if (observation_manager->getSimpleGroupFollowing()){
+			guide_action="continue";
+		}
+		else {
+			guide_action="abandon";
+		}
 	}
 
 	if (!ros::ok()) return;
@@ -430,6 +447,7 @@ int main(int argc, char **argv) {
 	n.getParam("/supervision/max_speed",max_speed);
 	n.getParam("supervision/simulation_mode",simulation_mode);
 	n.getParam("supervision/use_driving_direction",use_driving_direction);
+	n.getParam("supervision/simple_mode",simple_mode);
 
 	ROS_INFO("Parameters are:");
 	ROS_INFO("robot name %s",robot_name.c_str());
@@ -438,12 +456,13 @@ int main(int argc, char **argv) {
 	ROS_INFO("min_speed %f",min_speed);
 	ROS_INFO("max_speed %f",max_speed);
 	ROS_INFO("simulation_mode %d",simulation_mode);
+	ROS_INFO("simple mode %d",simple_mode);
 
 	//create package objects
 	GuidePomdp guide_pomdp(n);
 	ControlSpeedPomdp control_speed_pomdp(n);
 
-	ObservationManager observation_manager(n,robot_name);
+	ObservationManager observation_manager(n,robot_name,simple_mode);
 	check_status=new CheckStatus(n);
 
 	ros::Rate r(10);
