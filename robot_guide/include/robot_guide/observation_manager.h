@@ -18,6 +18,17 @@
 
 using namespace std;
 
+
+class AgentObservation {
+	public:
+	string name;
+	double distance;
+	double delta_distance;
+	string orientation;
+	string is_moving;
+
+};
+
 class ObservationManager {
 public:
 	ObservationManager(ros::NodeHandle node_handle, string robot_name, bool simple_mode);
@@ -32,7 +43,6 @@ public:
 	string getInSlowArea();
 	string getRobotLocation();
 	string getTimer();
-	bool getSimpleGroupFollowing();
 
 private:
 	void agentFactCallback(const situation_assessment_msgs::FactList::ConstPtr& msg);
@@ -57,13 +67,15 @@ private:
 	string robot_location_;
 
 
-	boost::mutex mutex_simple_group_following_; 
-	bool simple_group_following_;
+
 	bool simple_mode_;
 
 	ros::NodeHandle node_handle_;
 
 	ros::Subscriber agent_sub_;
+
+	void getSimpleObservations(vector<situation_assessment_msgs::Fact> fact_list);
+
 };
 
 #endif

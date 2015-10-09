@@ -205,11 +205,8 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 		}
 	}
 
-	string guide_action;
-	string speed_action;
 
 	ROS_INFO("Starting POMDPs");
-	if (!simple_mode) {
 	//start pomdps
 		string guide_action=guide_pomdp->update(
 			observation_manager->getTimer(),
@@ -221,11 +218,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 		string speed_action=control_speed_pomdp->update(
 			observation_manager->getHighestDensity(),
 			observation_manager->getInSlowArea());
-	}
-	else {
-		guide_action="continue";
-		speed_action="continue";
-	}
+
 
 	//check if there is already an error
 	got_error=check_status->isBatteryLow() || check_status->isBumperPressed() || check_status->isStopped();
@@ -267,7 +260,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 				status_msg.details="Starting to move";		
 				is_moving=true;
 			}
-			else if (!simple_mode) {  //if it was already moving select a speed
+			else {  //if it was already moving select a speed
 				//control speed update
 
 				string speed_action=control_speed_pomdp->update(
@@ -334,20 +327,13 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 
 		status_pub.publish(status_msg);
 		r.sleep();
-		if (!simple_mode) {
 			guide_action=guide_pomdp->update(
 					observation_manager->getTimer(),
 					observation_manager->getDeltaDistance(),
 					observation_manager->getGroupDistance(),
 					observation_manager->getOrientation(),
 					observation_manager->getGroupIsMoving());
-		}
-		else if (observation_manager->getSimpleGroupFollowing()){
-			guide_action="continue";
-		}
-		else {
-			guide_action="abandon";
-		}
+
 	}
 
 	if (!ros::ok()) return;
