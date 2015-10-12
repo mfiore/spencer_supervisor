@@ -72,7 +72,7 @@ bool simple_mode;
 
 //control which additional modules are on or off
 bool use_driving_direction;
-bool use_control_speed
+bool use_control_speed;
 
 
 //location of the robot
@@ -221,7 +221,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 	ROS_INFO("Starting POMDPs");
 	//start pomdps
 		string guide_action=guide_pomdp->update(
-			observation_manager->getTimer(),
+			"ok",
 			observation_manager->getDeltaDistance(),
 			observation_manager->getGroupDistance(),
 			observation_manager->getOrientation(),
@@ -284,10 +284,10 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 				if (speed_action=="accelerate"){
 
 					 double new_speed=min(actual_speed+0.1,max_speed);
-					spencer_control_msgs::SetMaxVelocity srv;
-					srv.request.max_linear_velocity=actual_speed;
-					srv.request.max_angular_velocity=angular_velocity;
-					control_speed_client.call(srv);
+					// spencer_control_msgs::SetMaxVelocity srv;
+					// srv.request.max_linear_velocity=actual_speed;
+					// srv.request.max_angular_velocity=angular_velocity;
+					// control_speed_client.call(srv);
    	  				if (new_speed!=actual_speed) {
 					 	ROS_INFO("Switching speed to %f",new_speed);
 					 	actual_speed=new_speed;
@@ -488,20 +488,20 @@ int main(int argc, char **argv) {
 	ros::Rate r(10);
 
 
-	ROS_INFO<<"Connecting to control speed\n";
-	control_speed_client=n.serviceClient<spencer_control_msgs::SetMaxVelocity>("/spencer/control/set_max_velocity",true);
-	if (use_control_speed) {
-		control_speed_client.waitForExistence();
-		ROS_INFO<<"Connected\n";
+	// ROS_INFO<<"Connecting to control speed\n";
+	// // control_speed_client=n.serviceClient<spencer_control_msgs::SetMaxVelocity>("/spencer/control/set_max_velocity",true);
+	// if (use_control_speed) {
+	// 	control_speed_client.waitForExistence();
+	// 	ROS_INFO<<"Connected\n";
 
-		set the starting speed of the robot
-		spencer_control_msgs::SetMaxVelocity srv;
-		srv.request.max_linear_velocit::SetDrivingDirectiony=starting_speed;
-		srv.request.max_angular_velocity=angular_velocity;
-		control_speed_client.call(srv);
-		cout<<"Starting speed is "<<starting_speed<<"\n";
-		 actual_speed=starting_speed;
-	}
+	// 	// set the starting speed of the robot
+	// 	spencer_control_msgs::SetMaxVelocity srv;
+	// 	srv.request.max_linear_velocity=starting_speed;
+	// 	srv.request.max_angular_velocity=angular_velocity;
+	// 	control_speed_client.call(srv);
+	// 	cout<<"Starting speed is "<<starting_speed<<"\n";
+	// 	 actual_speed=starting_speed;
+	// }
 	
 	if (!ros::ok()) {
 		ROS_INFO("Shutdown request");
