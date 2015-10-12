@@ -103,7 +103,7 @@ catkin_package(
 # )
 
 ## Declare a cpp executable
- add_executable(robot_guide src/pomdp_interface.cpp src/guide_pomdp.cpp src/control_speed_pomdp.cpp src/robot_guide.cpp src/observation_manager )
+ add_executable(robot_guide src/pomdp_interface.cpp src/guide_pomdp.cpp src/control_speed_pomdp.cpp src/robot_guide.cpp src/observation_manager.cpp src/supervision_timer.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes

@@ -35,6 +35,8 @@ Main file for the spencer supervisor, which guides groups of passengers to a des
 
 #include <spencer_status/check_status.h>
 
+#include <robot_guide/supervision_timer.h>
+
 
 //other
 #include <string>
@@ -63,6 +65,8 @@ double max_speed;
 double starting_speed;
 double angular_velocity;
 double actual_speed;
+
+double time_to_wait;
 
 bool simple_mode;
 
@@ -120,6 +124,10 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 	supervision_msgs::GuideGroupFeedback feedback;
 	supervision_msgs::GuideGroupResult result;
 	supervision_msgs::SupervisionStatus status_msg; 
+
+
+	SupervisionTimer wait_timer(time_to_wait);
+	boost::thread timer_thread;
 
 	string group_id=goal->group_id;
 	string destination;
@@ -230,6 +238,8 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 
 		status_msg.status="Guiding group";
 		if (guide_action=="continue") {
+			wait_timer.stop();
+
 			//if the robot is not moving then get the next centroid and navigate towards it
 			if (is_moving==false) { 
 				supervision_msgs::MoveToGoal move_to_goal;
@@ -305,6 +315,8 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 			if (is_moving==true) {
 				status_msg.details="Waiting for users";
 
+				boost::thread t(boost::bind(&SupervisionTimer::start,&wait_timer));
+
 				if (!simulation_mode) {
 					move_to_client->cancelGoal();
 			}
@@ -312,7 +324,6 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 				is_moving=false;
 			}
 		}
-
 		got_error=check_status->isBatteryLow() || check_status->isBumperPressed() || check_status->isStopped();
 		if (is_moving) {
                   move_to_client->getState()==actionlib::SimpleClientGoalState::ABORTED || 	
@@ -327,14 +338,26 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 
 		status_pub.publish(status_msg);
 		r.sleep();
-			guide_action=guide_pomdp->update(
-					observation_manager->getTimer(),
-					observation_manager->getDeltaDistance(),
-					observation_manager->getGroupDistance(),
-					observation_manager->getOrientation(),
-					observation_manager->getGroupIsMoving());
 
+		string s_timer;
+		if (wait_timer.isElapsed()) {
+			s_timer="expired";
+			ROS_INFO("Timer expired");
+		}
+		else {
+			s_timer="ok";
+		}
+		guide_action=guide_pomdp->update(
+			s_timer,
+			observation_manager->getDeltaDistance(),
+			observation_manager->getGroupDistance(),
+			observation_manager->getOrientation(),
+			observation_manager->getGroupIsMoving());
+		if (guide_action=="abandon") {
+			ROS_INFO("Abandoning task");
+		}
 	}
+	
 
 	if (!ros::ok()) return;
 	ROS_INFO("Setting driving direction to forward");
@@ -434,6 +457,7 @@ int main(int argc, char **argv) {
 	n.getParam("supervision/simulation_mode",simulation_mode);
 	n.getParam("supervision/use_driving_direction",use_driving_direction);
 	n.getParam("supervision/simple_mode",simple_mode);
+	n.getParam("supervision/wait_time",time_to_wait);
 
 	ROS_INFO("Parameters are:");
 	ROS_INFO("robot name %s",robot_name.c_str());
@@ -443,6 +467,7 @@ int main(int argc, char **argv) {
 	ROS_INFO("max_speed %f",max_speed);
 	ROS_INFO("simulation_mode %d",simulation_mode);
 	ROS_INFO("simple mode %d",simple_mode);
+	ROS_INFO("wait time is %f",time_to_wait);
 
 	//create package objects
 	GuidePomdp guide_pomdp(n);

@@ -110,7 +110,7 @@ add_executable(robot_status_simulator src/robot_status_simulator.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(robot_status_simulator_node robot_status_simulator_generate_messages_cpp)
+add_dependencies(robot_status_simulator supervision_msgs_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
  target_link_libraries(robot_status_simulator

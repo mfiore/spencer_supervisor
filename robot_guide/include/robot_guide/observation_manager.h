@@ -69,6 +69,7 @@ private:
 
 
 	bool simple_mode_;
+	string best_agent_name_;
 
 	ros::NodeHandle node_handle_;
 

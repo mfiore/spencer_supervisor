@@ -7,10 +7,11 @@ supervision:
     simulation_mode: true
     use_map_switching: false
     use_driving_direction: false
+    wait_time: 30
     guide_pomdp:
         appl_problem: /home/mfiore/pomdpModels/icsr/guide.pomdpx
         appl_policy: /home/mfiore/pomdpModels/icsr/guide.out
     control_speed_pomdp:
         appl_problem: /home/mfiore/pomdpModels/icsr/controlSpeed.pomdpx
         appl_policy: /home/mfiore/pomdpModels/icsr/controlSpeed.out
-    simple_mode: false
+    simple_mode: true

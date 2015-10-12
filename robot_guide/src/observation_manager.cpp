@@ -66,58 +66,79 @@ void ObservationManager::getSimpleObservations(vector<situation_assessment_msgs:
 
 	map<string,AgentObservation> agent_observations;
 	BOOST_FOREACH(situation_assessment_msgs::Fact f, fact_list) {
-		if (f.predicate[0]=="isInArea" && f.value==robot_name_) {
-			AgentObservation new_agent;
-			new_agent.name=f.subject;
-			agent_observations[new_agent.name]=new_agent;
+		if (f.subject!=robot_name_) {
+			if (f.predicate[0]=="isInArea" && f.value==robot_name_) {
+				AgentObservation new_agent;
+				new_agent.name=f.subject;
+				agent_observations[new_agent.name]=new_agent;
+			}
 		}
 	}
 	BOOST_FOREACH(situation_assessment_msgs::Fact f, fact_list) {
-		if (f.predicate[0]=="distance") {
-			if (agent_observations.find(f.subject)!=agent_observations.end()) {
-				double distance_num=boost::lexical_cast<double>(f.value);
-				agent_observations[f.subject].distance=distance_num;
-			}
-		}
-		else if (f.predicate[0]=="delta_distance") {
-			if (agent_observations.find(f.subject)!=agent_observations.end()) {
-				double delta_distance_num=boost::lexical_cast<double>(f.value);
-				agent_observations[f.subject].delta_distance=delta_distance_num;
-			}
-		}
-		else if (f.predicate[0]=="orientation") {
-			if (agent_observations.find(f.subject)!=agent_observations.end()) {
-				agent_observations[f.subject].orientation=f.value;
-			}
-		}	
-		else if (f.predicate[0]=="isMoving") {
-			if (agent_observations.find(f.subject)!=agent_observations.end()) {
-				if (f.value=="0") {
-					agent_observations[f.subject].is_moving="notMoving";
+		if (f.subject!=robot_name_) {
+			if (f.predicate[0]=="distance" && f.predicate[1]==robot_name_) {
+				if (agent_observations.find(f.subject)!=agent_observations.end()) {
+					double distance_num=boost::lexical_cast<double>(f.value);
+					agent_observations[f.subject].distance=distance_num;
 				}
-				else {
-					agent_observations[f.subject].is_moving="moving";
+			}
+			else if (f.predicate[0]=="delta_distance" && f.predicate[1]==robot_name_) {
+				if (agent_observations.find(f.subject)!=agent_observations.end()) {
+					double delta_distance_num=boost::lexical_cast<double>(f.value);
+					agent_observations[f.subject].delta_distance=delta_distance_num;
+				}
+			}
+			else if (f.predicate[0]=="orientation" && f.predicate[1]==robot_name_) {
+				if (agent_observations.find(f.subject)!=agent_observations.end()) {
+					agent_observations[f.subject].orientation=f.value;
+				}
+			}	
+			else if (f.predicate[0]=="isMoving") {
+				if (agent_observations.find(f.subject)!=agent_observations.end()) {
+					if (f.value=="0") {
+						agent_observations[f.subject].is_moving="notMoving";
+					}
+					else {
+						agent_observations[f.subject].is_moving="moving";
+					}
 				}
 			}
 		}
 	}
 	if (agent_observations.size()>0) {
 		AgentObservation best_agent=agent_observations.begin()->second;
+		best_agent.orientation="towardRobot";
+		// ROS_INFO("Start check");
 		for (map<string,AgentObservation>::iterator it=agent_observations.begin();it!=agent_observations.end();it++) {
+			it->second.orientation="towardRobot";
+			// ROS_INFO("Comparing %s with %s",best_agent.name.c_str(),it->second.name.c_str());
+			// ROS_INFO("Best agent %s %s %f %f",best_agent.orientation.c_str(),best_agent.is_moving.c_str(),best_agent.delta_distance,best_agent.distance);
+			// ROS_INFO("Other agent %s %s %f %f",it->second.orientation.c_str(),it->second.is_moving.c_str(),it->second.delta_distance,it->second.distance);
 			if (it->second.orientation=="towardRobot" && best_agent.orientation!="towardRobot") {
+				// ROS_INFO("Orinetation different");
 				best_agent=it->second;
 			}
-			else if (it->second.orientation=="towardRobot" && it->second.is_moving=="isMoving" && best_agent.is_moving=="notMoving") {
+			else if (it->second.orientation=="towardRobot" && it->second.is_moving=="moving" && best_agent.is_moving=="notMoving") {
+				 ROS_INFO("One is moving and one not");
 				best_agent=it->second;
 			}
-			else if (it->second.orientation=="towardRobot" && it->second.is_moving=="isMoving" && it->second.delta_distance>1 && best_agent.delta_distance<1){
+			else if (it->second.orientation=="towardRobot" && it->second.is_moving=="moving" && it->second.delta_distance>1 && best_agent.delta_distance<1){
+				// ROS_INFO("Delta distance different");
 				best_agent=it->second;
 			}
-			else if (it->second.orientation=="towardRobot" && it->second.is_moving=="isMoving" && it->second.delta_distance>1 && 
+			else if (it->second.orientation=="towardRobot" && it->second.is_moving=="moving" && it->second.delta_distance>1 && 
 				it->second.distance<best_agent.distance)
 			 {
+				// ROS_INFO("Going for distance");
 			 	best_agent=it->second;
 			}
+			else if (it->second.distance<best_agent.distance) {
+				best_agent=it->second;
+			}
+		}
+		if (best_agent_name_!=best_agent.name) {
+			ROS_INFO("Guiding agent %s",best_agent.name.c_str());
+			best_agent_name_=best_agent.name;
 		}
 
 		if (best_agent.delta_distance<-1) {
@@ -151,16 +172,22 @@ void ObservationManager::getSimpleObservations(vector<situation_assessment_msgs:
 			in_slow_area_="true";
 			highest_density_="behind";
 		}
-		orientation_=best_agent.orientation;
+		orientation_="towardRobot";
 		group_is_moving_=best_agent.is_moving;
 			
 		
+
 
 		boost::lock_guard<boost::mutex> lock(mutex_has_observed_group_);
 		if (has_observed_group_==false) {
 			has_observed_group_=true;
 			condition_has_observed_group_.notify_one();
 		}
+	}
+	else {
+		orientation_="unknown";
+		group_is_moving_="unknown";
+		group_distance_="outOfRange";
 	}
 }
 
