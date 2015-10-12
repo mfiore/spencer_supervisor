@@ -19,6 +19,7 @@ void ObservationManager::setObservedGroup(string group) {
 	observed_group_=group;
 }
 
+//we use a condition variable to block until se receive observations of the group. This variable can be unlocked in the callbacks
 void ObservationManager::waitForGroup() {
 	ROS_INFO("Waiting for group observations");
 	boost::unique_lock<boost::mutex> lock(mutex_has_observed_group_);
@@ -56,14 +57,11 @@ string ObservationManager::getRobotLocation() {
 	return robot_location_;
 }
 
-string ObservationManager::getTimer() {
-	return "ok";
-}
-
 
 void ObservationManager::getSimpleObservations(vector<situation_assessment_msgs::Fact> fact_list) {
 
-
+	//first, we get every agent in the robot area. Actually we might get objects too if we track their position in areas, but
+	//at the moment we aren't so this works. If this changes, the procedure needs to read the list of agents.
 	map<string,AgentObservation> agent_observations;
 	BOOST_FOREACH(situation_assessment_msgs::Fact f, fact_list) {
 		if (f.subject!=robot_name_) {
@@ -74,6 +72,7 @@ void ObservationManager::getSimpleObservations(vector<situation_assessment_msgs:
 			}
 		}
 	}
+	//we get the observations linked to each agent calculated before. (since it's a map shouldn't be heavy)
 	BOOST_FOREACH(situation_assessment_msgs::Fact f, fact_list) {
 		if (f.subject!=robot_name_) {
 			if (f.predicate[0]=="distance" && f.predicate[1]==robot_name_) {
@@ -105,10 +104,15 @@ void ObservationManager::getSimpleObservations(vector<situation_assessment_msgs:
 			}
 		}
 	}
+	//if we found any agent
 	if (agent_observations.size()>0) {
 		AgentObservation best_agent=agent_observations.begin()->second;
-		best_agent.orientation="towardRobot";
+		best_agent.orientation="towardRobot"; //just temporary, depends if we receive orientation from perception
 		// ROS_INFO("Start check");
+		//now we find the best agent in this way:
+		//best condition is the closet agent moving toward the robot.
+		//orientation is the first parameter checked, than it's movement, delta_distance and finally distance.
+
 		for (map<string,AgentObservation>::iterator it=agent_observations.begin();it!=agent_observations.end();it++) {
 			it->second.orientation="towardRobot";
 			// ROS_INFO("Comparing %s with %s",best_agent.name.c_str(),it->second.name.c_str());
@@ -119,7 +123,7 @@ void ObservationManager::getSimpleObservations(vector<situation_assessment_msgs:
 				best_agent=it->second;
 			}
 			else if (it->second.orientation=="towardRobot" && it->second.is_moving=="moving" && best_agent.is_moving=="notMoving") {
-				 ROS_INFO("One is moving and one not");
+				 // ROS_INFO("One is moving and one not");
 				best_agent=it->second;
 			}
 			else if (it->second.orientation=="towardRobot" && it->second.is_moving=="moving" && it->second.delta_distance>1 && best_agent.delta_distance<1){
@@ -141,6 +145,7 @@ void ObservationManager::getSimpleObservations(vector<situation_assessment_msgs:
 			best_agent_name_=best_agent.name;
 		}
 
+		//now we map observations into symbolic strings used by the system
 		if (best_agent.delta_distance<-1) {
 			delta_distance_="increasing";
 		}
@@ -175,16 +180,14 @@ void ObservationManager::getSimpleObservations(vector<situation_assessment_msgs:
 		orientation_="towardRobot";
 		group_is_moving_=best_agent.is_moving;
 			
-		
-
-
+		//and we unlock the condition variable. We're not guiding a particular group so anything found will be ok
 		boost::lock_guard<boost::mutex> lock(mutex_has_observed_group_);
 		if (has_observed_group_==false) {
 			has_observed_group_=true;
 			condition_has_observed_group_.notify_one();
 		}
 	}
-	else {
+	else { //if we didn't found people we set parameters to unknown
 		orientation_="unknown";
 		group_is_moving_="unknown";
 		group_distance_="outOfRange";
@@ -203,15 +206,15 @@ void ObservationManager::agentFactCallback(const situation_assessment_msgs::Fact
 
 	boost::lock_guard<boost::mutex> guard(mutex_observations_);
 
-
 	ros::Rate r(3);
 	vector<string> agents_in_group;
 
-
+	//if we're in simple_mode we call the other procedure, else we proceed normally
 	if (simple_mode_) {
 		getSimpleObservations(fact_list);
 	}
  	else {
+ 		//in the loop we collect observations of the group and of its members
 		BOOST_FOREACH(situation_assessment_msgs::Fact f, fact_list) {
 			if (f.subject==observed_group_ && f.predicate[0]=="contains") {
 				agents_in_group.push_back(f.value);
@@ -286,7 +289,7 @@ void ObservationManager::agentFactCallback(const situation_assessment_msgs::Fact
 		}
 	}
 	if (!simple_mode_) {
-		orientation_="towardRobot";
+		orientation_="towardRobot"; //again, this is a hack. If we get orientation from perception it's better
 		if (num_sides>num_behind) {
 			highest_density_="sides";
 		}
@@ -295,6 +298,7 @@ void ObservationManager::agentFactCallback(const situation_assessment_msgs::Fact
 		}
 	}
 
+	//we unlock the condition variable if we found the group.
 	boost::lock_guard<boost::mutex> lock(mutex_has_observed_group_);
 	if (found_group) {
 			has_observed_group_=true;

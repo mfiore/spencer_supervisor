@@ -2,7 +2,7 @@
 	control_speed_pomdp.h
 	author: Michelangelo Fiore
 
-	This class provides an interface with the control speed POMDP for group guiding.
+	This class provides an interface to the APPL pomdps with the control speed POMDP for group guiding.
 	This POMDP takes two observations:
 	highest_density: the robot area where there is a higher density of followers (behind\sides)
 	in_slow_area: true/false if there is/isn't a follower in the "slow down" robot area
@@ -23,7 +23,9 @@ using namespace std;
 class ControlSpeedPomdp:public PomdpInterface {
 	public:
 		ControlSpeedPomdp(ros::NodeHandle node_handle);
-		string update(string highest_density, string in_slow_area);
+		
+		//updates the pomdp with new observations and gets the next action
+		string update(string highest_density, string in_slow_area); 
 		bool started_; //the first time the pomdp is called there is a slightly different syntax.
 };
 

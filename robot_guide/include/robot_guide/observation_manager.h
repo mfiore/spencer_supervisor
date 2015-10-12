@@ -1,3 +1,16 @@
+/**
+	observation_manager.h
+	author: Michelangelo Fiore
+
+	this class manages observations used by the pomdps (and potentially by the rest of the supervisions). It's goal is 
+	receiving data (often numerical) and translating them to the pomdps format. 
+
+	The system can be set to a simple_mode, where it will collect observations from people in a symbolic area linked to it,
+	without considering if they are part of the group to follow (necessary if ids of passengers are not stable). 
+	The robot will choose observations from the *best_agent*, i.e. the one moving in the direction of the robot and the closest.
+*/
+
+
 #ifndef OBSERVATION_MANAGER_H 
 #define OBSERVATION_MANAGER_H
 
@@ -19,6 +32,7 @@
 using namespace std;
 
 
+//a small class that maps the observations linked to an agent. It's used only in the simple_mode at the moment.
 class AgentObservation {
 	public:
 	string name;
@@ -31,10 +45,14 @@ class AgentObservation {
 
 class ObservationManager {
 public:
+
 	ObservationManager(ros::NodeHandle node_handle, string robot_name, bool simple_mode);
 
+	//when we need to observe a particular group, we can set this parameter in the observation manager.
 	void setObservedGroup(string group);
+	//the robot waits for the observed group to be present.
 	void waitForGroup();
+	//getters for the observations.
 	string getDeltaDistance();
 	string getGroupDistance();
 	string getOrientation();
@@ -42,39 +60,40 @@ public:
 	string getHighestDensity();
 	string getInSlowArea();
 	string getRobotLocation();
-	string getTimer();
 
 private:
+	//callback to agent facts, as computed by our situation assessment modules
 	void agentFactCallback(const situation_assessment_msgs::FactList::ConstPtr& msg);
 	//pomdp observations and variables
 	boost::mutex mutex_observations_;
 	boost::mutex mutex_has_observed_group_;
 	boost::condition_variable condition_has_observed_group_;
-
-
 	bool has_observed_group_;
 
-
+	//parameters
 	string robot_name_;
-	string observed_group_;
-
-	string delta_distance_;
-	string group_distance_;
-	string orientation_;
-	string group_is_moving_;
-	string highest_density_;
-	string in_slow_area_;
-	string robot_location_;
-
-
-
 	bool simple_mode_;
-	string best_agent_name_;
 
+
+	string observed_group_; //name of the group to observe
+
+	string best_agent_name_; //for simple mode, name of the agent currently tracked by the system
+
+
+	//observations
+	string delta_distance_;  //increasing, decreasing or stable
+	string group_distance_;  //close, far, outOfRange
+	string orientation_;     //towardRobot, other
+	string group_is_moving_; //notMoving, moving, unknown
+	string highest_density_; //sides, behind
+	string in_slow_area_;    //false,true
+	string robot_location_;  //location of the robot in the symbolic map
+
+	//ros variables
 	ros::NodeHandle node_handle_;
-
 	ros::Subscriber agent_sub_;
 
+	//function to get observation in the simple mode
 	void getSimpleObservations(vector<situation_assessment_msgs::Fact> fact_list);
 
 };

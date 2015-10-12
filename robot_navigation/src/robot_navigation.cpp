@@ -1,3 +1,11 @@
+/**
+	robot_navigation.cpp
+	author: Michelangelo Fiore
+
+	This class acts as supervision for robot navigation tasks.
+*/
+
+
 #include <ros/ros.h>
 //actions
 #include <actionlib/server/simple_action_server.h>
@@ -50,13 +58,15 @@ bool simulation_mode;
 
 map<string, geometry_msgs::Pose> fake_map; //can be useful when we don't want to read the ma pdocuments
 
-CheckStatus *check_status;
+CheckStatus *check_status; //contains the symbolic status of the robot's system (batteries, bumper, emergency switch..)
 
 //publishers
 ros::Publisher status_pub;
 
-map<string,geometry_msgs::Point> node_centers_;
+map<string,geometry_msgs::Point> node_centers_; //includes the centers of each symbolic node
 
+
+//gets the symbolic map, in order to take the node centers
 bool getMap(ros::ServiceClient* get_symbolic_map_client) {
 	situation_assessment_msgs::GetMap get_map_request;
 	if (!get_symbolic_map_client->call(get_map_request)) {
@@ -102,7 +112,8 @@ void sendMoveBaseGoal(geometry_msgs::Pose pose,MoveBaseClient* move_base_client)
 	}
 }
 
-
+//in the spencer project we use smaller grid maps for navigations associated to couples of symbolic nodes. This procedure
+//calls a service to switch grid map on two symbolic nodes.
 bool switchMap(string node1, string node2) {
 	annotated_mapping::SwitchMap srv;
 	srv.request.name_1=node1;
@@ -111,16 +122,10 @@ bool switchMap(string node1, string node2) {
 	
 	bool success=srv.response.success;
 
-	// if (success) {
-	// 	static tf::TransformBroadcaster br;
-	  
-	//   	br.sendTransform(tf::StampedTransform(node_transforms[node1+"_"+node2], ros::Time::now(), "occ_map", "map"));
-	// }
 	return success;
 }
 
-
-
+//moves to: can have a symbolic destination (will plan to reach it), a given symbolic path or a list of coordinates
 void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_to_action_server,
 	MoveBaseClient* move_base_client, ros::ServiceClient* calculate_path_client) {
 	//supervision will publish on a status topic as well as giving feedback for the actionn	
@@ -128,7 +133,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 	supervision_msgs::MoveToResult result;
 	supervision_msgs::SupervisionStatus status_msg; 
 
-	bool symbolic_navigation=false;
+	bool symbolic_navigation=false; //this variable is true if we're not just going through a list of coordinates
 
 	if (goal->destination!="") {
 		ROS_INFO("Received destination");
@@ -160,7 +165,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 
 	int current_node=0; 
 
-	//get plan for destination (TODO)
+
 	if (goal->path.size()>0) {
 		nodes=goal->path;
 		n_nodes=goal->path.size();
@@ -180,7 +185,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		else {
 			ROS_ERROR("Failed to calculate path");
 			result.status="FAILED";
-			result.details="group id is missing";
+			result.details="no path found or error";
 			move_to_action_server->setAborted(result);
 			return;
 		}
@@ -189,12 +194,15 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 
 	ros::Rate r(3); 
 
+	//control variables
 	bool task_completed=false;
 	bool got_error=false;
 	bool is_moving=false;
 
+	//check if we already have an error
 	got_error=check_status->isBatteryLow()||check_status->isBumperPressed() || !ros::ok();
 
+	//switch map to the first one, if we have symbolic navigation
 	if (current_node<n_nodes && symbolic_navigation==true) {
 		ROS_INFO("Switching to map %s %s",nodes[current_node].c_str(),nodes[current_node+1].c_str());
 		bool switch_map_error=switchMap(nodes[current_node],nodes[current_node+1]);
@@ -205,9 +213,9 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 	}
 
 	while (!task_completed && !got_error && !move_to_action_server->isPreemptRequested()) {
-
 		geometry_msgs::Pose goal_pose;
-	
+
+		//send the next goal, from the next node center or from the next coordinate.	
 		double goal_x,goal_y;
 		if (symbolic_navigation==true) {
 			geometry_msgs::Point center=node_centers_[nodes[current_node+1]];
@@ -226,7 +234,6 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		sendMoveBaseGoal(goal_pose,move_base_client);
 
 		is_moving=true;
-
 		if (symbolic_navigation) {
 			ROS_INFO("Starting to move to %s",nodes[current_node+1].c_str());
 			status_msg.status="Moving to "+nodes[current_node+1];
@@ -245,6 +252,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		bool move_base_arrived=false;
 		bool robot_arrived=false;
 
+		//continue until we arrive or have a n error
 		while (!got_error && !move_base_error && !move_base_arrived && !robot_arrived && !move_to_action_server->isPreemptRequested()) {
 			got_error=check_status->isBatteryLow()||check_status->isBumperPressed() || !ros::ok();
 			move_base_error=hasMoveBaseError(move_base_client);
@@ -252,15 +260,17 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 			if (!simulation_mode) {
 				move_base_arrived=move_base_client->getState()==actionlib::SimpleClientGoalState::SUCCEEDED;
 			}
-			if (!got_error && symbolic_navigation==true) {
+
+			//in symbolic node we arrive as soon as we reach the next node, not waiting to reach the move base destination
+			if (!got_error && symbolic_navigation==true) { 
 				mutex_location.lock();
 				robot_arrived=robot_location==nodes[current_node+1] && (current_node+1)!=n_nodes-1;
 				mutex_location.unlock();
 			}
-
 			r.sleep();
 		}
 
+		//when we arrive to the next node, if we use symbolic navigation we stop the robot and switch map.
 		if (robot_arrived || move_base_arrived && (current_node+1!=n_nodes-1)) {
 			if (!simulation_mode) {
 				move_base_client->cancelGoal();
@@ -293,6 +303,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 	
 	}
 
+	//publish final task information
 	if (task_completed) {
 		status_msg.status="Task Completed";
 		status_msg.details="";
@@ -338,6 +349,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 
 }
 
+//used to get the location of the robot
 void agentFactCallback(const situation_assessment_msgs::FactList::ConstPtr& msg) {
 	vector<situation_assessment_msgs::Fact> fact_list=msg->fact_list;
 	boost::lock_guard<boost::mutex> lock(mutex_location);
@@ -360,6 +372,7 @@ int main(int argc,char** argv) {
 
 	string doc_name, doc_path;   //spencer maps document path
 
+	//get useful parameters
 	n.getParam("/robot/name",robot_name);
 	n.getParam("supervision/simulation_mode",simulation_mode);
 	n.getParam("supervision/use_map_switching",use_map_switching);
@@ -370,37 +383,8 @@ int main(int argc,char** argv) {
 	ROS_INFO("use map switching %d",use_map_switching);
 
 
-	//fake map when we don't want to use spencer mapping
-
-	geometry_msgs::Pose pose_0,pose_1,pose_2,pose_3;
-	pose_0.position.x=0;
-	pose_0.position.y=0;
-	pose_0.orientation=tf::createQuaternionMsgFromRollPitchYaw(0,0,1.6);
-
-	pose_1.position.x=2;
-	pose_1.position.y=4.14;
-	pose_1.orientation=tf::createQuaternionMsgFromRollPitchYaw(0,0,1.6);
-
-
-	pose_2.position.x=2.31;
-	pose_2.position.y=10;	
-	pose_2.orientation=tf::createQuaternionMsgFromRollPitchYaw(0,0,1.6);
-
-
-	pose_3.position.x=-0.92;
-	pose_3.position.y=12;
-	pose_3.orientation=tf::createQuaternionMsgFromRollPitchYaw(0,0,4.7);
-
-
-	fake_map["0"]=pose_0;
-	fake_map["1"]=pose_1;
-	fake_map["2"]=pose_2;
-	fake_map["3"]=pose_2;
-
-
 
 	//connect to the action and servers
-	
 	check_status=new CheckStatus(n);
 
 	ROS_INFO("Connecting for switch map client");

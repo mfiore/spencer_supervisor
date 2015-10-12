@@ -1,3 +1,10 @@
+/**
+	robot_status_simulator.cpp
+	author: Michelangelo Fiore
+
+	Simulates battery and emergency stop when not using the real robto.
+*/
+
 #include <ros/ros.h>
 #include <string>
 #include <spencer_control_msgs/SystemStatus.h>

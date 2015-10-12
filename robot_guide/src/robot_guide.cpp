@@ -28,13 +28,11 @@ Main file for the spencer supervisor, which guides groups of passengers to a des
 #include <spencer_nav_msgs/SetDrivingDirection.h>
 
 
-
+//self includes
 #include <robot_guide/guide_pomdp.h>
 #include <robot_guide/control_speed_pomdp.h>
 #include <robot_guide/observation_manager.h>
-
 #include <spencer_status/check_status.h>
-
 #include <robot_guide/supervision_timer.h>
 
 
@@ -42,7 +40,6 @@ Main file for the spencer supervisor, which guides groups of passengers to a des
 #include <string>
 #include <vector>
 #include <algorithm>    // std::max
-
 #include <math.h>
 
 
@@ -60,26 +57,29 @@ typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseCl
 //parameters
 string robot_name;
 
-double min_speed;
+//these are used for speed adaptation
+double min_speed; 
 double max_speed;
 double starting_speed;
 double angular_velocity;
 double actual_speed;
 
+//max time the robot will wait for users before abandoning
 double time_to_wait;
 
+//explained in observation_manager.h
 bool simple_mode;
 
+//control which additional modules are on or off
 bool use_driving_direction;
+bool use_control_speed
+
 
 //location of the robot
 int current_node_in_plan;
 
-
 //ros services
 ros::ServiceClient control_speed_client;
-
-
 
 //publishers
 ros::Publisher status_pub;
@@ -88,7 +88,7 @@ CheckStatus* check_status; //gets information about robot components
 
 bool simulation_mode; //if true doesn't connect to or call move_base
 
-
+//encapsulate move base errors
 bool hasMoveBaseError(MoveBaseClient* move_base_client) {
 	if (!simulation_mode) {
 	return move_base_client->getState()==actionlib::SimpleClientGoalState::ABORTED || 
@@ -97,8 +97,6 @@ bool hasMoveBaseError(MoveBaseClient* move_base_client) {
 			}
 			else return false;
 }
-
-
 
 
 // Called every time feedback is received for the goal
@@ -115,7 +113,9 @@ void moveToFeedbackCb(const supervision_msgs::MoveToFeedbackConstPtr& feedback)
 }
 
 
-//guide action callback
+//guide action callback. Goal can contains a destination (the robot will plan to find the symbolic path), a symbolic path
+//or coordinates. The priority for goals follow this order (so if we want to give the robot the path, we shouldn't set its
+//destination)
 void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer* guide_action_server,
 	MoveToClient* move_to_client, ApproachClient* approach_client, ObservationManager* observation_manager,
 	GuidePomdp* guide_pomdp, ControlSpeedPomdp* control_speed_pomdp, 
@@ -165,6 +165,8 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 		ROS_INFO("Received request to guide group %s to %f %f",group_id.c_str(),last_pose.position.x,
 			last_pose.position.y);
 	}
+
+	//wait until the group is seen (note that simple mode is transparent to this procedure)
 	observation_manager->setObservedGroup(group_id);
 	observation_manager->waitForGroup();
 
@@ -191,16 +193,18 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 			return;
 		}
 	}
-	current_node_in_plan=0;
+	current_node_in_plan=0;  //we start from node number 0 in the plan
 
 
 	ros::Rate r(3); 
 
+	//control variables 
 	bool is_moving=false;
 	bool task_completed=false;
 	bool got_error=false;
 	bool is_preempted=false;
 
+	//when the robot guides people, it will move backward, so that they can see the screen
 	ROS_INFO("Setting driving direction to backward");
 	spencer_nav_msgs::SetDrivingDirection set_driving_direction_srv;
 	set_driving_direction_srv.request.backward=true;
@@ -270,7 +274,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 				status_msg.details="Starting to move";		
 				is_moving=true;
 			}
-			else {  //if it was already moving select a speed
+			else if (use_control_speed) {  //if it was already moving select a speed
 				//control speed update
 
 				string speed_action=control_speed_pomdp->update(
@@ -280,10 +284,10 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 				if (speed_action=="accelerate"){
 
 					 double new_speed=min(actual_speed+0.1,max_speed);
-					// spencer_control_msgs::SetMaxVelocity srv;
-					// srv.request.max_linear_velocity=actual_speed;
-					// srv.request.max_angular_velocity=angular_velocity;
-					// control_speed_client.call(srv);
+					spencer_control_msgs::SetMaxVelocity srv;
+					srv.request.max_linear_velocity=actual_speed;
+					srv.request.max_angular_velocity=angular_velocity;
+					control_speed_client.call(srv);
    	  				if (new_speed!=actual_speed) {
 					 	ROS_INFO("Switching speed to %f",new_speed);
 					 	actual_speed=new_speed;
@@ -310,7 +314,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 				}
 			}
 		}
-		else if (guide_action=="wait") { //if the pomdp selects a wait stop move base
+		else if (guide_action=="wait") { //if the pomdp selects a wait stop move base and start the timer
 
 			if (is_moving==true) {
 				status_msg.details="Waiting for users";
@@ -324,6 +328,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 				is_moving=false;
 			}
 		}
+		//check for errors 
 		got_error=check_status->isBatteryLow() || check_status->isBumperPressed() || check_status->isStopped();
 		if (is_moving) {
                   move_to_client->getState()==actionlib::SimpleClientGoalState::ABORTED || 	
@@ -332,6 +337,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 	    }		    
 	    is_preempted=guide_action_server->isPreemptRequested();
 
+	    //if we're not in simulation check if move to has arrived to destination
 		if (!simulation_mode)	{	
 			task_completed=move_to_client->getState()==actionlib::SimpleClientGoalState::SUCCEEDED;
 		}
@@ -339,6 +345,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 		status_pub.publish(status_msg);
 		r.sleep();
 
+		//update observations, starting with the timer
 		string s_timer;
 		if (wait_timer.isElapsed()) {
 			s_timer="expired";
@@ -358,7 +365,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 		}
 	}
 	
-
+	//at the end of the task reset the driving direction to forward
 	if (!ros::ok()) return;
 	ROS_INFO("Setting driving direction to forward");
 	set_driving_direction_srv.request.backward=false;
@@ -371,7 +378,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 		}
 	}
 
-
+	//publish final status
 	if (task_completed) {
 		status_msg.status="Task Completed";
 		status_msg.details="";
@@ -419,8 +426,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 	}
 }
 
-
-
+//approaches a group. Still needs to be interfaced with Omar software so at the moment this is a stub
 void approach(const supervision_msgs::ApproachGoalConstPtr &goal, ApproachServer* approach_action_server,
 	MoveBaseClient* move_base_client, ros::ServiceClient* set_driving_direction_client) {
 
@@ -456,6 +462,7 @@ int main(int argc, char **argv) {
 	n.getParam("/supervision/max_speed",max_speed);
 	n.getParam("supervision/simulation_mode",simulation_mode);
 	n.getParam("supervision/use_driving_direction",use_driving_direction);
+	n.getParam("supervision/use_control_speed",use_control_speed);
 	n.getParam("supervision/simple_mode",simple_mode);
 	n.getParam("supervision/wait_time",time_to_wait);
 
@@ -468,6 +475,8 @@ int main(int argc, char **argv) {
 	ROS_INFO("simulation_mode %d",simulation_mode);
 	ROS_INFO("simple mode %d",simple_mode);
 	ROS_INFO("wait time is %f",time_to_wait);
+	ROS_INFO("Use Control speed is %d",use_control_speed);
+	ROS_INFO("Use driving direction is %d",use_driving_direction);
 
 	//create package objects
 	GuidePomdp guide_pomdp(n);
@@ -479,19 +488,20 @@ int main(int argc, char **argv) {
 	ros::Rate r(10);
 
 
-	// ROS_INFO<<"Connecting to control speed\n";
-	// control_speed_client=n.serviceClient<spencer_control_msgs::SetMaxVelocity>("/spencer/control/set_max_velocity",true);
-	// control_speed_client.waitForExistence();
-	// ROS_INFO<<"Connected\n";
+	ROS_INFO<<"Connecting to control speed\n";
+	control_speed_client=n.serviceClient<spencer_control_msgs::SetMaxVelocity>("/spencer/control/set_max_velocity",true);
+	if (use_control_speed) {
+		control_speed_client.waitForExistence();
+		ROS_INFO<<"Connected\n";
 
-	//set the starting speed of the robot
-	// spencer_control_msgs::SetMaxVelocity srv;
-	// srv.request.max_linear_velocit::SetDrivingDirectiony=starting_speed;
-	// srv.request.max_angular_velocity=angular_velocity;
-	// control_speed_client.call(srv);
-	// cout<<"Starting speed is "<<starting_speed<<"\n";
-	 actual_speed=starting_speed;
-
+		set the starting speed of the robot
+		spencer_control_msgs::SetMaxVelocity srv;
+		srv.request.max_linear_velocit::SetDrivingDirectiony=starting_speed;
+		srv.request.max_angular_velocity=angular_velocity;
+		control_speed_client.call(srv);
+		cout<<"Starting speed is "<<starting_speed<<"\n";
+		 actual_speed=starting_speed;
+	}
 	
 	if (!ros::ok()) {
 		ROS_INFO("Shutdown request");

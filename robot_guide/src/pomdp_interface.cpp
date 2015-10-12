@@ -15,7 +15,7 @@ PomdpInterface::PomdpInterface(ros::NodeHandle node_handle):node_handle_(node_ha
 string PomdpInterface::updatePomdp(string command, string x_state, string obs) {
 	appl::GetAction srv;
 	if (command=="start") {
-		srv.request.cmd=1;
+		srv.request.cmd=1;  //appl has 1 to start a pomdp has command, and 2 to update it.
 	}
 	else {
 		srv.request.cmd=2;

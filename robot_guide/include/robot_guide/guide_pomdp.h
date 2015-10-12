@@ -26,6 +26,7 @@ using namespace std;
 class GuidePomdp:public PomdpInterface {
 	public:
 		GuidePomdp(ros::NodeHandle node_handle);
+		//updates the pomdp, returning the next action
 		string update(string timer, string delta_distance, string distance, string orientation, 
 	string group_is_moving);
 		bool started_;
