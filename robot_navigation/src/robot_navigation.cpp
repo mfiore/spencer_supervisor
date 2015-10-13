@@ -11,6 +11,9 @@
 #include <actionlib/server/simple_action_server.h>
 #include <actionlib/client/simple_action_client.h>
 
+#include <sound_play/sound_play.h>
+
+
 //msgs
 #include <move_base_msgs/MoveBaseAction.h>
 #include <supervision_msgs/MoveToAction.h>
@@ -43,6 +46,8 @@ typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseCl
 
 //services
 ros::ServiceClient switch_map_client;
+
+sound_play::SoundClient sc;
 
 
 //location of the robot
@@ -93,6 +98,19 @@ bool hasMoveBaseError(MoveBaseClient* move_base_client) {
 			}
 			else return false;
 }
+
+bool hasSystemError(CheckStatus* check_status, bool is_moving, MoveBaseClient* move_base_client) {
+	bool result=false;
+	if (is_moving) {
+		result=hasMoveBaseError(move_base_client);
+	}
+	return result || check_status->isBatteryLow() || check_status->isStopped();
+}
+
+bool hasPaused(CheckStatus* check_status) {
+	return check_status->isPaused() || check_status->isBumperPressed();
+}
+
 
 //incapsulates sending a move base goal
 void sendMoveBaseGoal(geometry_msgs::Pose pose,MoveBaseClient* move_base_client) {
@@ -196,12 +214,11 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 
 	//control variables
 	bool task_completed=false;
-	bool got_error=false;
 	bool is_moving=false;
+	bool got_error=false;
 
-	//check if we already have an error
-	got_error=check_status->isBatteryLow()||check_status->isBumperPressed() || !ros::ok();
 
+	got_error=hasSystemError(check_status,is_moving,move_base_client);
 	//switch map to the first one, if we have symbolic navigation
 	if (current_node<n_nodes && symbolic_navigation==true) {
 		ROS_INFO("Switching to map %s %s",nodes[current_node].c_str(),nodes[current_node+1].c_str());
@@ -248,21 +265,19 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		status_msg.details="";
 		status_pub.publish(status_msg);
 
-		bool move_base_error=false;
 		bool move_base_arrived=false;
 		bool robot_arrived=false;
+		//if robot is paused wait for an error or for a resume. Movement is stopped in the move_to procedure
 
 		//continue until we arrive or have a n error
-		while (!got_error && !move_base_error && !move_base_arrived && !robot_arrived && !move_to_action_server->isPreemptRequested()) {
-			got_error=check_status->isBatteryLow()||check_status->isBumperPressed() || !ros::ok();
-			move_base_error=hasMoveBaseError(move_base_client);
-			
+		while (!hasSystemError(check_status,is_moving,move_base_client) && !move_base_arrived && !robot_arrived && 
+			!move_to_action_server->isPreemptRequested() &&!check_status->isPaused() &&! check_status->isPlannerBlocked() &&
+			ros::ok()) {
 			if (!simulation_mode) {
 				move_base_arrived=move_base_client->getState()==actionlib::SimpleClientGoalState::SUCCEEDED;
 			}
-
 			//in symbolic node we arrive as soon as we reach the next node, not waiting to reach the move base destination
-			if (!got_error && symbolic_navigation==true) { 
+			if (symbolic_navigation==true) { 
 				mutex_location.lock();
 				robot_arrived=robot_location==nodes[current_node+1] && (current_node+1)!=n_nodes-1;
 				mutex_location.unlock();
@@ -300,6 +315,27 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		else if (move_base_arrived && (current_node+1)==n_nodes-1) {
 			task_completed=true;
 		}
+		else if (check_status->isPaused()) {
+			if (is_moving) {
+				move_base_client->cancelGoal();
+				is_moving=false;
+			}
+			while (check_status->isPaused() && !hasSystemError(check_status,is_moving,move_base_client)) {
+				status_msg.status="supervision is paused";
+				status_pub.publish(status_msg);
+				r.sleep();
+			}
+		}
+		else if (check_status->isPlannerBlocked()) {
+			move_base_client->cancelGoal();
+			is_moving=false;
+
+			while (check_status->isPlannerBlocked()) {
+				sc.say("Excuse me, could you let me pass?");
+				r.sleep();
+			}
+		}
+		got_error=got_error || hasSystemError(check_status,is_moving,move_base_client);
 	
 	}
 
@@ -367,8 +403,10 @@ int main(int argc,char** argv) {
 	ros::init(argc,argv,"robot_navigation");
 	ros::NodeHandle n;
 
-	ROS_INFO("Starting robot navigation");
 
+
+	ROS_INFO("Starting robot navigation");
+	sc.say("Hello! What's up?");
 
 	string doc_name, doc_path;   //spencer maps document path
 

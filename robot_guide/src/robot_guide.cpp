@@ -98,6 +98,27 @@ bool hasMoveBaseError(MoveBaseClient* move_base_client) {
 			else return false;
 }
 
+bool hasMoveToError(MoveToClient* move_to_client) {
+	if (!simulation_mode) {
+	return move_to_client->getState()==actionlib::SimpleClientGoalState::ABORTED || 
+				move_to_client->getState()==actionlib::SimpleClientGoalState::LOST ||
+				move_to_client->getState()==actionlib::SimpleClientGoalState::PREEMPTED;
+			}
+			else return false;
+}
+
+bool hasSystemError(CheckStatus* check_status, bool is_moving, MoveToClient* move_to_client) {
+	bool result=false;
+	if (is_moving) {
+		result=hasMoveToError(move_to_client);
+	}
+	return result || check_status->isBatteryLow() || check_status->isStopped();
+}
+
+bool hasPaused(CheckStatus* check_status) {
+	return check_status->isPaused() || check_status->isBumperPressed();
+}
+
 
 // Called every time feedback is received for the goal
 void moveToFeedbackCb(const supervision_msgs::MoveToFeedbackConstPtr& feedback)
@@ -113,6 +134,29 @@ void moveToFeedbackCb(const supervision_msgs::MoveToFeedbackConstPtr& feedback)
 }
 
 
+
+void switchDrivingDirection(bool backward, ros::ServiceClient* set_driving_direction_client) {
+	//when the robot guides people, it will move backward, so that they can see the screen
+	ROS_INFO("Setting driving direction to backward");
+	spencer_nav_msgs::SetDrivingDirection set_driving_direction_srv;
+	set_driving_direction_srv.request.backward=true;
+	if (!simulation_mode && use_driving_direction) {
+		if (set_driving_direction_client->call(set_driving_direction_srv)){
+			ROS_INFO("Done");
+		}
+		else {
+			ROS_WARN("Couldn't switch driving direction");
+		}
+	}
+}
+
+void switchSpeed(double newSpeed, ros::ServiceClient* control_speed_client) {
+	// spencer_control_msgs::SetMaxVelocity srv;
+	// srv.request.max_linear_velocity=actual_speed;
+	// srv.request.max_angular_velocity=angular_velocity;
+	// control_speed_client.call(srv);
+}
+
 //guide action callback. Goal can contains a destination (the robot will plan to find the symbolic path), a symbolic path
 //or coordinates. The priority for goals follow this order (so if we want to give the robot the path, we shouldn't set its
 //destination)
@@ -126,9 +170,11 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 	supervision_msgs::SupervisionStatus status_msg; 
 
 
-	SupervisionTimer wait_timer(time_to_wait);
-	boost::thread timer_thread;
+	SupervisionTimer wait_timer(time_to_wait); //timer used when waiting users (before aborting)
+	boost::thread timer_thread; //its thread
 
+
+	//get mission information
 	string group_id=goal->group_id;
 	string destination;
 	geometry_msgs::Pose last_pose;
@@ -201,22 +247,9 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 	//control variables 
 	bool is_moving=false;
 	bool task_completed=false;
-	bool got_error=false;
-	bool is_preempted=false;
 
 	//when the robot guides people, it will move backward, so that they can see the screen
-	ROS_INFO("Setting driving direction to backward");
-	spencer_nav_msgs::SetDrivingDirection set_driving_direction_srv;
-	set_driving_direction_srv.request.backward=true;
-	if (!simulation_mode && use_driving_direction) {
-		if (set_driving_direction_client->call(set_driving_direction_srv)){
-			ROS_INFO("Done");
-		}
-		else {
-			ROS_WARN("Couldn't switch driving direction");
-		}
-	}
-
+	switchDrivingDirection(true,set_driving_direction_client);
 
 	ROS_INFO("Starting POMDPs");
 	//start pomdps
@@ -231,16 +264,20 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 			observation_manager->getHighestDensity(),
 			observation_manager->getInSlowArea());
 
+	//if robot is paused wait
+	while (hasPaused(check_status) && !hasSystemError(check_status,is_moving,move_to_client)) {
+		status_msg.status="supervision is paused";
+		status_pub.publish(status_msg);
+		r.sleep();
+	}
 
-	//check if there is already an error
-	got_error=check_status->isBatteryLow() || check_status->isBumperPressed() || check_status->isStopped();
-    is_preempted=guide_action_server->isPreemptRequested();
 	//the loop stops when the group abandons the task or we complete or we got an error or we are stopped from
 	//the outside
-	while (guide_action!="abandon" && !task_completed && !got_error && !is_preempted
-		 && ros::ok()) {
+	while (guide_action!="abandon" && !task_completed && !hasSystemError(check_status,is_moving,move_to_client) &&
+	 !guide_action_server->isPreemptRequested()  && ros::ok()) {
 
 		status_msg.status="Guiding group";
+
 		if (guide_action=="continue") {
 			wait_timer.stop();
 
@@ -276,35 +313,25 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 			}
 			else if (use_control_speed) {  //if it was already moving select a speed
 				//control speed update
-
 				string speed_action=control_speed_pomdp->update(
 					observation_manager->getHighestDensity(),
 					observation_manager->getInSlowArea());
 
 				if (speed_action=="accelerate"){
-
 					 double new_speed=min(actual_speed+0.1,max_speed);
-					// spencer_control_msgs::SetMaxVelocity srv;
-					// srv.request.max_linear_velocity=actual_speed;
-					// srv.request.max_angular_velocity=angular_velocity;
-					// control_speed_client.call(srv);
    	  				if (new_speed!=actual_speed) {
 					 	ROS_INFO("Switching speed to %f",new_speed);
 					 	actual_speed=new_speed;
+					 	switchSpeed(new_speed,&control_speed_client);
 						status_msg.details="Accelerating";
 
 					}
 				}
-
 				else if (speed_action=="decelerate") {
-
 					 double new_speed=max(actual_speed-0.1,min_speed);
-					// spencer_control_msgs::SetMaxVelocity srv;
-					// srv.request.max_linear_velocity=actual_speed;
-					// srv.request.max_angular_velocity=angular_velocity;
-					// control_speed_client.call(srv);
 					 if (new_speed!=actual_speed) {
 						ROS_INFO("Switching speed to %f",new_speed);
+						switchSpeed(new_speed,&control_speed_client);
 						actual_speed=new_speed;
 						status_msg.details="Decelerating";
 					}
@@ -315,12 +342,11 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 			}
 		}
 		else if (guide_action=="wait") { //if the pomdp selects a wait stop move base and start the timer
-
 			if (is_moving==true) {
 				status_msg.details="Waiting for users";
 
+				//star timer
 				boost::thread t(boost::bind(&SupervisionTimer::start,&wait_timer));
-
 				if (!simulation_mode) {
 					move_to_client->cancelGoal();
 			}
@@ -328,55 +354,56 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 				is_moving=false;
 			}
 		}
-		//check for errors 
-		got_error=check_status->isBatteryLow() || check_status->isBumperPressed() || check_status->isStopped();
+
+		if (hasPaused(check_status)) {
+			ROS_INFO("Robot is paused");
+			while (hasPaused(check_status) && !hasSystemError(check_status,is_moving,move_to_client)) {
+				is_moving=false;
+				status_msg.status="supervision is paused";
+				status_pub.publish(status_msg);
+				r.sleep();
+			}
+		}
 		if (is_moving) {
-                  move_to_client->getState()==actionlib::SimpleClientGoalState::ABORTED || 	
-			 	  move_to_client->getState()==actionlib::SimpleClientGoalState::LOST ||
-			      move_to_client->getState()==actionlib::SimpleClientGoalState::PREEMPTED;
-	    }		    
-	    is_preempted=guide_action_server->isPreemptRequested();
-
-	    //if we're not in simulation check if move to has arrived to destination
-		if (!simulation_mode)	{	
-			task_completed=move_to_client->getState()==actionlib::SimpleClientGoalState::SUCCEEDED;
+			if (check_status->isPlannerBlocked()) {
+				is_moving=false;
+			}
+			while (check_status->isPlannerBlocked() && !hasSystemError(check_status,is_moving,move_to_client)) {
+				r.sleep();
+			}
+			if (!simulation_mode) {
+				task_completed=move_to_client->getState()==actionlib::SimpleClientGoalState::SUCCEEDED;
+			}
 		}
 
-		status_pub.publish(status_msg);
-		r.sleep();
+		if (!hasSystemError(check_status,is_moving,move_to_client) && !guide_action_server->isPreemptRequested()) {
+			status_pub.publish(status_msg);
+			r.sleep();
 
-		//update observations, starting with the timer
-		string s_timer;
-		if (wait_timer.isElapsed()) {
-			s_timer="expired";
-			ROS_INFO("Timer expired");
-		}
-		else {
-			s_timer="ok";
-		}
-		guide_action=guide_pomdp->update(
-			s_timer,
-			observation_manager->getDeltaDistance(),
-			observation_manager->getGroupDistance(),
-			observation_manager->getOrientation(),
-			observation_manager->getGroupIsMoving());
-		if (guide_action=="abandon") {
-			ROS_INFO("Abandoning task");
+			//update observations, starting with the timer
+			string s_timer;
+			if (wait_timer.isElapsed()) {
+				s_timer="expired";
+				ROS_INFO("Timer expired");
+			}
+			else {
+				s_timer="ok";
+			}
+			guide_action=guide_pomdp->update(
+				s_timer,
+				observation_manager->getDeltaDistance(),
+				observation_manager->getGroupDistance(),
+				observation_manager->getOrientation(),
+				observation_manager->getGroupIsMoving());
+			if (guide_action=="abandon") {
+				ROS_INFO("Abandoning task");
+			}
 		}
 	}
 	
 	//at the end of the task reset the driving direction to forward
 	if (!ros::ok()) return;
-	ROS_INFO("Setting driving direction to forward");
-	set_driving_direction_srv.request.backward=false;
-	if (!simulation_mode && use_driving_direction) {
-		if (set_driving_direction_client->call(set_driving_direction_srv)){
-			ROS_INFO("Done");
-		}
-		else {
-			ROS_WARN("Couldn't switch driving direction");
-		}
-	}
+	switchDrivingDirection(false,set_driving_direction_client);
 
 	//publish final status
 	if (task_completed) {
@@ -390,7 +417,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 	else {
 		status_msg.status="Task Failed";
 
-		if (is_preempted) {
+		if (guide_action_server->isPreemptRequested()) {
 			ROS_INFO("Guide preempted");
 			status_msg.details="Preempted";
 		}
@@ -417,7 +444,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 		}
 		status_pub.publish(status_msg);
 
-		if (is_preempted) {
+		if (guide_action_server->isPreemptRequested()) {
 			guide_action_server->setPreempted(result);
 		}
 		else {

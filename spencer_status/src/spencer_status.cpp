@@ -8,12 +8,15 @@ ros::Publisher status_pub;
 boost::mutex stopped_mutex;
 
 bool stop_supervision;
+bool pause_supervision;
 
 //stops the supervision system
 bool stopSupervision(supervision_msgs::EmptyRequest::Request &req, supervision_msgs::EmptyRequest::Response &res) {
 	stopped_mutex.lock();
 	stop_supervision=true;
+	pause_supervision=false;
 	stopped_mutex.unlock();
+
 
 	res.result="OK";
 	return true;
@@ -23,11 +26,21 @@ bool stopSupervision(supervision_msgs::EmptyRequest::Request &req, supervision_m
 bool restartSupervision(supervision_msgs::EmptyRequest::Request &req, supervision_msgs::EmptyRequest::Response &res) {
 	stopped_mutex.lock();
 	stop_supervision=false;
+	pause_supervision=false;
 	stopped_mutex.unlock();
 
 	return true;
 }
 
+bool pauseSupervision(supervision_msgs::EmptyRequest::Request &req, supervision_msgs::EmptyRequest::Response &res) {
+	stopped_mutex.lock();
+	if (!stop_supervision) {
+		pause_supervision=true;
+	}
+	stopped_mutex.unlock();
+
+	return true;
+}
 
 
 int main(int argc, char** argv) {
@@ -39,6 +52,7 @@ int main(int argc, char** argv) {
 	//advertise servers, topics and actions
 	ros::ServiceServer stop_superivision_server=n.advertiseService("supervision/stop",stopSupervision);
 	ros::ServiceServer restart_superivision_server=n.advertiseService("supervision/restart",restartSupervision);
+	ros::ServiceServer pause_supervision_server=n.advertiseService("supervision/pause",pauseSupervision);
 
 	status_pub=n.advertise<supervision_msgs::SupervisionStopped>("supervision/is_stopped",1000);
 	
@@ -46,11 +60,13 @@ int main(int argc, char** argv) {
 	while (ros::ok()) {
 		ros::spinOnce();
 
-		stopped_mutex.lock();
 		supervision_msgs::SupervisionStopped msg;
+		stopped_mutex.lock();
 		msg.is_stopped=stop_supervision;
-		status_pub.publish(msg);
+		msg.is_paused=pause_supervision;
 		stopped_mutex.unlock();
+
+		status_pub.publish(msg);
 		r.sleep();
 	}
 	return 0;

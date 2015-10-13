@@ -4,7 +4,7 @@ project(robot_navigation)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS roscpp rospy situation_assessment_msgs supervision_msgs spencer_status tf geometry_msgs )
+find_package(catkin REQUIRED COMPONENTS roscpp rospy situation_assessment_msgs supervision_msgs spencer_status tf geometry_msgs sound_play)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -78,7 +78,7 @@ find_package(catkin REQUIRED COMPONENTS roscpp rospy situation_assessment_msgs s
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES robot_navigation
-#  CATKIN_DEPENDS roscpp rospy situation_assessment_msgs supervision_msgs spencer_status geometry_msgs
+#  CATKIN_DEPENDS roscpp rospy situation_assessment_msgs supervision_msgs spencer_status geometry_msgs sound_play
 
 #  DEPENDS system_lib
 )
