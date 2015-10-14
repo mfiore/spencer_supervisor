@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="Policy">
+		<xs:complexType>
+			<xs:choice minOccurs = "1" maxOccurs="1">
+				<xs:element ref = "AlphaVector" />
+				<xs:element ref = "DAG" /> 
+			</xs:choice>
+			<xs:attribute name="version" type="xs:float" use="required" />
+			<xs:attribute name="type">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="value"/>
+						<xs:enumeration value="graph"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>		
+			<xs:attribute name="model" type="xs:string" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="AlphaVector">
+		<xs:complexType>
+			<xs:choice minOccurs="1" maxOccurs="unbounded">
+				<xs:element ref = "Vector"/>
+				<xs:element ref = "SparseVector"/>
+			</xs:choice>
+			<xs:attribute name="vectorLength" type="biggerEqualOne" use="required"/>
+			<xs:attribute name="numVectors" type="biggerEqualOne" use="optional"/>
+			<xs:attribute name="numObsValue" type="biggerEqualOne" use="required"/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="Vector">
+		<xs:complexType mixed="true">
+			<xs:attributeGroup ref="actionObsValue"/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="SparseVector">
+		<xs:complexType>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="Entry"/>
+			</xs:choice>
+			<xs:attributeGroup ref="actionObsValue"/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="Entry" type="xs:string"/>
+
+	<xs:attributeGroup name="actionObsValue">
+		<xs:attribute name="action" type="xs:nonNegativeInteger"/>
+		<xs:attribute name="obsValue" type="xs:nonNegativeInteger"/>
+	</xs:attributeGroup>
+	
+	<xs:simpleType name="biggerEqualOne">
+		<xs:restriction base="xs:nonNegativeInteger">
+			<xs:minInclusive value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="floatList">
+		<xs:list itemType="xs:float"/>
+	</xs:simpleType>
+	<xs:element name="DAG"/>
+</xs:schema>

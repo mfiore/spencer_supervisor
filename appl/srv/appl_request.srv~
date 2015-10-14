@@ -1,0 +1,6 @@
+int64 cmd
+string obs
+string xstate
+---
+int64 action
+string[] ystate

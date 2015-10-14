@@ -1,0 +1,11 @@
+/home/mfiore/catkin_ws/src/appl/CMakeFiles/appl_gencpp.dir
+/home/mfiore/catkin_ws/src/appl/CMakeFiles/appl_genlisp.dir
+/home/mfiore/catkin_ws/src/appl/CMakeFiles/appl_genpy.dir
+/home/mfiore/catkin_ws/src/appl/CMakeFiles/appl_lib.dir
+/home/mfiore/catkin_ws/src/appl/CMakeFiles/clean_test_results.dir
+/home/mfiore/catkin_ws/src/appl/CMakeFiles/controlpipe.dir
+/home/mfiore/catkin_ws/src/appl/CMakeFiles/doxygen.dir
+/home/mfiore/catkin_ws/src/appl/gtest/CMakeFiles/gtest.dir
+/home/mfiore/catkin_ws/src/appl/gtest/CMakeFiles/gtest_main.dir
+/home/mfiore/catkin_ws/src/appl/CMakeFiles/run_tests.dir
+/home/mfiore/catkin_ws/src/appl/CMakeFiles/tests.dir

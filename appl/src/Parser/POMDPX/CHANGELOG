@@ -1,0 +1,23 @@
+14th August 2009:
+wrote a new way to merge reward table
+
+***5th August 2009
+
+error if observation has parents that are not from current time slice
+created default FALSE if fullyObs is not specified
+identity can be allowed if - - are not the last two tokens
+
+***20th June 2009
+
+Made changes to FactoredPomdp.cc line 680
+added:
+    if (!(nStateFunction.checkNoMissingEntries(mymap))) {
+      cerr << "ERROR in State Function " << nStateFunction.getVNameCurr() << " : there are missing transitions" << endl;
+      exit(XML_INPUT_ERROR);
+    }
+    if (!(nFunction.checkNoMissingEntries(mymap))) {
+      cerr << "ERROR in Observation Function " << nFunction.getVNameCurr() << " : there are missing transitions" << endl;
+      exit(XML_INPUT_ERROR);
+    }
+added methods to Function.cc and Function.h
+        bool checkNoMissingEntries(map<string, StateObsAct*> mymap);
