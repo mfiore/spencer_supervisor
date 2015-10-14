@@ -21,11 +21,7 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <supervision_msgs/SupervisionStatus.h>
 #include <situation_assessment_msgs/FactList.h>
-#include <situation_assessment_msgs/GetMap.h>
-#include <situation_assessment_msgs/Graph.h>
-#include <situation_assessment_msgs/Node.h>
 #include <supervision_msgs/CalculatePath.h>
-
 
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/locks.hpp> 
@@ -43,10 +39,14 @@ typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseCl
 
 //services
 ros::ServiceClient switch_map_client;
-
+ros::ServiceClient simple_database_client;
 
 //location of the robot
+vector<string> robot_areas;
 string robot_location;
+string next_area;
+bool reached_next_area=false;
+
 bool use_map_switching;
 
 boost::mutex mutex_location;
@@ -66,22 +66,115 @@ ros::Publisher status_pub;
 map<string,geometry_msgs::Point> node_centers_; //includes the centers of each symbolic node
 
 
-//gets the symbolic map, in order to take the node centers
-bool getMap(ros::ServiceClient* get_symbolic_map_client) {
-	situation_assessment_msgs::GetMap get_map_request;
-	if (!get_symbolic_map_client->call(get_map_request)) {
-		return false;
-	}
-	else {
-		situation_assessment_msgs::Graph g=get_map_request.response.graph;
-		vector<situation_assessment_msgs::Node> node_list=g.nodes;
-		for (int i=0; i<node_list.size();i++) {
-			situation_assessment_msgs::Node n=node_list[i];
-			node_centers_[n.label]=n.center;
+geometry_msgs::Pose::Pose getPose(string name) {
+	situation_assessment_msgs::DatabaseRequest srv;
+	srv.req.model=robot_name;
+	srv.req.subject=name;
+	srv.req.predicate.push_back("pose");
 
+	geoetry_msgs::Pose pose;
+	if (simple_database_client.call(srv)) {
+		if (srv.res.value.size()==0) {
+			ROS_ERR("Couldn't fine pose for %s",name.c_str());
+		}
+		else {
+			pose.position.x=srv.res.value[0];
+			pose.position.y=srv.res.value[1];
+			pose.position.z=srv.res.value[2];
+			pose.orientation.x=srv.res.value[3];
+			pose.orientation.y=srv.res.value[4];
+			pose.orientation.z=srv.res.value[5];
+			pose.orientation.w=srv.res.value[6];
 		}
 	}
-	return true;
+	else {
+		ROS_ERR("Could not contact database");
+	}
+	return pose;
+}
+
+bool hasArea(string name) {
+	situation_assessment_msgs::DatabaseRequest srv;
+	srv.req.model=robot_name;
+	srv.req.subject=name;
+	srv.req.predicate.push_back("hasArea");
+
+	if (simple_database_client.call(srv)) {
+		if (srv.res.value.size()>0) {
+			return true;
+		}
+	}
+	else {
+		ROS_ERR("Could not contact database");
+	}
+	return false;
+}
+
+string getEntityType(string name) {
+	situation_assessment_msgs::DatabaseRequest srv;
+	srv.req.model=robot_name;
+	srv.req.subject=name;
+	srv.req.predicate.push_back("");
+
+	if (simple_database_client.call(srv)) {
+		if (srv.res.value.size()>0) {
+			return srv.req.value[0];
+		}
+	}
+	else {
+		ROS_ERR("Could not contact database");
+	}
+	return "";	
+}
+
+string getRobotLocation() {
+	boost::lock_guard<boost::mutex> lock(mutex_location);
+	for (int i=0; i<robot_areas.size();i++) {
+		situation_assessment_msgs::DatabaseRequest srv;
+		srv.req.model=robot_name;
+		srv.req.subject=robot_areas[i];
+		srv.req.predicate.push_back("type");
+
+		if (simple_database_client.call(srv)) {
+			if (srv.res.value.size()>0) {
+				if (srv.res.value[0]=="location") return robot_areas[i];
+			}
+		}
+		else {
+			ROS_ERR("Could not contact database");
+		}
+		return "";			
+	}
+}
+
+string getEntityLocation(string name) {
+	vector<string> entity_areas;
+	situation_assessment_msgs::DatabaseRequest srv;
+	srv.req.model=robot_name;
+	srv.req.subject=name;
+	srv.req.predicate.push_back("isInArea");
+	if (simple_database_client.call(srv)) {
+		entity_areas=srv.res.value;
+
+		for (int i=0; i<entity_areas.size();i++) {
+			srv.req.subject=entity_areas[i];
+			srv.req.predicate.clear();
+			srv.req.predicate.push_back("type");
+			if (simple_database_client.call(srv)) {
+				if (srv.res.value.size()>0) {
+					if (srv.res.value[0]=="location") return entity_areas[i];
+				}
+			}
+			else {
+				ROS_ERR("Could not contact database");
+				break;
+			}
+		}
+	}
+	else {
+		ROS_ERR("Could not contact database");
+	}
+	return "";
 }
 
 //returns true if there is a move base error. 
@@ -125,6 +218,25 @@ bool switchMap(string node1, string node2) {
 	return success;
 }
 
+void navigationLoop(bool* got_error, bool* move_base_error, bool* move_base_arrived, bool* robot_arrived,
+	MoveToServer* move_to_action_server, bool symbolic_navigation, ros::Rate) {
+	while (!got_error && !move_base_error && !move_base_arrived && !robot_arrived && !move_to_action_server->isPreemptRequested()) {
+		got_error=check_status->isBatteryLow()||check_status->isBumperPressed() || !ros::ok();
+		move_base_error=hasMoveBaseError(move_base_client);
+	
+		if (symbolic_navigation) {
+			mutex_location.lock();
+			robot_arrived=reached_next_area;
+			mutex_location.unlock();
+		}			
+		if (!simulation_mode) {
+			move_base_arrived=move_base_client->getState()==actionlib::SimpleClientGoalState::SUCCEEDED;
+		}
+
+		r.sleep();
+	}
+}
+ 
 //moves to: can have a symbolic destination (will plan to reach it), a given symbolic path or a list of coordinates
 void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_to_action_server,
 	MoveBaseClient* move_base_client, ros::ServiceClient* calculate_path_client) {
@@ -158,6 +270,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 	}
 
 	string destination=goal->destination;
+	string location_destination;
 	//get plan for destiantion
 	vector<string> nodes; //list of nodes to traverse
 	vector<geometry_msgs::Pose> poses; 
@@ -176,9 +289,17 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		current_node=-1;
 	}
 	else {
+		string destination_type=getEntityType(destination);
+		if (destination_type!="location") {
+			location_destination=getEntityLocation(destination);
+		}
+		else {
+			location_destination=destination;
+		}
+
 		supervision_msgs::CalculatePath path_request;
-		path_request.request.source=robot_location;
-		path_request.request.dest=destination;
+		path_request.request.source=getRobotLocation(robot_location);
+		path_request.request.dest=location_destination;
 		if (calculate_path_client->call(path_request)) {
 			nodes=path_request.response.path;
 		}
@@ -218,9 +339,15 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		//send the next goal, from the next node center or from the next coordinate.	
 		double goal_x,goal_y;
 		if (symbolic_navigation==true) {
-			geometry_msgs::Point center=node_centers_[nodes[current_node+1]];
-			goal_x=center.x;
-			goal_y=center.y;
+			geometry_msgs::Pose node_pose=getPose(nodes[current_node+1]);
+			goal_x=node_pose.position.x;
+			goal_y=node_pose.position.y;
+
+			mutex_location.lock();
+			next_area=nodes[current_node+1];
+			reached_next_area=false;
+			mutex_location.unlock();
+
 		}
 		else {
 			goal_x=poses[current_node+1].position.x;
@@ -250,23 +377,29 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 
 		bool move_base_error=false;
 		bool move_base_arrived=false;
-		bool robot_arrived=false;
+		
 
+		bool node_has_area=false;
+		//if the node has a semantic area associated, we will move until we reach the area and not just it.
+		if (symbolic_navigation) {
+			node_has_area=hasArea(nodes[current_node+1]);
+		}
+
+		bool robot_arrived=false;
 		//continue until we arrive or have a n error
 		while (!got_error && !move_base_error && !move_base_arrived && !robot_arrived && !move_to_action_server->isPreemptRequested()) {
 			got_error=check_status->isBatteryLow()||check_status->isBumperPressed() || !ros::ok();
 			move_base_error=hasMoveBaseError(move_base_client);
-			
+	
+			if (symbolic_navigation) {
+				mutex_location.lock();
+				robot_arrived=reached_next_area;
+				mutex_location.unlock();
+			}			
 			if (!simulation_mode) {
 				move_base_arrived=move_base_client->getState()==actionlib::SimpleClientGoalState::SUCCEEDED;
 			}
 
-			//in symbolic node we arrive as soon as we reach the next node, not waiting to reach the move base destination
-			if (!got_error && symbolic_navigation==true) { 
-				mutex_location.lock();
-				robot_arrived=robot_location==nodes[current_node+1] && (current_node+1)!=n_nodes-1;
-				mutex_location.unlock();
-			}
 			r.sleep();
 		}
 
@@ -301,6 +434,36 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 			task_completed=true;
 		}
 	
+	}
+
+	//if we're reaching an entity in a location
+	if (task_completed && destination!=location_destination) {
+		task_completed=false;
+
+		geometry_msgs::Pose goal_pose=getPose(destination);
+
+		ROS_INFO("Starting to move to %s",destination.c_str());
+
+		sendMoveBaseGoal(goal_pose,move_base_client);
+		
+		bool node_has_area=hasArea(destination);
+		while (!got_error && !move_base_error && !move_base_arrived && !robot_arrived && !move_to_action_server->isPreemptRequested()) {
+			got_error=check_status->isBatteryLow()||check_status->isBumperPressed() || !ros::ok();
+			move_base_error=hasMoveBaseError(move_base_client);
+		
+			if (hasArea) {
+				mutex_location.lock();
+				robot_arrived=reached_next_area;
+				mutex_location.unlock();
+			}			
+			if (!simulation_mode) {
+				move_base_arrived=move_base_client->getState()==actionlib::SimpleClientGoalState::SUCCEEDED;
+			}
+
+			r.sleep();
+		}
+		if (move_base_arrived || robot_arrived) task_completed=true;
+
 	}
 
 	//publish final task information
@@ -357,6 +520,9 @@ void agentFactCallback(const situation_assessment_msgs::FactList::ConstPtr& msg)
 	for (int i=0;i<fact_list.size();i++) {
 		if (fact_list[i].subject==robot_name && fact_list[i].predicate[0]=="isInArea") {
 			robot_location=fact_list[i].value;
+			if (std::find(robot_location.begin(),robot_location.end(),next_area)) {
+				reached_next_area=true;
+			}
 			break;
 		}
 	}
@@ -400,16 +566,11 @@ int main(int argc,char** argv) {
 	calculate_path_client.waitForExistence();
 	ROS_INFO("Connected\n");
 
-	ROS_INFO("Connecting to get map service");
-		ros::ServiceClient get_symbolic_map_client=n.serviceClient<situation_assessment_msgs::GetMap>("/situation_assessment/get_symbolic_map",true);
-		get_symbolic_map_client.waitForExistence();
-		ROS_INFO("Connected\n");
 
-	if (!getMap(&get_symbolic_map_client)) {
-		ROS_ERROR("Can't get map");
-		ros::shutdown();
-	}
-
+	ROS_INFO("Connecting to the simple database service");
+	simple_database_client=n.serviceClient<situation_assessment_msgs::DatabaseRequest>("situation_assessment/simple_database",true);
+	simple_database_client.waitForExistence();
+	ROS_INFO("Connected\n");
 
 
 	ROS_INFO("Waiting for move_base");
@@ -428,8 +589,6 @@ int main(int argc,char** argv) {
 		r.sleep();
 	}
 
-
-
 	status_pub=n.advertise<supervision_msgs::SupervisionStatus>("supervision/status",1000);
 
 	MoveToServer move_to_action_server(n,"supervision/move_to",
@@ -437,8 +596,7 @@ int main(int argc,char** argv) {
 	move_to_action_server.start();
 	ROS_INFO("Started action server MoveTo");
 	
-
-	ROS_INFO("Ready");
+    ROS_INFO("Ready");
 
 	ros::spin();
 	return 0;
