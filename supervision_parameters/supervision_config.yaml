@@ -4,10 +4,10 @@ supervision:
     starting_speed: 0.7
     min_speed: 0.4
     max_speed: 1.0
-    simulation_mode: true
+    simulation_mode: false
     use_map_switching: false
     use_driving_direction: false
-    use_control_speed: true
+    use_control_speed: false
     wait_time: 30
     guide_pomdp:
         appl_problem: /home/mfiore/pomdpModels/icsr/guide.pomdpx

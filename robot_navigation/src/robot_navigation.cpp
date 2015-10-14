@@ -47,7 +47,7 @@ typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseCl
 //services
 ros::ServiceClient switch_map_client;
 
-sound_play::SoundClient sc;
+// sound_play::SoundClient sc;
 
 
 //location of the robot
@@ -327,14 +327,17 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 			}
 		}
 		else if (check_status->isPlannerBlocked()) {
+			ROS_INFO("Planner blocked");
 			move_base_client->cancelGoal();
 			is_moving=false;
 
 			while (check_status->isPlannerBlocked()) {
-				sc.say("Excuse me, could you let me pass?");
+				// sc.say("Excuse me, could you let me pass?");
 				r.sleep();
 			}
+			ROS_INFO("Not blocked anymore");
 		}
+
 		got_error=got_error || hasSystemError(check_status,is_moving,move_base_client);
 	
 	}
@@ -406,7 +409,7 @@ int main(int argc,char** argv) {
 
 
 	ROS_INFO("Starting robot navigation");
-	sc.say("Hello! What's up?");
+	// sc.say("Hello! What's up?");
 
 	string doc_name, doc_path;   //spencer maps document path
 
