@@ -22,7 +22,7 @@ typedef actionlib::SimpleActionClient<supervision_msgs::MoveToAction> MoveToClie
 GuideGroupClient* guide_group_client;
 MoveToClient* move_to_client;
 
-bool is_guiding;
+bool is_guiding=false;
 boost::mutex mutex_guide_group;
 boost::condition_variable guide_group_condition;
 
@@ -41,16 +41,12 @@ void changeGate(string new_gate) {
 	if (guide_group_client->getState()==actionlib::SimpleClientGoalState::ACTIVE) {
 		guide_group_client->cancelGoal();
 	}
-	guide_group_client->cancelGoal();
-	
+
 	boost::unique_lock<boost::mutex> lock(mutex_guide_group);
 	while (is_guiding) {
 		guide_group_condition.wait(lock);
 	}
 	lock.unlock()
-
-
-
 
 	guideGroup(new_gate);
 }
@@ -58,20 +54,32 @@ void changeGate(string new_gate) {
 void guideGroup(string gate) {
 	supervision_msgs::GuideGroupGoal guide_goal;
 
-	supervision_msgs::SupervisionStatus status_msg; 
-	status_msg.status="Guiding group to "+gate;
-	status_pub.publish(status_msg);
+	// supervision_msgs::SupervisionStatus status_msg; 
+	// status_msg.status="Guiding group to "+gate;
+	// status_pub.publish(status_msg);
 
 	guide_goal.destination=gate;	
 
 	guide_group_client->sendGoal(guide_goal);
+	mutex_guide_group.lock();
 	is_guiding=true;
+	mutex_guide_group.unlock();
 	guide_group_client->waitForResult();
-	is_guiding=false;
 
 	boost::unique_lock<boost::mutex> lock(mutex_guide_group);
 	is_guiding=false;
 	guide_group_condition.notify_one():
+}
+
+void moveToDestination(string dest) {
+	supervision_msgs::MoveToGoal move_to_goal;
+
+	// supervision_msgs::SupervisionStatus status_msgs
+	// status_msg.status="Moving to "+dest;
+	// status_pub.publish(status_msg);
+
+	move_to_client->sendGoal(move_to_goal);
+	move_to_client->waitForResult();
 }
 
 
