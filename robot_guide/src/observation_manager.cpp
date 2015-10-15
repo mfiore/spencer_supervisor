@@ -63,15 +63,60 @@ void ObservationManager::getSimpleObservations(vector<situation_assessment_msgs:
 	//first, we get every agent in the robot area. Actually we might get objects too if we track their position in areas, but
 	//at the moment we aren't so this works. If this changes, the procedure needs to read the list of agents.
 	map<string,AgentObservation> agent_observations;
+	vector<string> agents;
+	vector<string> agents2;
+
 	BOOST_FOREACH(situation_assessment_msgs::Fact f, fact_list) {
-		if (f.subject!=robot_name_) {
-			if (f.predicate[0]=="isInArea" && f.value[0]==robot_name_) {
-				AgentObservation new_agent;
-				new_agent.name=f.subject;
-				agent_observations[new_agent.name]=new_agent;
-			}
+		if (f.predicate[0]=="type" && f.value[0]=="agent" && f.subject!=robot_name_) {
+				agents.push_back(f.subject);
+				
 		}
 	}
+	
+
+	BOOST_FOREACH(situation_assessment_msgs::Fact f, fact_list) {
+		if (f.subject!=robot_name_) {
+			if (f.predicate[0]=="isInArea") {
+				if (std::find(agents.begin(),agents.end(),f.subject)!=agents.end() && std::find(f.value.begin(),f.value.end(),robot_name_)!=f.value.end())  {
+					AgentObservation new_agent;
+					new_agent.name=f.subject;
+					agent_observations[new_agent.name]=new_agent;
+				}
+			}
+		}
+	}	
+
+	// BOOST_FOREACH(situation_assessment_msgs::Fact f, fact_list) {
+	// 	if (f.subject!=robot_name_) {
+	// 		if (f.predicate[0]=="isInArea") {
+	// 			if (std::find(agents.begin(),agents.end(),f.subject)!=agents.end() && std::find(f.value.begin(),f.value.end(),robot_name_)!=f.value.end())  {
+	// 				agents2.push_back(f.subject);
+	// 			}
+	// 		}
+	// 	}
+	// }	
+	// // BOOST_FOREACH(situation_assessment_msgs::Fact f, fact_list) {
+	// 	if (f.subject!=robot_name_) {
+	// 		if (f.predicate[0]=="isMoving" && f.value[0]=="1") {
+	// 			if (std::find(agents2.begin(),agents2.end(),f.subject)!=agents2.end())  {
+	// 				AgentObservation new_agent;
+	// 				new_agent.name=f.subject;
+	// 				agent_observations[new_agent.name]=new_agent;
+	// 			}
+	// 		}
+	// 	}
+	// }	
+	// BOOST_FOREACH(situation_assessment_msgs::Fact f, fact_list) {
+	// 	if (f.subject!=robot_name_) {
+	// 		if (f.predicate[0]=="distance" && f.predicate[1]==robot_name_) {
+	// 			if (std::find(agents.begin(),agents.end(),f.subject)!=agents.end() && boost::lexical_cast<double>(f.value[0])<10)  {
+	// 				AgentObservation new_agent;
+	// 				new_agent.name=f.subject;
+	// 				agent_observations[new_agent.name]=new_agent;
+	// 			}
+	// 		}
+	// 	}
+	// }
 	//we get the observations linked to each agent calculated before. (since it's a map shouldn't be heavy)
 	BOOST_FOREACH(situation_assessment_msgs::Fact f, fact_list) {
 		if (f.subject!=robot_name_) {
@@ -156,10 +201,10 @@ void ObservationManager::getSimpleObservations(vector<situation_assessment_msgs:
 			delta_distance_="stable";
 		}
 
-		if (best_agent.distance<4) {
+		if (best_agent.distance<3) {
 			group_distance_="close";
 		}
-		else if (best_agent.distance<10) {
+		else if (best_agent.distance<7) {
 			group_distance_="far";
 		}
 		else group_distance_="outOfRange";
@@ -177,7 +222,7 @@ void ObservationManager::getSimpleObservations(vector<situation_assessment_msgs:
 			in_slow_area_="true";
 			highest_density_="behind";
 		}
-		orientation_="towardRobot";
+		orientation_=best_agent.orientation;
 		group_is_moving_=best_agent.is_moving;
 			
 		//and we unlock the condition variable. We're not guiding a particular group so anything found will be ok

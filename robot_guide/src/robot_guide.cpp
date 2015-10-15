@@ -26,6 +26,7 @@ Main file for the spencer supervisor, which guides groups of passengers to a des
 #include <supervision_msgs/EmptyRequest.h>
 #include <supervision_msgs/CalculatePath.h>
 #include <spencer_nav_msgs/SetDrivingDirection.h>
+#include <situation_assessment_msgs/SwitchOrientation.h>
 
 
 //self includes
@@ -80,6 +81,7 @@ int current_node_in_plan;
 
 //ros services
 ros::ServiceClient control_speed_client;
+ros::ServiceClient switch_orientation_client;
 
 //publishers
 ros::Publisher status_pub;
@@ -179,19 +181,19 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 		poses=goal->coordinates;
 	}
 	else {
-		supervision_msgs::CalculatePath path_request;
-		path_request.request.source=observation_manager->getRobotLocation();
-		path_request.request.dest=destination;
-		if (calculate_path_client->call(path_request)) {
-			nodes=path_request.response.path;
-		}
-		else {
-			ROS_ERROR("Failed to calculate path");
-			result.status="FAILED";
-			result.details="group id is missing";
-			guide_action_server->setAborted(result);
-			return;
-		}
+		// supervision_msgs::CalculatePath path_request;
+		// path_request.request.source=observation_manager->getRobotLocation();
+		// path_request.request.dest=destination;
+		// if (calculate_path_client->call(path_request)) {
+		// 	nodes=path_request.response.path;
+		// }
+		// else {
+		// 	ROS_ERROR("Failed to calculate path");
+		// 	result.status="FAILED";
+		// 	result.details="group id is missing";
+		// 	guide_action_server->setAborted(result);
+		// 	return;
+		// }
 	}
 	current_node_in_plan=0;  //we start from node number 0 in the plan
 
@@ -216,6 +218,11 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 			ROS_WARN("Couldn't switch driving direction");
 		}
 	}
+	situation_assessment_msgs::SwitchOrientation srv_switch_orientation;
+	srv_switch_orientation.request.backward=true;
+	if(!switch_orientation_client.call(srv_switch_orientation)){
+		ROS_ERROR("ROBOT_GUIDE couldn't call switch orientation");
+	}
 
 
 	ROS_INFO("Starting POMDPs");
@@ -237,8 +244,15 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
     is_preempted=guide_action_server->isPreemptRequested();
 	//the loop stops when the group abandons the task or we complete or we got an error or we are stopped from
 	//the outside
+
+	int n_tries=0;
 	while (guide_action!="abandon" && !task_completed && !got_error && !is_preempted
 		 && ros::ok()) {
+
+		if (n_tries<10) {
+			n_tries++;
+			guide_action="continue";
+		}
 
 		status_msg.status="Guiding group";
 		if (guide_action=="continue") {
@@ -248,22 +262,25 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 			if (is_moving==false) { 
 				supervision_msgs::MoveToGoal move_to_goal;
 				
-				vector<string> actual_path;
-				vector<geometry_msgs::Pose> actual_poses;
-				//we take the planner's path from current node to end. We do this if not the MoveTo action
-				//would replan everytime we stop the semantic path.
-				if (nodes.size()>0) {
-					vector<string>::const_iterator first = nodes.begin() + current_node_in_plan;
-					vector<string>::const_iterator last = nodes.end();
-					vector<string> actual_path(first, last);
+				if (destination=="") {
+					vector<string> actual_path;
+					vector<geometry_msgs::Pose> actual_poses;
+					//we take the planner's path from current node to end. We do this if not the MoveTo action
+					//would replan everytime we stop the semantic path.
+					if (nodes.size()>0) {
+						vector<string>::const_iterator first = nodes.begin() + current_node_in_plan;
+						vector<string>::const_iterator last = nodes.end();
+						vector<string> actual_path(first, last);
+					}
+					if (poses.size()>0) {
+						vector<geometry_msgs::Pose>::const_iterator first = poses.begin() + current_node_in_plan;
+						vector<geometry_msgs::Pose>::const_iterator last = poses.end();
+						actual_poses.insert(actual_poses.begin(),first, last);
+					}
+					move_to_goal.path=actual_path;
+					move_to_goal.coordinates=actual_poses;
 				}
-				if (poses.size()>0) {
-					vector<geometry_msgs::Pose>::const_iterator first = poses.begin() + current_node_in_plan;
-					vector<geometry_msgs::Pose>::const_iterator last = poses.end();
-					actual_poses.insert(actual_poses.begin(),first, last);
-				}
-				move_to_goal.path=actual_path;
-				move_to_goal.coordinates=actual_poses;
+
 				move_to_goal.destination=destination;
 								move_to_client->sendGoal(
 									move_to_goal,
@@ -348,7 +365,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 		//update observations, starting with the timer
 		string s_timer;
 		if (wait_timer.isElapsed()) {
-			s_timer="expired";
+			s_timer="ok";
 			ROS_INFO("Timer expired");
 		}
 		else {
@@ -376,6 +393,10 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 		else {
 			ROS_WARN("Couldn't switch driving direction");
 		}
+	}
+	srv_switch_orientation.request.backward=false;
+	if(!switch_orientation_client.call(srv_switch_orientation)){
+		ROS_ERROR("ROBOT_GUIDE couldn't call switch orientation");
 	}
 
 	//publish final status
@@ -518,8 +539,18 @@ int main(int argc, char **argv) {
 	ROS_INFO("Connecting to calculate path service\n");
 	ros::ServiceClient calculate_path_client=n.serviceClient<supervision_msgs::CalculatePath>("/supervision/calculate_path",true);
 	calculate_path_client.waitForExistence();
+	ROS_INFO("Connected\n");	
+
+	ROS_INFO("Connecting to switch orientation service\n");
+	switch_orientation_client=n.serviceClient<situation_assessment_msgs::SwitchOrientation>("/situation_assessment/switch_orientation",true);
+	switch_orientation_client.waitForExistence();
 	ROS_INFO("Connected\n");
 
+	situation_assessment_msgs::SwitchOrientation srv_switch_orientation;
+	srv_switch_orientation.request.backward=true;
+	if(!switch_orientation_client.call(srv_switch_orientation)){
+		ROS_ERROR("ROBOT_GUIDE couldn't call switch orientation");
+	}
 
 
 	ROS_INFO("Waiting for move_base");
