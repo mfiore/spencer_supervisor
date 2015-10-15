@@ -32,6 +32,7 @@
 //services
 #include <annotated_mapping/SwitchMap.h>
 #include <situation_assessment_msgs/QueryDatabase.h>
+#include <situation_assessment_msgs/EmptyRequest.h>
 
 
 //libraries
@@ -44,6 +45,7 @@ typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseCl
 //services
 ros::ServiceClient switch_map_client;
 ros::ServiceClient simple_database_client;
+// ros::ServiceClient has_published_client;
 
 //location of the robot
 vector<string> robot_areas;
@@ -146,30 +148,33 @@ string getRobotLocation() {
 	boost::lock_guard<boost::mutex> lock(mutex_location);
 	ROS_INFO("ROBOT_NAVIGATION Robot areas size %ld",robot_areas.size());
 	for (int i=0; i<robot_areas.size();i++) {
-		situation_assessment_msgs::QueryDatabase srv;
+		if (robot_areas[i]!="this") {
 
-		situation_assessment_msgs::Fact fact;
+			situation_assessment_msgs::QueryDatabase srv;
 
-		fact.model=robot_name;
-		fact.subject=robot_areas[i];
-		fact.predicate.push_back("type");
-		srv.request.query=fact;
+			situation_assessment_msgs::Fact fact;
+
+			fact.model=robot_name;
+			fact.subject=robot_areas[i];
+			fact.predicate.push_back("type");
+			srv.request.query=fact;
 
 
-		if (simple_database_client.call(srv)) {
-			if (srv.response.result.size()>0) {
-				ROS_INFO("ROBOT_NAVIGATION %s area is type %s",robot_areas[i].c_str(),srv.response.result[0].value[0].c_str());
-				if (srv.response.result[0].value[0]=="location") {
-					ROS_INFO("ROBOT_NAVIGATION found location");
-					return robot_areas[i];
+			if (simple_database_client.call(srv)) {
+				if (srv.response.result.size()>0) {
+					ROS_INFO("ROBOT_NAVIGATION %s area is type %s",robot_areas[i].c_str(),srv.response.result[0].value[0].c_str());
+					if (srv.response.result[0].value[0]=="location") {
+						ROS_INFO("ROBOT_NAVIGATION found location");
+						return robot_areas[i];
+					}
 				}
-			}
-			else {
-				ROS_ERROR("Could not contact database");
+				else {
+					ROS_ERROR("Could not contact database");
+				}
 			}
 		}
 	}
-	return "";			
+	return "this";			
 }
 
 string getEntityLocation(string name) {
@@ -184,32 +189,33 @@ string getEntityLocation(string name) {
 	srv.request.query=fact;
 
 	if (simple_database_client.call(srv)) {
-		ROS_INFO("ROBOT_NAVIGATION result size is %ld",srv.response.result.size());
 		entity_areas=srv.response.result[0].value;
 
 		for (int i=0; i<entity_areas.size();i++) {
-	 		fact.predicate.clear();
+			if (entity_areas[i]!="this") {
+		 		fact.predicate.clear();
 
-			fact.model=robot_name;
-			fact.subject=entity_areas[i];
-			fact.predicate.push_back("type");
-			srv.request.query=fact;
+				fact.model=robot_name;
+				fact.subject=entity_areas[i];
+				fact.predicate.push_back("type");
+				srv.request.query=fact;
 
-			if (simple_database_client.call(srv)) {
-				if (srv.response.result.size()>0) {
-					if (srv.response.result[0].value[0]=="location") return entity_areas[i];
+				if (simple_database_client.call(srv)) {
+					if (srv.response.result.size()>0) {
+						if (srv.response.result[0].value[0]=="location") return entity_areas[i];
+					}
 				}
-			}
-			else {
-				ROS_ERROR("Could not contact database");
-				break;
+				else {
+					ROS_ERROR("Could not contact database");
+					break;
+				}
 			}
 		}
 	}
 	else {
 		ROS_ERROR("Could not contact database");
 	}
-	return "";
+	return "this";
 }
 
 //returns true if there is a move base error. 
@@ -499,6 +505,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		sendMoveBaseGoal(goal_pose,move_base_client);
 		
 		bool node_has_area=hasArea(destination);
+		ROS_INFO("goal pose is %f %f ", goal_pose.position.x,goal_pose.position.y);
 		ROS_INFO("node has areas %d",node_has_area);
 
 		bool move_base_error=false;
@@ -638,7 +645,7 @@ int main(int argc,char** argv) {
 	ROS_INFO("ROBOT_NAVIGATION Connecting to the simple database service");
 	simple_database_client=n.serviceClient<situation_assessment_msgs::QueryDatabase>("situation_assessment/query_database",true);
 	simple_database_client.waitForExistence();
-	ROS_INFO("ROBOT_NAVIGATION Connected\n");
+	ROS_INFO("ROBOT_NAVIGATION Connected");
 
 
 	ROS_INFO("ROBOT_NAVIGATION Waiting for move_base");
@@ -657,6 +664,18 @@ int main(int argc,char** argv) {
 		r.sleep();
 	}
 
+	// ROS_INFO("ROBOT_NAVIGATION Connecting to has_published");
+	// has_published_client=n.serviceClient<situation_assessment_msgs::EmptyRequest>("situation_assessment/has_published",true);
+	// has_published_client.waitForExistence();
+	// ROS_INFO("ROBOT_NAVIGATION Connected, now waiting for published");
+	// situation_assessment_msgs::EmptyRequest srv;
+	// if (has_published_client.call(srv)) {
+	// 	ROS_INFO("ROBOT_NAVIGATION Done");
+	// }
+	// else {
+	// 	ROS_ERROR("ROBOT_NAVIGATION fail");
+	// }
+
 	status_pub=n.advertise<supervision_msgs::SupervisionStatus>("supervision/status",1000);
 
 	MoveToServer move_to_action_server(n,"supervision/move_to",
@@ -664,7 +683,10 @@ int main(int argc,char** argv) {
 	move_to_action_server.start();
 	ROS_INFO("ROBOT_NAVIGATION Started action server MoveTo");
 	
+	// ros::Duration(5).sleep();
+
     ROS_INFO("ROBOT_NAVIGATION Ready");
+
 
 	ros::spin();
 	return 0;
