@@ -27,6 +27,7 @@ Main file for the spencer supervisor, which guides groups of passengers to a des
 #include <supervision_msgs/CalculatePath.h>
 #include <spencer_nav_msgs/SetDrivingDirection.h>
 #include <situation_assessment_msgs/SwitchOrientation.h>
+#include <situation_assessment_msgs/QueryDatabase.h>
 
 
 //self includes
@@ -69,7 +70,7 @@ double actual_speed;
 double time_to_wait;
 
 //explained in observation_manager.h
-bool simple_mode;
+string observations_mode;
 
 //control which additional modules are on or off
 bool use_driving_direction;
@@ -82,6 +83,7 @@ int current_node_in_plan;
 //ros services
 ros::ServiceClient control_speed_client;
 ros::ServiceClient switch_orientation_client;
+ros::ServiceClient database_client;
 
 //publishers
 ros::Publisher status_pub;
@@ -89,6 +91,7 @@ ros::Publisher status_pub;
 CheckStatus* check_status; //gets information about robot components
 
 bool simulation_mode; //if true doesn't connect to or call move_base
+
 
 //encapsulate move base errors
 bool hasMoveBaseError(MoveBaseClient* move_base_client) {
@@ -112,6 +115,50 @@ void moveToFeedbackCb(const supervision_msgs::MoveToFeedbackConstPtr& feedback)
   												feedback->current_pose.position.y);
   	}
   current_node_in_plan++;
+}
+
+
+vector<string> getAgentsInGroup() {
+	vector<string> result;
+	situation_assessment_msgs::QueryDatabase srv;
+
+	ROS_INFO("ROBOT_GUIDE getting agents in group");
+
+	srv.request.query.model=robot_name;
+	srv.request.query.subject="";
+	srv.request.query.predicate.push_back("isInArea");
+
+	if (!database_client.call(srv)) {
+		ROS_ERROR("Couldn't contact database");
+		return result;
+	}
+	vector<string> entities_in_area;
+	ROS_INFO("ROBOT_GUIDE getting entities in area");
+	for (int i=0; i<srv.response.result.size();i++) {
+		string entity_name=srv.response.result[i].subject;
+		vector<string> areas=srv.response.result[i].value;
+		if (std::find(areas.begin(),areas.end(),robot_name)!=areas.end()) {
+			entities_in_area.push_back(entity_name);
+		}
+	}
+	vector<string> humans_in_area;
+	ROS_INFO("ROBOT_GUIDE getting humans in area");
+	for (int i=0; i<entities_in_area.size();i++) {
+		srv.request.query.subject=entities_in_area[i];
+		srv.request.query.predicate[0]="type";
+		if (!database_client.call(srv)) {
+			ROS_ERROR("Couldn't connect to database");
+			return result;
+		}
+		if (srv.response.result[0].value[1]=="HUMAN") {
+			humans_in_area.push_back(entities_in_area[i]);
+		}
+	}
+	ROS_INFO("ROBOT_GUIDE returning");
+	result=humans_in_area;
+	return result;
+
+
 }
 
 
@@ -169,8 +216,10 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 	}
 
 	//wait until the group is seen (note that simple mode is transparent to this procedure)
-	observation_manager->setObservedGroup(group_id);
-	observation_manager->waitForGroup();
+	// observation_manager->setObservedGroup(group_id);
+	// observation_manager->waitForGroup();
+	vector<string> agents_in_group=getAgentsInGroup();
+	observation_manager->setAgentsInGroup(agents_in_group);
 
 	vector<string> nodes; //list of nodes to traverse
 	vector<geometry_msgs::Pose> poses; //list of nodes to traverse
@@ -238,6 +287,8 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 			observation_manager->getHighestDensity(),
 			observation_manager->getInSlowArea());
 
+		ROS_INFO("%s a %s b %s c %s",observation_manager->getDeltaDistance().c_str(),observation_manager->getGroupDistance().c_str(),
+			observation_manager->getOrientation().c_str(),observation_manager->getGroupIsMoving().c_str());
 
 	//check if there is already an error
 	got_error=check_status->isBatteryLow() || check_status->isBumperPressed() || check_status->isStopped();
@@ -249,10 +300,10 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 	while (guide_action!="abandon" && !task_completed && !got_error && !is_preempted
 		 && ros::ok()) {
 
-		if (n_tries<10) {
-			n_tries++;
-			guide_action="continue";
-		}
+		// if (n_tries<10) {
+		// 	n_tries++;
+		// 	guide_action="continue";
+		// }
 
 		status_msg.status="Guiding group";
 		if (guide_action=="continue") {
@@ -484,7 +535,7 @@ int main(int argc, char **argv) {
 	n.getParam("supervision/simulation_mode",simulation_mode);
 	n.getParam("supervision/use_driving_direction",use_driving_direction);
 	n.getParam("supervision/use_control_speed",use_control_speed);
-	n.getParam("supervision/simple_mode",simple_mode);
+	n.getParam("supervision/observations_mode",observations_mode);
 	n.getParam("supervision/wait_time",time_to_wait);
 
 	ROS_INFO("Parameters are:");
@@ -494,7 +545,7 @@ int main(int argc, char **argv) {
 	ROS_INFO("min_speed %f",min_speed);
 	ROS_INFO("max_speed %f",max_speed);
 	ROS_INFO("simulation_mode %d",simulation_mode);
-	ROS_INFO("simple mode %d",simple_mode);
+	ROS_INFO("mode %s",observations_mode.c_str());
 	ROS_INFO("wait time is %f",time_to_wait);
 	ROS_INFO("Use Control speed is %d",use_control_speed);
 	ROS_INFO("Use driving direction is %d",use_driving_direction);
@@ -503,7 +554,7 @@ int main(int argc, char **argv) {
 	GuidePomdp guide_pomdp(n);
 	ControlSpeedPomdp control_speed_pomdp(n);
 
-	ObservationManager observation_manager(n,robot_name,simple_mode);
+	ObservationManager observation_manager(n,robot_name,observations_mode);
 	check_status=new CheckStatus(n);
 
 	ros::Rate r(10);
@@ -551,6 +602,13 @@ int main(int argc, char **argv) {
 	if(!switch_orientation_client.call(srv_switch_orientation)){
 		ROS_ERROR("ROBOT_GUIDE couldn't call switch orientation");
 	}
+
+
+	ROS_INFO("Connecting to query database service\n");
+	database_client=n.serviceClient<situation_assessment_msgs::QueryDatabase>("/situation_assessment/query_database",true);
+	database_client.waitForExistence();
+	ROS_INFO("Connected\n");
+
 
 
 	ROS_INFO("Waiting for move_base");
