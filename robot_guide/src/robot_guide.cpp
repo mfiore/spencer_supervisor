@@ -108,10 +108,10 @@ bool hasMoveBaseError(MoveBaseClient* move_base_client) {
 void moveToFeedbackCb(const supervision_msgs::MoveToFeedbackConstPtr& feedback)
 {
 	if (feedback->current_node!="") {
-  		ROS_INFO("Move to has arrived in %s", feedback->current_node.c_str());
+  		ROS_INFO("ROBOT_GUIDE Move to has arrived in %s", feedback->current_node.c_str());
   	}
   	else {
-  		ROS_INFO("Move to has arrived in %f %f",feedback->current_pose.position.x,
+  		ROS_INFO("ROBOT_GUIDE Move to has arrived in %f %f",feedback->current_pose.position.x,
   												feedback->current_pose.position.y);
   	}
   current_node_in_plan++;
@@ -122,7 +122,7 @@ vector<string> getAgentsInGroup() {
 	vector<string> result;
 	situation_assessment_msgs::QueryDatabase srv;
 
-	ROS_INFO("ROBOT_GUIDE getting agents in group");
+	ROS_INFO("ROBOT_GUIDE ROBOT_GUIDE getting agents in group");
 
 	srv.request.query.model=robot_name;
 	srv.request.query.subject="";
@@ -133,7 +133,7 @@ vector<string> getAgentsInGroup() {
 		return result;
 	}
 	vector<string> entities_in_area;
-	ROS_INFO("ROBOT_GUIDE getting entities in area");
+	ROS_INFO("ROBOT_GUIDE ROBOT_GUIDE getting entities in area");
 	for (int i=0; i<srv.response.result.size();i++) {
 		string entity_name=srv.response.result[i].subject;
 		vector<string> areas=srv.response.result[i].value;
@@ -142,7 +142,7 @@ vector<string> getAgentsInGroup() {
 		}
 	}
 	vector<string> humans_in_area;
-	ROS_INFO("ROBOT_GUIDE getting humans in area");
+	ROS_INFO("ROBOT_GUIDE ROBOT_GUIDE getting humans in area");
 	for (int i=0; i<entities_in_area.size();i++) {
 		srv.request.query.subject=entities_in_area[i];
 		srv.request.query.predicate[0]="type";
@@ -154,7 +154,6 @@ vector<string> getAgentsInGroup() {
 			humans_in_area.push_back(entities_in_area[i]);
 		}
 	}
-	ROS_INFO("ROBOT_GUIDE returning");
 	result=humans_in_area;
 	return result;
 
@@ -208,13 +207,14 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 	}
 
 	if (destination!="") {
-		ROS_INFO("Received request to guide group %s to %s",group_id.c_str(),destination.c_str());
+		ROS_INFO("ROBOT_GUIDE Received request to guide group %s to %s",group_id.c_str(),destination.c_str());
 	}
 	else {
-		ROS_INFO("Received request to guide group %s to %f %f",group_id.c_str(),last_pose.position.x,
+		ROS_INFO("ROBOT_GUIDE Received request to guide group %s to %f %f",group_id.c_str(),last_pose.position.x,
 			last_pose.position.y);
 	}
 
+	ros::Duration(10).sleep();
 	//wait until the group is seen (note that simple mode is transparent to this procedure)
 	// observation_manager->setObservedGroup(group_id);
 	// observation_manager->waitForGroup();
@@ -256,15 +256,15 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 	bool is_preempted=false;
 
 	//when the robot guides people, it will move backward, so that they can see the screen
-	ROS_INFO("Setting driving direction to backward");
+	ROS_INFO("ROBOT_GUIDE Setting driving direction to backward");
 	spencer_nav_msgs::SetDrivingDirection set_driving_direction_srv;
 	set_driving_direction_srv.request.backward=true;
 	if (!simulation_mode && use_driving_direction) {
 		if (set_driving_direction_client->call(set_driving_direction_srv)){
-			ROS_INFO("Done");
+			ROS_INFO("ROBOT_GUIDE Done");
 		}
 		else {
-			ROS_WARN("Couldn't switch driving direction");
+			ROS_WARN("ROBOT_GUIDE Couldn't switch driving direction");
 		}
 	}
 	situation_assessment_msgs::SwitchOrientation srv_switch_orientation;
@@ -274,7 +274,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 	}
 
 
-	ROS_INFO("Starting POMDPs");
+	ROS_INFO("ROBOT_GUIDE Starting POMDPs");
 	//start pomdps
 		string guide_action=guide_pomdp->update(
 			"ok",
@@ -287,8 +287,6 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 			observation_manager->getHighestDensity(),
 			observation_manager->getInSlowArea());
 
-		ROS_INFO("%s a %s b %s c %s",observation_manager->getDeltaDistance().c_str(),observation_manager->getGroupDistance().c_str(),
-			observation_manager->getOrientation().c_str(),observation_manager->getGroupIsMoving().c_str());
 
 	//check if there is already an error
 	got_error=check_status->isBatteryLow() || check_status->isBumperPressed() || check_status->isStopped();
@@ -296,14 +294,8 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 	//the loop stops when the group abandons the task or we complete or we got an error or we are stopped from
 	//the outside
 
-	int n_tries=0;
 	while (guide_action!="abandon" && !task_completed && !got_error && !is_preempted
 		 && ros::ok()) {
-
-		// if (n_tries<10) {
-		// 	n_tries++;
-		// 	guide_action="continue";
-		// }
 
 		status_msg.status="Guiding group";
 		if (guide_action=="continue") {
@@ -357,7 +349,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 					// srv.request.max_angular_velocity=angular_velocity;
 					// control_speed_client.call(srv);
    	  				if (new_speed!=actual_speed) {
-					 	ROS_INFO("Switching speed to %f",new_speed);
+					 	ROS_INFO("ROBOT_GUIDE Switching speed to %f",new_speed);
 					 	actual_speed=new_speed;
 						status_msg.details="Accelerating";
 
@@ -372,7 +364,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 					// srv.request.max_angular_velocity=angular_velocity;
 					// control_speed_client.call(srv);
 					 if (new_speed!=actual_speed) {
-						ROS_INFO("Switching speed to %f",new_speed);
+						ROS_INFO("ROBOT_GUIDE Switching speed to %f",new_speed);
 						actual_speed=new_speed;
 						status_msg.details="Decelerating";
 					}
@@ -392,7 +384,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 				if (!simulation_mode) {
 					move_to_client->cancelGoal();
 			}
-				ROS_INFO("Waiting for user");
+				ROS_INFO("ROBOT_GUIDE Waiting for user");
 				is_moving=false;
 			}
 		}
@@ -417,7 +409,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 		string s_timer;
 		if (wait_timer.isElapsed()) {
 			s_timer="ok";
-			ROS_INFO("Timer expired");
+			ROS_INFO("ROBOT_GUIDE Timer expired");
 		}
 		else {
 			s_timer="ok";
@@ -429,17 +421,17 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 			observation_manager->getOrientation(),
 			observation_manager->getGroupIsMoving());
 		if (guide_action=="abandon") {
-			ROS_INFO("Abandoning task");
+			ROS_INFO("ROBOT_GUIDE Abandoning task");
 		}
 	}
 	
 	//at the end of the task reset the driving direction to forward
 	if (!ros::ok()) return;
-	ROS_INFO("Setting driving direction to forward");
+	ROS_INFO("ROBOT_GUIDE Setting driving direction to forward");
 	set_driving_direction_srv.request.backward=false;
 	if (!simulation_mode && use_driving_direction) {
 		if (set_driving_direction_client->call(set_driving_direction_srv)){
-			ROS_INFO("Done");
+			ROS_INFO("ROBOT_GUIDE Done");
 		}
 		else {
 			ROS_WARN("Couldn't switch driving direction");
@@ -455,7 +447,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 		status_msg.status="Task Completed";
 		status_msg.details="";
 
-		ROS_INFO("Task completed");
+		ROS_INFO("ROBOT_GUIDE Task completed");
 		result.status="OK";
 		guide_action_server->setSucceeded(result);
 	}
@@ -463,25 +455,25 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 		status_msg.status="Task Failed";
 
 		if (is_preempted) {
-			ROS_INFO("Guide preempted");
+			ROS_INFO("ROBOT_GUIDE Guide preempted");
 			status_msg.details="Preempted";
 		}
 		else if (move_to_client->getState()==actionlib::SimpleClientGoalState::ABORTED || 	
 			 	 move_to_client->getState()==actionlib::SimpleClientGoalState::LOST ||
 			     move_to_client->getState()==actionlib::SimpleClientGoalState::PREEMPTED) {
 			status_msg.details="Navigation Error";
-		ROS_INFO("Navigation Error");
+		ROS_INFO("ROBOT_GUIDE Navigation Error");
 		}
 		else  {
 			status_msg.details=check_status->getCommonErrorString();
 		}
 	
 
-		ROS_INFO("Guide Task Failed");
+		ROS_INFO("ROBOT_GUIDE Guide Task Failed");
 		result.status="FAILURE";
 		result.details=status_msg.details;
 		if (is_moving) {
-			ROS_INFO("Supervision is stopped");
+			ROS_INFO("ROBOT_GUIDE Supervision is stopped");
 			if (!simulation_mode) {
 				move_to_client->cancelGoal();
 			}
@@ -502,12 +494,12 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 void approach(const supervision_msgs::ApproachGoalConstPtr &goal, ApproachServer* approach_action_server,
 	MoveBaseClient* move_base_client, ros::ServiceClient* set_driving_direction_client) {
 
-	ROS_INFO("Setting driving direction to forward");
+	ROS_INFO("ROBOT_GUIDE Setting driving direction to forward");
 	spencer_nav_msgs::SetDrivingDirection set_driving_direction_srv;
 	set_driving_direction_srv.request.backward=false;
 	if (!simulation_mode) {
 		if (set_driving_direction_client->call(set_driving_direction_srv)){
-			ROS_INFO("Done");
+			ROS_INFO("ROBOT_GUIDE Done");
 		}
 		else {
 			ROS_WARN("Couldn't switch driving direction");
@@ -523,7 +515,7 @@ int main(int argc, char **argv) {
 	ros::init(argc,argv,"robot_guide");
 	ros::NodeHandle n;
 
-	ROS_INFO("Starting robot guide");
+	ROS_INFO("ROBOT_GUIDE Starting robot guide");
 
 	//get all useful parameters
 	n.getParam("/robot/name",robot_name);
@@ -538,17 +530,17 @@ int main(int argc, char **argv) {
 	n.getParam("supervision/observations_mode",observations_mode);
 	n.getParam("supervision/wait_time",time_to_wait);
 
-	ROS_INFO("Parameters are:");
-	ROS_INFO("robot name %s",robot_name.c_str());
-	ROS_INFO("angular velocity %f",angular_velocity);
-	ROS_INFO("starting_speed %f",starting_speed);
-	ROS_INFO("min_speed %f",min_speed);
-	ROS_INFO("max_speed %f",max_speed);
-	ROS_INFO("simulation_mode %d",simulation_mode);
-	ROS_INFO("mode %s",observations_mode.c_str());
-	ROS_INFO("wait time is %f",time_to_wait);
-	ROS_INFO("Use Control speed is %d",use_control_speed);
-	ROS_INFO("Use driving direction is %d",use_driving_direction);
+	ROS_INFO("ROBOT_GUIDE Parameters are:");
+	ROS_INFO("ROBOT_GUIDE robot name %s",robot_name.c_str());
+	ROS_INFO("ROBOT_GUIDE angular velocity %f",angular_velocity);
+	ROS_INFO("ROBOT_GUIDE starting_speed %f",starting_speed);
+	ROS_INFO("ROBOT_GUIDE min_speed %f",min_speed);
+	ROS_INFO("ROBOT_GUIDE max_speed %f",max_speed);
+	ROS_INFO("ROBOT_GUIDE simulation_mode %d",simulation_mode);
+	ROS_INFO("ROBOT_GUIDE mode %s",observations_mode.c_str());
+	ROS_INFO("ROBOT_GUIDE wait time is %f",time_to_wait);
+	ROS_INFO("ROBOT_GUIDE Use Control speed is %d",use_control_speed);
+	ROS_INFO("ROBOT_GUIDE Use driving direction is %d",use_driving_direction);
 
 	//create package objects
 	GuidePomdp guide_pomdp(n);
@@ -576,26 +568,26 @@ int main(int argc, char **argv) {
 	// }
 	
 	if (!ros::ok()) {
-		ROS_INFO("Shutdown request");
+		ROS_INFO("ROBOT_GUIDE Shutdown request");
 		return 0;
 	}
 
-	ROS_INFO("Connecting to set driving direction service\n");
+	ROS_INFO("ROBOT_GUIDE Connecting to set driving direction service\n");
 	ros::ServiceClient set_driving_direction_client=n.serviceClient<spencer_nav_msgs::SetDrivingDirection>("/spencer/navigation/set_driving_direction",true);
 	if (!simulation_mode && use_driving_direction) {
 		set_driving_direction_client.waitForExistence();
-		ROS_INFO("Connected\n");
+		ROS_INFO("ROBOT_GUIDE Connected\n");
 	}
 
-	ROS_INFO("Connecting to calculate path service\n");
+	ROS_INFO("ROBOT_GUIDE Connecting to calculate path service\n");
 	ros::ServiceClient calculate_path_client=n.serviceClient<supervision_msgs::CalculatePath>("/supervision/calculate_path",true);
 	calculate_path_client.waitForExistence();
-	ROS_INFO("Connected\n");	
+	ROS_INFO("ROBOT_GUIDE Connected\n");	
 
-	ROS_INFO("Connecting to switch orientation service\n");
+	ROS_INFO("ROBOT_GUIDE Connecting to switch orientation service\n");
 	switch_orientation_client=n.serviceClient<situation_assessment_msgs::SwitchOrientation>("/situation_assessment/switch_orientation",true);
 	switch_orientation_client.waitForExistence();
-	ROS_INFO("Connected\n");
+	ROS_INFO("ROBOT_GUIDE Connected\n");
 
 	situation_assessment_msgs::SwitchOrientation srv_switch_orientation;
 	srv_switch_orientation.request.backward=true;
@@ -604,21 +596,21 @@ int main(int argc, char **argv) {
 	}
 
 
-	ROS_INFO("Connecting to query database service\n");
+	ROS_INFO("ROBOT_GUIDE Connecting to query database service\n");
 	database_client=n.serviceClient<situation_assessment_msgs::QueryDatabase>("/situation_assessment/query_database",true);
 	database_client.waitForExistence();
-	ROS_INFO("Connected\n");
+	ROS_INFO("ROBOT_GUIDE Connected\n");
 
 
 
-	ROS_INFO("Waiting for move_base");
+	ROS_INFO("ROBOT_GUIDE Waiting for move_base");
 	MoveBaseClient move_base_client("move_base",true);
 	if (!simulation_mode) {
 		move_base_client.waitForServer();
 	}
-	ROS_INFO("connected to move_base");
+	ROS_INFO("ROBOT_GUIDE connected to move_base");
 
-	ROS_INFO("Started services to stop and restart supervisor");
+	ROS_INFO("ROBOT_GUIDE Started services to stop and restart supervisor");
 
 	status_pub=n.advertise<supervision_msgs::SupervisionStatus>("supervision/status",1000);
 
@@ -626,7 +618,7 @@ int main(int argc, char **argv) {
 		boost::bind(&approach,_1,&approach_action_server,
 			&move_base_client,&set_driving_direction_client),false);
 	approach_action_server.start();
-	ROS_INFO("Started action server Approach");
+	ROS_INFO("ROBOT_GUIDE Started action server Approach");
 
 	MoveToClient move_to_client("supervision/move_to",true);
 	ApproachClient approach_client("supervision/approach",true);
@@ -636,9 +628,9 @@ int main(int argc, char **argv) {
 			&guide_pomdp,&control_speed_pomdp, &set_driving_direction_client,&calculate_path_client),false);
 	guide_action_server.start();
 
-	ROS_INFO("Started action server GuideGroup");
+	ROS_INFO("ROBOT_GUIDE Started action server GuideGroup");
 
-	ROS_INFO("Ready");
+	ROS_INFO("ROBOT_GUIDE Ready");
 
 	ros::spin();
 	return 0;

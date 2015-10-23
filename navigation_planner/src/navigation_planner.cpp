@@ -69,21 +69,21 @@ template <class PredecessorMap>
 bool getMap() {
 	situation_assessment_msgs::GetMap get_map_request;
 	if (map_client.call(get_map_request)) {
-		ROS_INFO("Got map");
+		ROS_INFO(" NAVIGATION_PLANNER Got map");
 		situation_assessment_msgs::Graph map_graph=get_map_request.response.graph;
 	
 		int n_nodes=map_graph.nodes.size();
-		ROS_INFO("There are %d nodes:",n_nodes);
+		ROS_INFO(" NAVIGATION_PLANNER There are %d nodes:",n_nodes);
 		for (int i=0;i<n_nodes;i++) {
 			situation_assessment_msgs::Node node=map_graph.nodes[i];
 			label_to_index[node.label]=i;
 			labels.push_back(node.label);
-			ROS_INFO("- %s",node.label.c_str());
+			ROS_INFO(" NAVIGATION_PLANNER - %s",node.label.c_str());
 		}
 
 		vector<Edge > map_edges;
 		vector<boost::property<boost::edge_weight_t, int> > weights;
-		ROS_INFO("With edges:");
+		ROS_INFO(" NAVIGATION_PLANNER With edges:");
 		for (int i=0; i<map_graph.edges.size();i++) {
 			situation_assessment_msgs::Edge edge=map_graph.edges[i];
 			// boost::graph::add_edge(label_to_index[edge.source],label_to_index[edge.destination],g);
@@ -92,7 +92,7 @@ bool getMap() {
 			weights.push_back(1);
 			pair<int,int> pair_edge2(label_to_index[edge.destination],label_to_index[edge.source]);
 			map_edges.push_back(pair_edge2);
-			ROS_INFO("- %s %s",edge.source.c_str(),edge.destination.c_str());
+			ROS_INFO(" NAVIGATION_PLANNER - %s %s",edge.source.c_str(),edge.destination.c_str());
 			weights.push_back(1);
 		}
 		symbolic_map=new Graph(map_edges.begin(),map_edges.end(),weights.begin(),n_nodes);
@@ -123,17 +123,17 @@ bool calculatePath(supervision_msgs::CalculatePath::Request &req, supervision_ms
 
 	 IndexMap index;
 
-	 ROS_INFO("distances from start vertex:");
+	 ROS_INFO(" NAVIGATION_PLANNER distances from start vertex:");
 	 boost::graph_traits<Graph>::vertex_iterator vi;
 	 for(vi = vertices(*symbolic_map).first; vi != vertices(*symbolic_map).second; ++vi)
-	   ROS_INFO("distance(%ld) = %d",index(*vi),d[*vi]);
+	   ROS_INFO(" NAVIGATION_PLANNER distance(%ld) = %d",index(*vi),d[*vi]);
 
-	 ROS_INFO("parents in the tree of shortest paths:");
+	 ROS_INFO(" NAVIGATION_PLANNER parents in the tree of shortest paths:");
 	   for(vi = boost::vertices(*symbolic_map).first; vi != boost::vertices(*symbolic_map).second; ++vi) {
 	     if (p[*vi] == boost::graph_traits<Graph>::null_vertex())
-	       ROS_INFO("Parent(%ld) = no parent",index(*vi)); 
+	       ROS_INFO(" NAVIGATION_PLANNER Parent(%ld) = no parent",index(*vi)); 
 	     else 
-	       ROS_INFO("Parent(%ld) = %ld",index(*vi),p[*vi]);
+	       ROS_INFO(" NAVIGATION_PLANNER Parent(%ld) = %ld",index(*vi),p[*vi]);
 	   }
 
    boost::graph_traits<Graph>::vertex_iterator v_start=boost::vertices(*symbolic_map).first+source_node;
@@ -143,7 +143,7 @@ bool calculatePath(supervision_msgs::CalculatePath::Request &req, supervision_ms
    vector<string> predecessors;
 
    bool found_path=true;;
-    ROS_INFO("Predecessors ");
+    ROS_INFO(" NAVIGATION_PLANNER Predecessors ");
 	vi=boost::vertices(*symbolic_map).first+dest_node;
 	distance=d[*vi];
 	while (vi!=v_start) {
@@ -153,13 +153,13 @@ bool calculatePath(supervision_msgs::CalculatePath::Request &req, supervision_ms
 			break;
 		}
 		else {
-			ROS_INFO("- %s",labels[index(*vi)].c_str());
+			ROS_INFO(" NAVIGATION_PLANNER - %s",labels[index(*vi)].c_str());
 			predecessors.push_back(labels[index(*vi)]);
 			vi=vertices(*symbolic_map).first+p[*vi];
 		}
 	}	 
 	if (found_path) {
-		ROS_INFO("- %s", labels[index(*vi)].c_str());
+		ROS_INFO(" NAVIGATION_PLANNER - %s", labels[index(*vi)].c_str());
 		predecessors.push_back(labels[index(*v_start)]);
 
 		if (predecessors.size()>0) {
@@ -175,10 +175,10 @@ int main(int argc, char** argv) {
 	ros::init(argc,argv,"navigation_planner");
 	ros::NodeHandle node_handle;
 
-	ROS_INFO("Init navigation_planner");
+	ROS_INFO(" NAVIGATION_PLANNER Init navigation_planner");
 
 	map_client=node_handle.serviceClient<situation_assessment_msgs::GetMap>("situation_assessment/get_symbolic_map");
-	ROS_INFO("Waiting for get map service");
+	ROS_INFO(" NAVIGATION_PLANNER Waiting for get map service");
 	map_client.waitForExistence();
 
 	if (!getMap()) {
@@ -188,7 +188,7 @@ int main(int argc, char** argv) {
 	
  	ros::ServiceServer path_server=node_handle.advertiseService("supervision/calculate_path",calculatePath);
 
-	ROS_INFO("Advertising calculate path");
-	ROS_INFO("Ready");
+	ROS_INFO(" NAVIGATION_PLANNER Advertising calculate path");
+	ROS_INFO(" NAVIGATION_PLANNER Ready");
 	ros::spin();
 }
