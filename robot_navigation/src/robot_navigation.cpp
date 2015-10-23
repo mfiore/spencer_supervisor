@@ -146,7 +146,7 @@ string getEntityType(string name) {
 
 string getRobotLocation() {
 	boost::lock_guard<boost::mutex> lock(mutex_location);
-	ROS_INFO("ROBOT_NAVIGATION Robot areas size %ld",robot_areas.size());
+	// ROS_INFO("ROBOT_NAVIGATION Robot areas size %ld",robot_areas.size());
 	for (int i=0; i<robot_areas.size();i++) {
 		if (robot_areas[i]!="this") {
 
@@ -162,9 +162,9 @@ string getRobotLocation() {
 
 			if (simple_database_client.call(srv)) {
 				if (srv.response.result.size()>0) {
-					ROS_INFO("ROBOT_NAVIGATION %s area is type %s",robot_areas[i].c_str(),srv.response.result[0].value[0].c_str());
+					// ROS_INFO("ROBOT_NAVIGATION %s area is type %s",robot_areas[i].c_str(),srv.response.result[0].value[0].c_str());
 					if (srv.response.result[0].value[0]=="location") {
-						ROS_INFO("ROBOT_NAVIGATION found location");
+						ROS_INFO("ROBOT_NAVIGATION found robot location");
 						return robot_areas[i];
 					}
 				}
@@ -243,6 +243,8 @@ void sendMoveBaseGoal(geometry_msgs::Pose pose,MoveBaseClient* move_base_client)
 			move_base_goal.target_pose.pose.position.y, move_base_goal.target_pose.pose.orientation.x ,
 			 move_base_goal.target_pose.pose.orientation.y , move_base_goal.target_pose.pose.orientation.z ,
 			  move_base_goal.target_pose.pose.orientation.w);	
+
+
 	}
 }
 
@@ -259,24 +261,6 @@ bool switchMap(string node1, string node2) {
 	return success;
 }
 
-// void navigationLoop(bool* got_error, bool* move_base_error, bool* move_base_arrived, bool* robot_arrived,
-// 	MoveBaseClient* move_base_client, bool symbolic_navigation, ros::Rate,MoveToServer *move_to_action_server) {
-// 	while (!got_error && !move_base_error && !move_base_arrived && !robot_arrived && !move_to_action_server->isPreemptRequested()) {
-// 		*got_error=check_status->isBatteryLow()||check_status->isBumperPressed() || !ros::ok();
-// 		*move_base_error=hasMoveBaseError(move_base_client);
-	
-// 		if (symbolic_navigation) {
-// 			mutex_location.lock();
-// 			*robot_arrived=reached_next_area;
-// 			mutex_location.unlock();
-// 		}			
-// 		if (!simulation_mode) {
-// 			*move_base_arrived=move_base_client->getState()==actionlib::SimpleClientGoalState::SUCCEEDED;
-// 		}
-
-// 		r.sleep();
-// 	}
-// }
  
 //moves to: can have a symbolic destination (will plan to reach it), a given symbolic path or a list of coordinates
 void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_to_action_server,
@@ -334,15 +318,14 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		string destination_type=getEntityType(destination);
 		ROS_INFO("ROBOT_NAVIGATION got entity type"); 
 		if (destination_type!="location") {
-			ROS_INFO("ROBOT_NAVIGATION dest is not location"); 
+			ROS_INFO("ROBOT_NAVIGATION destination is not location"); 
 			location_destination=getEntityLocation(destination);
 			ROS_INFO("ROBOT_NAVIGATION location is %s",location_destination.c_str());
 		}
 		else {
-			ROS_INFO("ROBOT_NAVIGATION dest is location");
+			ROS_INFO("ROBOT_NAVIGATION destination is a location");
 			location_destination=destination;
 		}
-		ROS_INFO("ROBOT_NAVIGATION about to ask robot location");
 		robot_location=getRobotLocation();
 		ROS_INFO("ROBOT_NAVIGATION robot location is %s",robot_location.c_str());
 			if (robot_location!=location_destination) {
@@ -503,6 +486,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		ROS_INFO("ROBOT_NAVIGATION Starting to move to %s",destination.c_str());
 
 		sendMoveBaseGoal(goal_pose,move_base_client);
+		is_moving=true;
 		
 		bool node_has_area=hasArea(destination);
 		ROS_INFO("goal pose is %f %f ", goal_pose.position.x,goal_pose.position.y);
@@ -552,20 +536,23 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		status_msg.status="Task Failed";
 
 		if (move_to_action_server->isPreemptRequested()) {
+			ROS_INFO("ROBOT_NAVIGATION Server was preempted");
 					status_msg.details="Preempted";
 		}
-		else if (move_base_client) {
+		else if (hasMoveBaseError(move_base_client)) {
+			ROS_INFO("ROBOT_NAVIGATION There was an error with move base");
 			status_msg.details="Navigation error";
 		}
 		else {
 			status_msg.details=check_status->getCommonErrorString();
+			ROS_INFO("ROBOT_NAVIGATION %s",status_msg.details.c_str());
 		}
 		status_pub.publish(status_msg);
 
 		result.status="FAILURE";
 		result.details=status_msg.details;
 		if (is_moving) {
-			ROS_INFO("ROBOT_NAVIGATION Supervision is stopped");
+			ROS_INFO("ROBOT_NAVIGATION Stopping move base");
 			if (!simulation_mode) {
 				move_base_client->cancelGoal();
 			}

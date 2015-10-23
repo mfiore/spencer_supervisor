@@ -4,7 +4,8 @@ supervision:
     starting_speed: 0.7
     min_speed: 0.4
     max_speed: 1.0
-    simulation_mode: true
+    simulation_mode: false
+    test_mode: 10
     use_map_switching: false
     use_driving_direction: false
     use_control_speed: false

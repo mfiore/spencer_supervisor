@@ -91,7 +91,7 @@ ros::Publisher status_pub;
 CheckStatus* check_status; //gets information about robot components
 
 bool simulation_mode; //if true doesn't connect to or call move_base
-
+double test_mode; //number of seconds to sleep at the start
 
 //encapsulate move base errors
 bool hasMoveBaseError(MoveBaseClient* move_base_client) {
@@ -214,11 +214,21 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 			last_pose.position.y);
 	}
 
-	ros::Duration(10).sleep();
+	if (test_mode>0) {
+		ROS_INFO("ROBOT_GUIDE sleeping %f seconds for test mode",test_mode);
+		ros::Duration(test_mode).sleep();
+	}
 	//wait until the group is seen (note that simple mode is transparent to this procedure)
 	// observation_manager->setObservedGroup(group_id);
 	// observation_manager->waitForGroup();
 	vector<string> agents_in_group=getAgentsInGroup();
+	if (agents_in_group.size()==0) {
+		ROS_WARN("ROBOT_GUIDE No Agents behind the robot. Aborting");
+		result.status="FAILED";
+		result.details="no agents present";
+		guide_action_server->setAborted();
+		return;
+	}
 	observation_manager->setAgentsInGroup(agents_in_group);
 
 	vector<string> nodes; //list of nodes to traverse
@@ -529,6 +539,7 @@ int main(int argc, char **argv) {
 	n.getParam("supervision/use_control_speed",use_control_speed);
 	n.getParam("supervision/observations_mode",observations_mode);
 	n.getParam("supervision/wait_time",time_to_wait);
+	n.getParam("supervision/test_mode",test_mode);
 
 	ROS_INFO("ROBOT_GUIDE Parameters are:");
 	ROS_INFO("ROBOT_GUIDE robot name %s",robot_name.c_str());
@@ -541,6 +552,7 @@ int main(int argc, char **argv) {
 	ROS_INFO("ROBOT_GUIDE wait time is %f",time_to_wait);
 	ROS_INFO("ROBOT_GUIDE Use Control speed is %d",use_control_speed);
 	ROS_INFO("ROBOT_GUIDE Use driving direction is %d",use_driving_direction);
+	ROS_INFO("ROBOT_GUIDE Test mode of %f",test_mode);
 
 	//create package objects
 	GuidePomdp guide_pomdp(n);

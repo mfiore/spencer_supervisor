@@ -194,10 +194,22 @@ void ObservationManager::getSimpleObservations(vector<situation_assessment_msgs:
 	vector<string> agents,agents_to_find;
 
 	BOOST_FOREACH(situation_assessment_msgs::Fact f, fact_list) {
-		if (f.predicate[0]=="type" && f.value[0]=="agent" && f.value[1]=="human") {
+		if (f.predicate[0]=="type" && f.value[0]=="agent" && f.value[1]=="HUMAN") {
 				agents.push_back(f.subject);
 		}
+
 	}
+
+	BOOST_FOREACH(situation_assessment_msgs::Fact f, fact_list) {
+		if (f.subject!=robot_name_) {
+			if (f.predicate[0]=="isInArea") {
+				if (std::find(agents.begin(),agents.end(),f.subject)!=agents.end() 
+					&& std::find(f.value.begin(),f.value.end(),robot_name_)!=f.value.end())  {
+					agents_to_find.push_back(f.subject);
+				}
+			}
+		}
+	}	
 
 
 	map<string,AgentObservation> agent_observations=createAgentObservations(fact_list,agents_to_find);
