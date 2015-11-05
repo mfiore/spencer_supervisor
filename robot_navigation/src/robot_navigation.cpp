@@ -11,6 +11,7 @@
 #include <actionlib/server/simple_action_server.h>
 #include <actionlib/client/simple_action_client.h>
 
+#include <sound_play/sound_play.h>
 //msgs
 #include <move_base_msgs/MoveBaseAction.h>
 #include <supervision_msgs/MoveToAction.h>
@@ -44,6 +45,10 @@ typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseCl
 
 //services
 ros::ServiceClient switch_map_client;
+
+// sound_play::SoundClient sc;
+
+
 ros::ServiceClient simple_database_client;
 // ros::ServiceClient has_published_client;
 
@@ -228,6 +233,19 @@ bool hasMoveBaseError(MoveBaseClient* move_base_client) {
 			else return false;
 }
 
+bool hasSystemError(CheckStatus* check_status, bool is_moving, MoveBaseClient* move_base_client) {
+	bool result=false;
+	if (is_moving) {
+		result=hasMoveBaseError(move_base_client);
+	}
+	return result || check_status->isBatteryLow() || check_status->isStopped();
+}
+
+bool isPaused(CheckStatus* check_status) {
+	return check_status->isPaused() || check_status->isBumperPressed();
+}
+
+
 //incapsulates sending a move base goal
 void sendMoveBaseGoal(geometry_msgs::Pose pose,MoveBaseClient* move_base_client) {
 	if (!simulation_mode) {
@@ -354,6 +372,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 	bool got_error=false;
 	bool is_moving=false;
 
+	got_error=hasSystemError(check_status,is_moving,move_base_client);
 
 	if (symbolic_navigation && nodes.size()>0 || poses.size()>0 && !symbolic_navigation) {
 
@@ -370,7 +389,6 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 				got_error=true;
 			}
 		}
-
 		while (!task_completed && !got_error && !move_to_action_server->isPreemptRequested()) {
 			geometry_msgs::Pose goal_pose;
 
@@ -471,6 +489,31 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 			else if (move_base_arrived && (current_node+1)==n_nodes-1) {
 				task_completed=true;
 			}
+		   else if (check_status->isPaused()) {
+				if (is_moving) {
+					move_base_client->cancelGoal();
+					is_moving=false;
+				}
+				while (check_status->isPaused() && !hasSystemError(check_status,is_moving,move_base_client)) {
+					status_msg.status="supervision is paused";
+					status_pub.publish(status_msg);
+					r.sleep();
+				}
+     		}
+			else if (check_status->isPlannerBlocked()) {
+				ROS_INFO("Planner blocked");
+				// move_base_client->cancelGoal();
+				is_moving=false;
+
+				while (check_status->isPlannerBlocked()) {
+					// sc.say("Excuse me, could you let me pass?");
+					r.sleep();
+				}
+				ROS_INFO("Not blocked anymore");
+			}
+
+		got_error=got_error || hasSystemError(check_status,is_moving,move_base_client);
+	
 		
 		}
 	}
@@ -496,14 +539,15 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		bool got_error=false;
 		bool move_base_arrived=false;
 		bool robot_arrived=false;
+		//if robot is paused wait for an error or for a resume. Movement is stopped in the move_to procedure
 
 		mutex_location.lock();
 		next_area=destination;
 		mutex_location.unlock();
-
-		while (!got_error && !move_base_error && !move_base_arrived && !robot_arrived && !move_to_action_server->isPreemptRequested()) {
-			got_error=check_status->isBatteryLow()||check_status->isBumperPressed() || !ros::ok();
-			move_base_error=hasMoveBaseError(move_base_client);
+	//continue until we arrive or have a n error
+		while (!hasSystemError(check_status,is_moving,move_base_client) && !move_base_arrived && !robot_arrived && 
+			!move_to_action_server->isPreemptRequested() &&!check_status->isPaused() &&! check_status->isPlannerBlocked() &&
+			ros::ok()) {
 		
 			if (hasArea) {
 				mutex_location.lock();
@@ -597,6 +641,7 @@ int main(int argc,char** argv) {
 
 	ROS_INFO("ROBOT_NAVIGATION Starting robot navigation");
 
+	// sc.say("Hello! What's up?");
 
 	string doc_name, doc_path;   //spencer maps document path
 
@@ -651,17 +696,7 @@ int main(int argc,char** argv) {
 		r.sleep();
 	}
 
-	// ROS_INFO("ROBOT_NAVIGATION Connecting to has_published");
-	// has_published_client=n.serviceClient<situation_assessment_msgs::EmptyRequest>("situation_assessment/has_published",true);
-	// has_published_client.waitForExistence();
-	// ROS_INFO("ROBOT_NAVIGATION Connected, now waiting for published");
-	// situation_assessment_msgs::EmptyRequest srv;
-	// if (has_published_client.call(srv)) {
-	// 	ROS_INFO("ROBOT_NAVIGATION Done");
-	// }
-	// else {
-	// 	ROS_ERROR("ROBOT_NAVIGATION fail");
-	// }
+
 
 	status_pub=n.advertise<supervision_msgs::SupervisionStatus>("supervision/status",1000);
 
@@ -670,7 +705,6 @@ int main(int argc,char** argv) {
 	move_to_action_server.start();
 	ROS_INFO("ROBOT_NAVIGATION Started action server MoveTo");
 	
-	// ros::Duration(5).sleep();
 
     ROS_INFO("ROBOT_NAVIGATION Ready");
 
