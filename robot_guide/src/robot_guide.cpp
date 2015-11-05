@@ -115,7 +115,7 @@ bool hasSystemError(CheckStatus* check_status, bool is_moving, MoveToClient* mov
 	return result || check_status->isBatteryLow() || check_status->isStopped();
 }
 
-bool hasPaused(CheckStatus* check_status) {
+bool isPaused(CheckStatus* check_status) {
 	return check_status->isPaused() || check_status->isBumperPressed();
 }
 
@@ -265,7 +265,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 			observation_manager->getInSlowArea());
 
 	//if robot is paused wait
-	while (hasPaused(check_status) && !hasSystemError(check_status,is_moving,move_to_client)) {
+	while (isPaused(check_status) && !hasSystemError(check_status,is_moving,move_to_client)) {
 		status_msg.status="supervision is paused";
 		status_pub.publish(status_msg);
 		r.sleep();
@@ -355,9 +355,9 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 			}
 		}
 
-		if (hasPaused(check_status)) {
+		if (isPaused(check_status)) {
 			ROS_INFO("Robot is paused");
-			while (hasPaused(check_status) && !hasSystemError(check_status,is_moving,move_to_client)) {
+			while (isPaused(check_status) && !hasSystemError(check_status,is_moving,move_to_client)) {
 				is_moving=false;
 				status_msg.status="supervision is paused";
 				status_pub.publish(status_msg);

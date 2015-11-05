@@ -107,7 +107,7 @@ bool hasSystemError(CheckStatus* check_status, bool is_moving, MoveBaseClient* m
 	return result || check_status->isBatteryLow() || check_status->isStopped();
 }
 
-bool hasPaused(CheckStatus* check_status) {
+bool isPaused(CheckStatus* check_status) {
 	return check_status->isPaused() || check_status->isBumperPressed();
 }
 
@@ -328,7 +328,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		}
 		else if (check_status->isPlannerBlocked()) {
 			ROS_INFO("Planner blocked");
-			move_base_client->cancelGoal();
+			// move_base_client->cancelGoal();
 			is_moving=false;
 
 			while (check_status->isPlannerBlocked()) {
