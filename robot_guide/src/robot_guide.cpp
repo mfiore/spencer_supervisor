@@ -413,6 +413,9 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 					status_msg.details="Moving";
 				}
 			}
+			else {
+				status_msg.details="Moving";
+			}
 		}
 		else if (guide_action=="wait") { //if the pomdp selects a wait stop move base and start the timer
 
@@ -434,6 +437,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 			while (isPaused(check_status) && !hasSystemError(check_status,is_moving,move_to_client)) {
 				is_moving=false;
 				status_msg.status="supervision is paused";
+				status_msg.details="";
 				status_pub.publish(status_msg);
 				r.sleep();
 			}
@@ -445,9 +449,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 			while (check_status->isPlannerBlocked() && !hasSystemError(check_status,is_moving,move_to_client)) {
 				r.sleep();
 			}
-			if (!simulation_mode) {
-				task_completed=move_to_client->getState()==actionlib::SimpleClientGoalState::SUCCEEDED;
-			}
+			task_completed=move_to_client->getState()==actionlib::SimpleClientGoalState::SUCCEEDED;
 		}
 
 		if (!hasSystemError(check_status,is_moving,move_to_client) && !guide_action_server->isPreemptRequested()) {
@@ -481,12 +483,14 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 
 	//publish final status
 	if (task_completed) {
-		status_msg.status="Task Completed";
+		status_msg.status="Guide Task Completed";
 		status_msg.details="";
 
 		ROS_INFO("ROBOT_GUIDE Task completed");
 		result.status="OK";
 		guide_action_server->setSucceeded(result);
+		status_pub.publish(status_msg);
+
 	}
 	else {
 		status_msg.status="Task Failed";
