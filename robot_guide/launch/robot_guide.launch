@@ -2,7 +2,7 @@
 	<rosparam command="load" file="$(find supervision_parameters)/supervision_config.yaml" />
 	<include file="$(find robot_navigation)/launch/robot_navigation.launch" />
 	<node name="robot_guide" pkg="robot_guide" type="robot_guide" output="screen" />
-	<node name="guide_pomdp" pkg="appl" type="controlpipe" >
+	<node name="guide_pomdp" pkg="appl" type="controlpipe"  >
 		<param name="problem_name" value="guide_pomdp" />
 	</node>
 	 <node name="control_speed_pomdp" pkg="appl" type="controlpipe" >

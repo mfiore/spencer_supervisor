@@ -408,9 +408,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 	    is_preempted=guide_action_server->isPreemptRequested();
 
 	    //if we're not in simulation check if move to has arrived to destination
-		if (!simulation_mode)	{	
-			task_completed=move_to_client->getState()==actionlib::SimpleClientGoalState::SUCCEEDED;
-		}
+		task_completed=move_to_client->getState()==actionlib::SimpleClientGoalState::SUCCEEDED;
 
 		status_pub.publish(status_msg);
 		r.sleep();
@@ -418,7 +416,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 		//update observations, starting with the timer
 		string s_timer;
 		if (wait_timer.isElapsed()) {
-			s_timer="ok";
+			s_timer="expired";
 			ROS_INFO("ROBOT_GUIDE Timer expired");
 		}
 		else {
@@ -460,6 +458,8 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 		ROS_INFO("ROBOT_GUIDE Task completed");
 		result.status="OK";
 		guide_action_server->setSucceeded(result);
+
+		status_pub.publish(status_msg);
 	}
 	else {
 		status_msg.status="Task Failed";
