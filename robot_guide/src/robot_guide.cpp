@@ -221,12 +221,48 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 	//wait until the group is seen (note that simple mode is transparent to this procedure)
 	// observation_manager->setObservedGroup(group_id);
 	// observation_manager->waitForGroup();
+	//when the robot guides people, it will move backward, so that they can see the screen
+	ROS_INFO("ROBOT_GUIDE Setting driving direction to backward");
+	spencer_nav_msgs::SetDrivingDirection set_driving_direction_srv;
+	set_driving_direction_srv.request.backward=true;
+	if (!simulation_mode && use_driving_direction) {
+		if (set_driving_direction_client->call(set_driving_direction_srv)){
+			ROS_INFO("ROBOT_GUIDE Done");
+		}
+		else {
+			ROS_WARN("ROBOT_GUIDE Couldn't switch driving direction");
+		}
+	}
+	situation_assessment_msgs::SwitchOrientation srv_switch_orientation;
+	srv_switch_orientation.request.backward=true;
+	if(!switch_orientation_client.call(srv_switch_orientation)){
+		ROS_ERROR("ROBOT_GUIDE couldn't call switch orientation");
+	}
+
+	ros::Duration(1).sleep();
 	vector<string> agents_in_group=getAgentsInGroup();
 	if (agents_in_group.size()==0) {
 		ROS_WARN("ROBOT_GUIDE No Agents behind the robot. Aborting");
 		result.status="FAILED";
 		result.details="no agents present";
 		guide_action_server->setAborted();
+
+		spencer_nav_msgs::SetDrivingDirection set_driving_direction_srv;
+		set_driving_direction_srv.request.backward=false;
+		if (!simulation_mode && use_driving_direction) {
+			if (set_driving_direction_client->call(set_driving_direction_srv)){
+				ROS_INFO("ROBOT_GUIDE Done");
+			}
+			else {
+				ROS_WARN("ROBOT_GUIDE Couldn't switch driving direction");
+			}
+		}
+		situation_assessment_msgs::SwitchOrientation srv_switch_orientation;
+		srv_switch_orientation.request.backward=true;
+		if(!switch_orientation_client.call(srv_switch_orientation)){
+			ROS_ERROR("ROBOT_GUIDE couldn't call switch orientation");
+		}
+
 		return;
 	}
 	observation_manager->setAgentsInGroup(agents_in_group);
@@ -265,23 +301,6 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 	bool got_error=false;
 	bool is_preempted=false;
 
-	//when the robot guides people, it will move backward, so that they can see the screen
-	ROS_INFO("ROBOT_GUIDE Setting driving direction to backward");
-	spencer_nav_msgs::SetDrivingDirection set_driving_direction_srv;
-	set_driving_direction_srv.request.backward=true;
-	if (!simulation_mode && use_driving_direction) {
-		if (set_driving_direction_client->call(set_driving_direction_srv)){
-			ROS_INFO("ROBOT_GUIDE Done");
-		}
-		else {
-			ROS_WARN("ROBOT_GUIDE Couldn't switch driving direction");
-		}
-	}
-	situation_assessment_msgs::SwitchOrientation srv_switch_orientation;
-	srv_switch_orientation.request.backward=true;
-	if(!switch_orientation_client.call(srv_switch_orientation)){
-		ROS_ERROR("ROBOT_GUIDE couldn't call switch orientation");
-	}
 
 
 	ROS_INFO("ROBOT_GUIDE Starting POMDPs");

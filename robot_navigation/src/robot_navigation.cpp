@@ -51,7 +51,7 @@ ros::ServiceClient simple_database_client;
 vector<string> robot_areas;
 string robot_location;
 string next_area;
-bool reached_next_area=false;
+bool reached_next_area_=false;
 
 bool use_map_switching;
 
@@ -383,7 +383,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 
 				mutex_location.lock();
 				next_area=nodes[current_node+1];
-				reached_next_area=false;
+				reached_next_area_=false;
 				mutex_location.unlock();
 
 			}
@@ -431,7 +431,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		
 				if (symbolic_navigation) {
 					mutex_location.lock();
-					robot_arrived=reached_next_area;
+					robot_arrived=reached_next_area_;
 					mutex_location.unlock();
 				}			
 				if (!simulation_mode) {
@@ -499,6 +499,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 
 		mutex_location.lock();
 		next_area=destination;
+		reached_next_area_=false;
 		mutex_location.unlock();
 
 		while (!got_error && !move_base_error && !move_base_arrived && !robot_arrived && !move_to_action_server->isPreemptRequested()) {
@@ -507,7 +508,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		
 			if (hasArea) {
 				mutex_location.lock();
-				robot_arrived=reached_next_area;
+				robot_arrived=reached_next_area_;
 				mutex_location.unlock();
 			}			
 			if (!simulation_mode) {
@@ -583,7 +584,7 @@ void agentFactCallback(const situation_assessment_msgs::FactList::ConstPtr& msg)
 			// ROS_INFO("Next area is %s",next_area.c_str());
 			if (std::find(robot_areas.begin(),robot_areas.end(),next_area)!=robot_areas.end()) {
 				// ROS_INFO("ROBOT_NAVIGATION Reached next area");
-				reached_next_area=true;
+				reached_next_area_=true;
 			}
 			break;
 		}
