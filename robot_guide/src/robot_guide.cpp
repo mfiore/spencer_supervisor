@@ -451,6 +451,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 			ROS_INFO("ROBOT_GUIDE Abandoning task");
 		}
 	}
+	wait_timer.stop();
 	
 	//at the end of the task reset the driving direction to forward
 	if (!ros::ok()) return;
