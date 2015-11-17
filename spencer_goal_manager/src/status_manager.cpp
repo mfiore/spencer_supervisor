@@ -3,7 +3,7 @@
 
 StatusManager::StatusManager(ros::NodeHandle node_handle):node_handle_(node_handle) {
 	guide_status_sub_=node_handle_.subscribe("supervision/guide/status",1,&StatusManager::guideStatusCallback,this);
-	move_status_sub_=node_handle_.subscribe("supervision/move/status",1,&StatusManager::moveStatusCallback,this);
+	move_status_sub_=node_handle_.subscribe("supervision/move_to/status",1,&StatusManager::moveStatusCallback,this);
 
 	database_service_=node_handle_.serviceClient<situation_assessment_msgs::QueryDatabase>("situation_assessment/query_database");
 	ROS_INFO("SPENCER_GOAL_MANAGER waiting for query database service");

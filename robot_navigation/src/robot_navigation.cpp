@@ -264,7 +264,8 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 	}
 	else {
 		ROS_WARN("No path or destination given");
-		result.status="no path or destination given";
+		result.status="FAILED";
+		result.details="no path or destination given";
 		move_to_action_server->setAborted(result);
 		return;
 	}
@@ -363,11 +364,13 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		is_moving=true;
 		if (symbolic_navigation) {
 			ROS_INFO("Starting to move to %s",nodes[current_node+1].c_str());
-			status_msg.status="Moving to "+nodes[current_node+1];
+			status_msg.status="RUNNING";
+			status_msg.details="Moving to "+nodes[current_node+1];
 		}
 		else {
 			ROS_INFO("Starting to move to %f %f",poses[current_node+1].position.x,
 				poses[current_node+1].position.y);
+			status_msg.status="RUNNING";
 		    status_msg.status="Moving to "+
 		    boost::lexical_cast<string>(poses[current_node+1].position.x)+" "+
 		    boost::lexical_cast<string>(poses[current_node+1].position.y);
@@ -468,18 +471,18 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 
 	//publish final task information
 	if (task_completed) {
-		status_msg.status="Task Completed";
+		status_msg.status="COMPLETED";
 		status_msg.details="";
 
 		ROS_INFO("Task completed");
-		result.status="OK";
+		result.status="COMPLETED";
 		status_pub.publish(status_msg);
 		move_to_action_server->setSucceeded(result);
 	}
 	else {
 		ROS_INFO("Navigation Task Failed");
 
-		status_msg.status="Task Failed";
+		status_msg.status="F_AILED";
 
 		if (move_to_action_server->isPreemptRequested()) {
 					status_msg.details="Preempted";
@@ -492,7 +495,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		}
 		status_pub.publish(status_msg);
 
-		result.status="FAILURE";
+		result.status="FAILED";
 		result.details=status_msg.details;
 		if (is_moving) {
 			ROS_INFO("Supervision is stopped");
@@ -589,7 +592,7 @@ int main(int argc,char** argv) {
 		r.sleep();
 	}
 
-	status_pub=n.advertise<supervision_msgs::SupervisionStatus>("supervision/status",1000);
+	status_pub=n.advertise<supervision_msgs::SupervisionStatus>("supervision/move_to/status",1000);
 
 	MoveToServer move_to_action_server(n,"supervision/move_to",
 		boost::bind(&moveTo,_1,&move_to_action_server,&move_base_client, &calculate_path_client),false);

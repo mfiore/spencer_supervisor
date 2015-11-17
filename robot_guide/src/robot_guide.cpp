@@ -240,7 +240,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 	while (guide_action!="abandon" && !task_completed && !got_error && !is_preempted
 		 && ros::ok()) {
 
-		status_msg.status="Guiding group";
+		status_msg.status="RUNNING";
 		if (guide_action=="continue") {
 			wait_timer.stop();
 
@@ -271,7 +271,15 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 									MoveToClient::SimpleActiveCallback(),
 					&moveToFeedbackCb);
 
-				status_msg.details="Starting to move";		
+				if (destination!="") {
+					status_msg.details="guiding group to "+destination;		
+				}
+				else if (coordinates.size()>0) {
+					status_msg.details="guiding group to "+coordinates[coordinates.size()-1];
+				}
+				else {
+					status_msg.details="guiding group to "+poses[poses.size()-1];
+				}	
 				is_moving=true;
 			}
 			else if (use_control_speed) {  //if it was already moving select a speed
@@ -291,13 +299,12 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
    	  				if (new_speed!=actual_speed) {
 					 	ROS_INFO("Switching speed to %f",new_speed);
 					 	actual_speed=new_speed;
-						status_msg.details="Accelerating";
+						status_msg.details="accelerating";
 
 					}
 				}
 
 				else if (speed_action=="decelerate") {
-
 					 double new_speed=max(actual_speed-0.1,min_speed);
 					// spencer_control_msgs::SetMaxVelocity srv;
 					// srv.request.max_linear_velocity=actual_speed;
@@ -306,18 +313,27 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 					 if (new_speed!=actual_speed) {
 						ROS_INFO("Switching speed to %f",new_speed);
 						actual_speed=new_speed;
-						status_msg.details="Decelerating";
+						status_msg.details="decelerating";
+
 					}
 				}
 				else if (speed_action=="continue") {
-					status_msg.details="Moving";
+					if (destination!="") {
+						status_msg.details="guiding group to "+destination;		
+					}
+					else if (coordinates.size()>0) {
+						status_msg.details="guiding group to "+coordinates[coordinates.size()-1];
+					}
+					else {
+						status_msg.details="guiding group to "+poses[poses.size()-1];
+					}				
 				}
 			}
 		}
 		else if (guide_action=="wait") { //if the pomdp selects a wait stop move base and start the timer
 
 			if (is_moving==true) {
-				status_msg.details="Waiting for users";
+				status_msg.details="waiting for group";
 
 				boost::thread t(boost::bind(&SupervisionTimer::start,&wait_timer));
 
@@ -380,19 +396,19 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 
 	//publish final status
 	if (task_completed) {
-		status_msg.status="Task Completed";
+		status_msg.status="COMPLETED";
 		status_msg.details="";
 
 		ROS_INFO("Task completed");
-		result.status="OK";
+		result.status="COMPLETED";
 		guide_action_server->setSucceeded(result);
 	}
 	else {
-		status_msg.status="Task Failed";
+		status_msg.status="FAILED";
 
 		if (is_preempted) {
 			ROS_INFO("Guide preempted");
-			status_msg.details="Preempted";
+			status_msg.details="Supervision Preempted";
 		}
 		else if (move_to_client->getState()==actionlib::SimpleClientGoalState::ABORTED || 	
 			 	 move_to_client->getState()==actionlib::SimpleClientGoalState::LOST ||
@@ -406,7 +422,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 	
 
 		ROS_INFO("Guide Task Failed");
-		result.status="FAILURE";
+		result.status="FAILED";
 		result.details=status_msg.details;
 		if (is_moving) {
 			ROS_INFO("Supervision is stopped");
@@ -531,7 +547,7 @@ int main(int argc, char **argv) {
 
 	ROS_INFO("Started services to stop and restart supervisor");
 
-	status_pub=n.advertise<supervision_msgs::SupervisionStatus>("supervision/status",1000);
+	status_pub=n.advertise<supervision_msgs::SupervisionStatus>("supervision/guide/status",1000);
 
 	ApproachServer approach_action_server(n,"supervision/approach",
 		boost::bind(&approach,_1,&approach_action_server,
