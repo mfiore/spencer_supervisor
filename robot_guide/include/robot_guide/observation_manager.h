@@ -46,10 +46,11 @@ class AgentObservation {
 class ObservationManager {
 public:
 
-	ObservationManager(ros::NodeHandle node_handle, string robot_name, bool simple_mode);
+	ObservationManager(ros::NodeHandle node_handle, string robot_name, string mode);
 
 	//when we need to observe a particular group, we can set this parameter in the observation manager.
 	void setObservedGroup(string group);
+	void setAgentsInGroup(vector<string> agents_in_group);
 	//the robot waits for the observed group to be present.
 	void waitForGroup();
 	//getters for the observations.
@@ -68,14 +69,19 @@ private:
 	boost::mutex mutex_observations_;
 	boost::mutex mutex_has_observed_group_;
 	boost::condition_variable condition_has_observed_group_;
+	boost::mutex mutex_agents_in_group;
+
 	bool has_observed_group_;
 
 	//parameters
 	string robot_name_;
-	bool simple_mode_;
+	string mode_;
 
 
 	string observed_group_; //name of the group to observe
+
+
+	vector<string> agents_in_group_;
 
 	string best_agent_name_; //for simple mode, name of the agent currently tracked by the system
 
@@ -89,12 +95,18 @@ private:
 	string in_slow_area_;    //false,true
 	string robot_location_;  //location of the robot in the symbolic map
 
+	string true_mode;
+
 	//ros variables
 	ros::NodeHandle node_handle_;
 	ros::Subscriber agent_sub_;
 
 	//function to get observation in the simple mode
 	void getSimpleObservations(vector<situation_assessment_msgs::Fact> fact_list);
+	void getComplexObservations(vector<situation_assessment_msgs::Fact> fact_list);
+	AgentObservation getBestAgent(map<string,AgentObservation> agent_observations);
+	void setSymbolicObservations(AgentObservation agent);
+	map<string,AgentObservation> createAgentObservations(vector<situation_assessment_msgs::Fact> fact_list,vector<string> agents_to_find);
 
 };
 

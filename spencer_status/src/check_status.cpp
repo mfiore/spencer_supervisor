@@ -29,9 +29,13 @@ CheckStatus::CheckStatus(ros::NodeHandle node_handle):node_handle_(node_handle) 
 	status_sub = node_handle_.subscribe("/supervision/is_stopped", 1000, 
 		&CheckStatus::stoppedCallback,this);
 
+	planner_blocked_sub_ = node_handle_.subscribe("/spencer/navigation/planner_blocked", 1000, 
+		&CheckStatus::plannerBlockedCallback,this);
+
 	battery_low_=false;
 	bumper_pressed_=false;
 	stopped_=false;
+	planner_blocked_=false;
 }
 
 void CheckStatus::bumperCallback(const spencer_control_msgs::SystemStatus& msg) {
@@ -62,6 +66,12 @@ void CheckStatus::batteryCallback(const std_msgs::Float32& msg) {
 void CheckStatus::stoppedCallback(const supervision_msgs::SupervisionStopped& msg) {
 	boost::lock_guard<boost::mutex> guard(mutex_stopped_);
 	stopped_=msg.is_stopped;
+	paused_=msg.is_paused;
+}
+
+void CheckStatus::plannerBlockedCallback(const std_msgs::Bool& msg) {
+	boost::lock_guard<boost::mutex> guard(mutex_planner_blocked_);
+	planner_blocked_=msg.data;
 }
 
 
@@ -79,6 +89,17 @@ bool CheckStatus::isStopped() {
 	return stopped_;
 }
 
+
+bool CheckStatus::isPaused() {
+	boost::lock_guard<boost::mutex> guard(mutex_stopped_);
+	return paused_;
+}
+
+bool CheckStatus::isPlannerBlocked() {
+	boost::lock_guard<boost::mutex> guard(mutex_planner_blocked_);
+	return planner_blocked_;
+}
+
 string CheckStatus::getCommonErrorString() {
 
 	if (!ros::ok()) {
@@ -92,6 +113,9 @@ string CheckStatus::getCommonErrorString() {
 	}
 	else if (isStopped()) {
 		return "Supervisor stopped";
+	}
+	else if (isPaused()) {
+		return "Supervisor paused";
 	}
 	else {
 		return "Other Error";

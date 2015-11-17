@@ -1,0 +1,12 @@
+FORMAT OF out.plot 
+* out.plot is the statistic file which stores the following values:
+	currentTime, numTrials, numBackups, lb, ub, numBeliefs, numAlphaVectors
+	(same order as they appear in each line)
+	
+Format of the pomdp problem is in pomdpFileFormat.html (from http://cassandra.org/pomdp/code/pomdp-file-spec.shtml ).
+
+Format of simulation run (set by -o of Simulate):
+>>> begin
+sim: currState currAction newState currObservation
+belief: beliefIdx:beliefValue ....
+----- time: timeInSec

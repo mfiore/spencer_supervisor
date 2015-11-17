@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/mfiore/catkin_ws/src/appl/devel/setup.sh
