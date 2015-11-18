@@ -517,8 +517,12 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 
 			r.sleep();
 		}
-		if (move_base_arrived || robot_arrived) task_completed=true;
-
+		if (move_base_arrived || robot_arrived) {
+			task_completed=true;
+		}
+		if (robot_arrived && !simulation_mode) {
+			move_base_client->cancelGoal();
+		}
 	}
 
 	//publish final task information
