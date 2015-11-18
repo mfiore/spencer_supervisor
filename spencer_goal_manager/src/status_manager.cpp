@@ -2,14 +2,23 @@
 
 
 StatusManager::StatusManager(ros::NodeHandle node_handle):node_handle_(node_handle) {
-	guide_status_sub_=node_handle_.subscribe("supervision/guide/status",1,&StatusManager::guideStatusCallback,this);
-	move_status_sub_=node_handle_.subscribe("supervision/move_to/status",1,&StatusManager::moveStatusCallback,this);
+	guide_status_sub_=node_handle_.subscribe("/supervision/robot_guide/status",1,&StatusManager::guideStatusCallback,this);
+	move_status_sub_=node_handle_.subscribe("/supervision/navigation/status",1,&StatusManager::moveStatusCallback,this);
+
+	ROS_INFO("Waiting for status to be published");
+	ros::Rate r(3);
+	while (move_status_sub_.getNumPublishers()==0 && ros::ok()) {
+		r.sleep();
+	}
+	ROS_INFO("Published");
 
 	database_service_=node_handle_.serviceClient<situation_assessment_msgs::QueryDatabase>("situation_assessment/query_database");
 	ROS_INFO("SPENCER_GOAL_MANAGER waiting for query database service");
 	database_service_.waitForExistence();
 
 	node_handle_.getParam("/robot/name",robot_name_);
+
+	move_status_="IDLE";
 }
 
 string StatusManager::getLocation() {
@@ -47,17 +56,24 @@ string StatusManager::getLocation() {
 string StatusManager::getStatus(){
 	boost::lock_guard<boost::mutex> lock(mutex_guide_status_);
 	boost::lock_guard<boost::mutex> lock2(mutex_move_status_);
-	if (guide_status_!="") return guide_status_;
-	else return move_status_;
+	if (guide_status_!="") {
+		// ROS_INFO("Returning %s",guide_status_.c_str());
+		return guide_status_;
+	}
+	else{
+		// ROS_INFO("Returning %s",move_status_.c_str());
+		return move_status_;	
+	} 
 }
 
 void StatusManager::guideStatusCallback(const supervision_msgs::SupervisionStatus::ConstPtr& msg) {
 	boost::lock_guard<boost::mutex> lock(mutex_guide_status_);
-	guide_status_=msg->status;
-
+	guide_status_=msg->status+" "+msg->details;
+	// ROS_INFO("Received status %s",guide_status_.c_str());
 }
 void StatusManager::moveStatusCallback(const supervision_msgs::SupervisionStatus::ConstPtr& msg) {
 	boost::lock_guard<boost::mutex> lock(mutex_move_status_);
-	move_status_=msg->status;
+	move_status_=msg->status+" "+msg->details;
+	// ROS_INFO("Received status %s",move_status_.c_str());
 }
 
