@@ -21,6 +21,8 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <supervision_msgs/SupervisionStatus.h>
 #include <situation_assessment_msgs/FactList.h>
+#include <situation_assessment_msgs/QueryDatabase.h>
+
 #include <supervision_msgs/CalculatePath.h>
 
 #include <boost/thread/mutex.hpp>
@@ -222,11 +224,10 @@ bool hasMoveBaseError(MoveBaseClient* move_base_client) {
 }
 
 bool hasSystemError(CheckStatus* check_status_) {
-	check_status_->isBatteryLow() || check_status_->isStopped();
+	check_status_->isBatteryLow() || check_status_->isStopped() || !ros::ok();
 }
 
 bool isPaused(CheckStatus* check_status_) {
-	ROS_INFO("Trolololollo");
 	return check_status_->isPaused() || check_status_->isBumperPressed();
 }
 
@@ -540,7 +541,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 
 		ROS_INFO("Task completed");
 		result.status="COMPLETED";
-		status_pub.publish(status_msg);
+		status_pub_.publish(status_msg);
 		move_to_action_server->setSucceeded(result);
 		status_pub_.publish(status_msg);
 	}
@@ -667,14 +668,20 @@ int main(int argc,char** argv) {
 
 
 
-	status_pub_=n.advertise<supervision_msgs::SupervisionStatus>("supervision/status",1000);
+	status_pub_=n.advertise<supervision_msgs::SupervisionStatus>("supervision/navigation/status",1000);
 
 	MoveToServer move_to_action_server(n,"supervision/move_to",
 		boost::bind(&moveTo,_1,&move_to_action_server,&move_base_client, &calculate_path_client),false);
 	move_to_action_server.start();
 	ROS_INFO("ROBOT_NAVIGATION Started action server MoveTo");
 	
+	supervision_msgs::SupervisionStatus status_msg; 
 
+	status_msg.status="IDLE";
+	// while (ros::ok()) {
+		status_pub_.publish(status_msg);
+	// 	r.sleep();
+	// }
     ROS_INFO("ROBOT_NAVIGATION Ready");
 
 

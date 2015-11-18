@@ -379,12 +379,10 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 				if (destination!="") {
 					status_msg.details="guiding group to "+destination;		
 				}
-				else if (coordinates.size()>0) {
-					status_msg.details="guiding group to "+coordinates[coordinates.size()-1];
-				}
 				else {
-					status_msg.details="guiding group to "+poses[poses.size()-1];
-				}	
+					status_msg.details="guiding group to "+boost::lexical_cast<string>(last_pose.position.x)+" "+
+					boost::lexical_cast<string>(last_pose.position.y);
+				}
 				is_moving=true;
 			}
 			else if (use_control_speed) {  //if it was already moving select a speed
@@ -423,24 +421,20 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 					if (destination!="") {
 						status_msg.details="guiding group to "+destination;		
 					}
-					else if (coordinates.size()>0) {
-						status_msg.details="guiding group to "+coordinates[coordinates.size()-1];
-					}
 					else {
-						status_msg.details="guiding group to "+poses[poses.size()-1];
-					}				
+						status_msg.details="guiding group to "+boost::lexical_cast<string>(last_pose.position.x)+" "
+						+boost::lexical_cast<string>(last_pose.position.y);
+					}			
 				}
 			}
 			else {
-					if (destination!="") {
-						status_msg.details="guiding group to "+destination;		
-					}
-					else if (coordinates.size()>0) {
-						status_msg.details="guiding group to "+coordinates[coordinates.size()-1];
-					}
-					else {
-						status_msg.details="guiding group to "+poses[poses.size()-1];
-					}		
+				if (destination!="") {
+					status_msg.details="guiding group to "+destination;		
+				}
+				else {
+					status_msg.details="guiding group to "+boost::lexical_cast<string>(last_pose.position.x)+" "+
+					boost::lexical_cast<string>(last_pose.position.y);
+				}	
 			}
 		}
 		else if (guide_action=="wait") { //if the pomdp selects a wait stop move base and start the timer
@@ -514,6 +508,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 
 		ROS_INFO("ROBOT_GUIDE Task completed");
 		result.status="COMPLETED";
+		result.details="";
 		guide_action_server->setSucceeded(result);
 		status_pub.publish(status_msg);
 
@@ -681,7 +676,7 @@ int main(int argc, char **argv) {
 
 	ROS_INFO("ROBOT_GUIDE Started services to stop and restart supervisor");
 
-	status_pub=n.advertise<supervision_msgs::SupervisionStatus>("supervision/guide/status",1000);
+	status_pub=n.advertise<supervision_msgs::SupervisionStatus>("supervision/robot_guide/status",1000);
 
 	ApproachServer approach_action_server(n,"supervision/approach",
 		boost::bind(&approach,_1,&approach_action_server,
@@ -699,6 +694,10 @@ int main(int argc, char **argv) {
 
 	ROS_INFO("ROBOT_GUIDE Started action server GuideGroup");
 
+	supervision_msgs::SupervisionStatus status_msg; 
+
+	status_msg.status="IDLE";
+	status_pub.publish(status_msg);
 	ROS_INFO("ROBOT_GUIDE Ready");
 
 	ros::spin();
