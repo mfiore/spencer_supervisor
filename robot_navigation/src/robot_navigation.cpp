@@ -469,6 +469,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 				}
 			}
 			else if (move_base_arrived && (current_node+1)==n_nodes-1) {
+				is_moving=false;
 				task_completed=true;
 			}
 		
