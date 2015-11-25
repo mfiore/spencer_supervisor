@@ -270,13 +270,12 @@ bool moveToNext(geometry_msgs::Pose goal_pose, MoveBaseClient *move_base_client,
 	supervision_msgs::SupervisionStatus status_msg; 
 	ros::Rate r(3); 
 
-	ROS_INFO("Moving to next nexus nexis");
 	sendMoveBaseGoal(goal_pose,move_base_client);
 
 	bool is_moving=true;
 	if (symbolic_navigation) {
 		ROS_INFO("ROBOT_NAVIGATION Starting to move to %s",destination.c_str());
-		status_msg.status="Moving to "+destination;
+		status_msg.details="Moving to "+destination;
 	}
 	else {
 		ROS_INFO("ROBOT_NAVIGATION Starting to move to %f %f",goal_pose.position.x,
@@ -433,6 +432,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 				path_request.request.dest=location_destination;
 				if (calculate_path_client->call(path_request)) {
 					nodes=path_request.response.path;
+					n_nodes=nodes.size();
 				}
 				else {
 					ROS_ERROR("ROBOT_NAVIGATION Failed to calculate path");
@@ -456,15 +456,17 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 	if (symbolic_navigation && nodes.size()>0 || poses.size()>0 && !symbolic_navigation) {
 
 		//switch map to the first one, if we have symbolic navigation
-		if (current_node<n_nodes && symbolic_navigation==true) {
-			ROS_INFO("ROBOT_NAVIGATION Switching to map %s %s",nodes[current_node].c_str(),nodes[current_node+1].c_str());
-			bool switch_map_error=switchMap(nodes[current_node],nodes[current_node+1]);
-			if (!switch_map_error) { 
-				ROS_INFO("ROBOT_NAVIGATION Error when switching map");
-				got_error=true;
-			}
-		}
+
 		while (!task_completed && !got_error && !move_to_action_server->isPreemptRequested()) {
+			if (current_node<n_nodes && symbolic_navigation==true) {
+				ROS_INFO("ROBOT_NAVIGATION Switching to map %s %s",nodes[current_node].c_str(),nodes[current_node+1].c_str());
+				bool switch_map_error=switchMap(nodes[current_node],nodes[current_node+1]);
+				if (!switch_map_error) { 
+					ROS_INFO("ROBOT_NAVIGATION Error when switching map");
+					got_error=true;
+				}
+			}
+
 			geometry_msgs::Pose goal_pose;
 
 			//send the next goal, from the next node center or from the next coordinate.	
@@ -499,16 +501,6 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 				current_node++;
 				if (symbolic_navigation) {
 					ROS_INFO("ROBOT_NAVIGATION Reached node %s",nodes[current_node].c_str());
-							
-					ROS_INFO("ROBOT_NAVIGATION Switching to new map %s %s",nodes[current_node].c_str(),nodes[current_node+1].c_str());
-					if(switchMap(nodes[current_node],nodes[current_node+1])){
-						feedback.current_node=nodes[current_node];
-						move_to_action_server->publishFeedback(feedback);	
-					}
-					else {
-						ROS_INFO("ROBOT_NAVIGATION Error when switching map");
-						got_error=true;
-					}
 				}
 				else {
 					ROS_INFO("ROBOT_NAVIGATION Reached pose %f %f",poses[current_node].position.x,poses[current_node].position.y);
@@ -516,6 +508,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 					move_to_action_server->publishFeedback(feedback);	
 				}
 				if (current_node==n_nodes-1) {
+					ROS_INFO("ROBOT_NAVIGATION Reached last node");
 					task_completed=true;
 				}
 			}
@@ -524,6 +517,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 	else {
 		task_completed=true; //if there are no nodes in the path we're already arrived
 	}
+	ROS_INFO("ROBOT_NAVIGATION checking for final location");
 	//if we're reaching an entity in a location
 	if (task_completed && destination!=location_destination) {
 		ROS_INFO("ROBOT_NAVIGATION We're in the final node. Now we're heading to the linked entity %s",destination.c_str());
