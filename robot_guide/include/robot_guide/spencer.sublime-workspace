@@ -4,32 +4,492 @@
 		"selected_items":
 		[
 			[
+				"RO",
+				"ROS_INFO"
+			],
+			[
+				"Polygo",
+				"Polygon	(simple_agent_monitor.cpp)"
+			],
+			[
+				"geometry",
+				"geometry_msgs::Polygon"
+			],
+			[
+				"getLo",
+				"getLocationsAreas	(data_reader.cpp)"
+			],
+			[
+				"Polygon",
+				"PolygonMap"
+			],
+			[
+				"Poly",
+				"PolygonMap"
+			],
+			[
+				"geometr",
+				"geometry_msgs::Polygon"
+			],
+			[
+				"location",
+				"location_areas_	(data_reader.h)"
+			],
+			[
+				"sit",
+				"situation_assessment_msgs	(spencer_symbolic_map.cpp)"
+			],
+			[
+				"geometry_msgs",
+				"geometry_msgs::Polygon	(spencer_symbolic_map.cpp)"
+			],
+			[
+				"NamedPo",
+				"NamedPoseList	(spencer_symbolic_map.cpp)"
+			],
+			[
+				"situ",
+				"situation_assessment_msgs"
+			],
+			[
+				"simulat",
+				"simulation_mode"
+			],
+			[
+				"move_base_",
+				"move_base_arrived"
+			],
+			[
+				"guide",
+				"guideGroup"
+			],
+			[
+				"client_",
+				"client_status_socket_"
+			],
+			[
+				"socket_",
+				"socket_status"
+			],
+			[
+				"menu",
+				"menuCommand"
+			],
+			[
+				"getsta",
+				"getStatusLoop"
+			],
+			[
+				"mutex_",
+				"mutex_status_"
+			],
+			[
+				"guide_status",
+				"guide_status_	(status_manager.h)"
+			],
+			[
+				"mutex_g",
+				"mutex_guide_status_	(status_manager.cpp)"
+			],
+			[
+				"database",
+				"database_service_"
+			],
+			[
+				"waitFor",
+				"waitForExistence	(robot_guide.cpp)"
+			],
+			[
+				"datab",
+				"database_service_	(status_manager.h)"
+			],
+			[
+				"data",
+				"database_service_	(status_manager.h)"
+			],
+			[
+				"node",
+				"node_handle_"
+			],
+			[
+				"robot_",
+				"robot_name_	(status_manager.h)"
+			],
+			[
+				"situat",
+				"situation_assessment_msgs	(spencer_goal_manager.cpp)"
+			],
+			[
+				"node_a",
+				"node_handle_"
+			],
+			[
+				"node_ha",
+				"node_handle_"
+			],
+			[
+				"move_to",
+				"move_to_client_"
+			],
+			[
+				"ROS_",
+				"ROS_INFO"
+			],
+			[
+				"mutex",
+				"mutex_command_"
+			],
+			[
+				"ROS",
+				"ROS_INFO"
+			],
+			[
+				"for",
+				"foreach	(agent_monitors.h)"
+			],
+			[
+				"condition",
+				"condition_new_command_"
+			],
+			[
+				"sho",
+				"should_quit_"
+			],
+			[
+				"comma",
+				"command_"
+			],
+			[
+				"sock",
+				"socket_command"
+			],
+			[
+				"hostn",
+				"host_name_"
+			],
+			[
+				"connect",
+				"connectTo"
+			],
+			[
+				"socket",
+				"socket_change"
+			],
+			[
+				"client",
+				"client_command_socket_"
+			],
+			[
+				"cleint",
+				"client_command_socket_"
+			],
+			[
+				"command",
+				"client_command_socket_"
+			],
+			[
+				"change",
+				"changeLoop"
+			],
+			[
+				"client_c",
+				"client_change_socket_"
+			],
+			[
+				"port",
+				"port_change"
+			],
+			[
+				"por",
+				"port_command"
+			],
+			[
+				"infor",
+				"informAndGuide"
+			],
+			[
+				"has",
+				"has_finished"
+			],
+			[
+				"guide_group",
+				"guide_group_client_"
+			],
+			[
+				"newso",
+				"newsockfd_"
+			],
+			[
+				"guide_gr",
+				"guide_group_client_"
+			],
+			[
+				"info",
+				"inform_gate_change"
+			],
+			[
+				"a_p",
+				"a_parameter"
+			],
+			[
+				"moveT",
+				"moveToDestination"
+			],
+			[
+				"waitFo",
+				"waitForResult"
+			],
+			[
+				"move_ot",
+				"move_to_client_"
+			],
+			[
+				"status_",
+				"status_pub_"
+			],
+			[
+				"check",
+				"check_status_"
+			],
+			[
+				"destina",
+				"destination"
+			],
+			[
+				"move_base",
+				"move_base_arrived"
+			],
+			[
+				"move_b",
+				"move_base_client"
+			],
+			[
+				"agents",
+				"agents_to_find"
+			],
+			[
+				"node_",
+				"node_handle_	(mainwindow.h)"
+			],
+			[
+				"label",
+				"label_status_guiding	(mainwindow.ui)"
+			],
+			[
+				"first",
+				"first_feedback_"
+			],
+			[
+				"supervis",
+				"supervision_msgs	(mainwindow.h)"
+			],
+			[
+				"mission",
+				"mission_action_server"
+			],
+			[
+				"supervisi",
+				"supervision_msgs"
+			],
+			[
+				"superv",
+				"supervision_msgs	(mainwindow.h)"
+			],
+			[
+				"pause_s",
+				"pause_supervision_client_	(mainwindow.h)"
+			],
+			[
+				"supervisio",
+				"supervisionStatusCallback	(mainwindow.h)"
+			],
+			[
+				"MOC",
+				"MOC_SRC_H"
+			],
+			[
+				"delta_",
+				"delta_distance_"
+			],
+			[
+				"getGroup",
+				"getGroupIsMoving"
+			],
+			[
+				"observation",
+				"observation_manager"
+			],
+			[
+				"obser",
+				"observation_manager"
+			],
+			[
+				"obse",
+				"observation_manager"
+			],
+			[
+				"geometry_",
+				"geometry_msgs::PoseStamped"
+			],
+			[
+				"agent",
+				"agent"
+			],
+			[
+				"agets",
+				"agents_in_group"
+			],
+			[
+				"set",
+				"setAgentsInGroup	(observation_manager.h)"
+			],
+			[
+				"observation_",
+				"observations_mode"
+			],
+			[
+				"observation_m",
+				"observation_mode"
+			],
+			[
+				"sets",
+				"setSymbolicObservations"
+			],
+			[
+				"best_",
+				"best_agent"
+			],
+			[
+				"symbo",
+				"setSymbolicObservations	(observation_manager.h)"
+			],
+			[
+				"Obser",
+				"ObservationManager	(robot_guide.cpp)"
+			],
+			[
+				"Observation",
+				"ObservationManager::getSimpleObservations"
+			],
+			[
+				"agents_",
+				"agents_in_group"
+			],
+			[
+				"entit",
+				"entities_in_area"
+			],
+			[
+				"enti",
+				"entities_in_area"
+			],
+			[
+				"ori",
+				"orientation"
+			],
+			[
+				"simu",
+				"simulation_mode	(robot_navigation.cpp)"
+			],
+			[
+				"situatio",
+				"situation_assessment_msgs"
+			],
+			[
+				"switch_",
+				"switch_orientation"
+			],
+			[
+				"switch",
+				"switch_orientation"
+			],
+			[
+				"Swit",
+				"SwitchOrientation"
+			],
+			[
+				"this",
+				"this_entity_pose"
+			],
+			[
+				"entity",
+				"entity_name]=area"
+			],
+			[
+				"wait",
+				"waitForResult"
+			],
+			[
+				"move_",
+				"move_to_client"
+			],
+			[
+				"mute",
+				"mutex_guide_group"
+			],
+			[
+				"status",
+				"status_msg"
+			],
+			[
+				"super",
+				"supervision_msgs"
+			],
+			[
+				"SI",
+				"SIMPLE_AGENT_MONITOR"
+			],
+			[
+				"Empty",
+				"EmptyRequest	(simple_agent_monitor.cpp)"
+			],
+			[
+				"Empt",
+				"EmptyRequest"
+			],
+			[
+				"predic",
+				"predicate_try"
+			],
+			[
+				"res_",
+				"res_predicate_string"
+			],
+			[
+				"loca",
+				"location_destination"
+			],
+			[
+				"geoetr",
+				"geometry_msgs::Point32"
+			],
+			[
+				"geoetry",
+				"geometry_msgs::Pose"
+			],
+			[
+				"robot_a",
+				"robot_areas"
+			],
+			[
+				"Geom",
+				"GeometryPolygonMap"
+			],
+			[
+				"found",
+				"found_path"
+			],
+			[
+				"desi",
+				"destination"
+			],
+			[
 				"getent",
 				"getEntityPoses	(agent_monitors.h)"
 			],
 			[
-				"geoetr",
-				"geometry_msgs::Pose"
-			],
-			[
-				"location",
-				"location_poses"
-			],
-			[
-				"situat",
-				"situation_assessment_msgs	(simple_agent_monitor.cpp)"
-			],
-			[
 				"locat",
 				"location_poses"
-			],
-			[
-				"loca",
-				"locations_client_	(data_reader.h)"
-			],
-			[
-				"situatio",
-				"situation_assessment_msgs::Fact"
 			],
 			[
 				"Entityap",
@@ -38,10 +498,6 @@
 			[
 				"task",
 				"task_completed"
-			],
-			[
-				"move_b",
-				"move_base_arrived"
 			],
 			[
 				"symbolic",
@@ -58,712 +514,64 @@
 			[
 				"desti",
 				"destiantion"
-			],
-			[
-				"dest",
-				"destination"
-			],
-			[
-				"destinati",
-				"destination_type"
-			],
-			[
-				"get",
-				"getEntityType"
-			],
-			[
-				"next",
-				"next_area"
-			],
-			[
-				"robot_",
-				"robot_location"
-			],
-			[
-				"sym",
-				"symbolic_navigation"
-			],
-			[
-				"mutex",
-				"mutex_location"
-			],
-			[
-				"has",
-				"hasArea"
-			],
-			[
-				"getP",
-				"getPose"
-			],
-			[
-				"pose",
-				"pose"
-			],
-			[
-				"ROS_",
-				"ROS_WARN"
-			],
-			[
-				"geometry",
-				"geometry_msgs::Pose"
-			],
-			[
-				"geometr",
-				"geometry_msgs::Pose"
-			],
-			[
-				"wait",
-				"waitForExistence"
-			],
-			[
-				"simple_",
-				"simple_database_client"
-			],
-			[
-				"situation_",
-				"situation_assessment"
-			],
-			[
-				"gate_",
-				"gate_b_"
-			],
-			[
-				"build",
-				"build_depend"
-			],
-			[
-				"move_to",
-				"move_to_client	(robot_guide.cpp)"
-			],
-			[
-				"move_base",
-				"move_base_client"
-			],
-			[
-				"move_ba",
-				"move_base_client"
-			],
-			[
-				"ispre",
-				"isPreemptRequested"
-			],
-			[
-				"chck",
-				"check_status"
-			],
-			[
-				"control_s",
-				"control_speed_client=n"
-			],
-			[
-				"set_dr",
-				"set_driving_direction_client"
-			],
-			[
-				"simulat",
-				"simulation_mode"
-			],
-			[
-				"guide_",
-				"guide_action_server"
-			],
-			[
-				"is",
-				"isStopped"
-			],
-			[
-				"isB",
-				"isBatteryLow"
-			],
-			[
-				"MoveTo",
-				"MoveToClient"
-			],
-			[
-				"lock",
-				"lock_guard	(check_status.h)"
-			],
-			[
-				"plann",
-				"planner_blocked_"
-			],
-			[
-				"planner",
-				"plannerBlockedCallback	(check_status.h)"
-			],
-			[
-				"move_",
-				"move_base_client"
-			],
-			[
-				"check",
-				"check_status"
-			],
-			[
-				"pause_",
-				"pause_supervision"
-			],
-			[
-				"use_",
-				"use_driving_direction"
-			],
-			[
-				"guide_group",
-				"guide_group_condition"
-			],
-			[
-				"waitF",
-				"waitForServer	(robot_guide.cpp)"
-			],
-			[
-				"seconds",
-				"seconds_to_wait_"
-			],
-			[
-				"supervisi",
-				"supervision_timer"
-			],
-			[
-				"super",
-				"supervision_timer"
-			],
-			[
-				"Supervisio",
-				"SupervisionTimer"
-			],
-			[
-				"seconds_",
-				"seconds_to_wait_	(supervision_timer.h)"
-			],
-			[
-				"distance",
-				"distance"
-			],
-			[
-				"best_",
-				"best_agent_name_	(observation_manager.h)"
-			],
-			[
-				"best",
-				"best_agent_name_	(observation_manager.h)"
-			],
-			[
-				"robot",
-				"robot_name"
-			],
-			[
-				"is",
-				"is_moving"
-			],
-			[
-				"group_i",
-				"group_is_moving_"
-			],
-			[
-				"ori",
-				"orientation_"
-			],
-			[
-				"delta_d",
-				"delta_distance"
-			],
-			[
-				"delta",
-				"delta_distance_"
-			],
-			[
-				"simple",
-				"simple_mode_"
-			],
-			[
-				"best_agent",
-				"best_agent"
-			],
-			[
-				"toward",
-				"towardRobot"
-			],
-			[
-				"agent",
-				"agent_observations"
-			],
-			[
-				"delta_di",
-				"delta_distance_num"
-			],
-			[
-				"del",
-				"delta_distance"
-			],
-			[
-				"geometry",
-				"geometry_msgs::Point32"
-			],
-			[
-				"rotate",
-				"rotatePoint	(spencer_bridge.cpp)"
-			],
-			[
-				"entity",
-				"entity_areas"
-			],
-			[
-				"update",
-				"updateEntityAreas"
-			],
-			[
-				"sim",
-				"simple_mode"
-			],
-			[
-				"spee",
-				"speed_action"
-			],
-			[
-				"guide_",
-				"guide_action"
-			],
-			[
-				"observat",
-				"observation_manager"
-			],
-			[
-				"mutex",
-				"mutex_simple_group_following_"
-			],
-			[
-				"Obser",
-				"ObservationManager::getTimer"
-			],
-			[
-				"mutex_",
-				"mutex_simple_group_following_	(observation_manager.h)"
-			],
-			[
-				"si",
-				"simple_mode"
-			],
-			[
-				"simpl",
-				"simple_mode_"
-			],
-			[
-				"v",
-				"value"
-			],
-			[
-				"battery",
-				"battery_low_"
-			],
-			[
-				"use",
-				"use_map_switching"
-			],
-			[
-				"geoem",
-				"geometry_msgs::Point"
-			],
-			[
-				"geometry_",
-				"geometry_msgs"
-			],
-			[
-				"situa",
-				"situation_assessment_msgs"
-			],
-			[
-				"situ",
-				"situation_assessment_msgs"
-			],
-			[
-				"get_",
-				"get_map_request"
-			],
-			[
-				"get_s",
-				"get_symbolic_map_client"
-			],
-			[
-				"calcula",
-				"calculate_path_client"
-			],
-			[
-				"calculate_",
-				"calculate_path_client"
-			],
-			[
-				"calculat",
-				"calculate_path"
-			],
-			[
-				"des",
-				"destination"
-			],
-			[
-				"dest",
-				"dest_node=label_to_index"
-			],
-			[
-				"sy",
-				"symbolic_map"
-			],
-			[
-				"super",
-				"supervision_msgs::CalculatePath::Request"
-			],
-			[
-				"label",
-				"label_to_index"
-			],
-			[
-				"sup",
-				"supervision_msgs::CalculatePath::Request"
-			],
-			[
-				"vertex",
-				"vertexs"
-			],
-			[
-				"spencer",
-				"spencer_symbolic_map	(node_info.cpp)"
-			],
-			[
-				"destiat",
-				"destinations"
-			],
-			[
-				"destin",
-				"destination	(Edge.msg)"
-			],
-			[
-				"map_in",
-				"map_info	(spencer_map.h)"
-			],
-			[
-				"spence",
-				"spencer_symbolic_map"
-			],
-			[
-				"geometr",
-				"geometry_msgs::Point"
-			],
-			[
-				"situatio",
-				"situation_assessment_msgs"
-			],
-			[
-				"edge",
-				"edge_element=e"
-			],
-			[
-				"First",
-				"FirstChildElement"
-			],
-			[
-				"g",
-				"graph	(spencer_symbolic_map.cpp)"
-			],
-			[
-				"situat",
-				"situation_assessment	(robot_navigation.cpp)"
-			],
-			[
-				"guide_ac",
-				"guide_action_server"
-			],
-			[
-				"geome",
-				"geometry_msgs::Pose"
-			],
-			[
-				"current",
-				"current_node"
-			],
-			[
-				"pos",
-				"position"
-			],
-			[
-				"n_",
-				"n_nodes"
-			],
-			[
-				"move",
-				"move_to"
-			],
-			[
-				"curre",
-				"current_node"
-			],
-			[
-				"last",
-				"last_pose"
-			],
-			[
-				"move_tpo",
-				"move_to_pose_client"
-			],
-			[
-				"co",
-				"coordinates"
-			],
-			[
-				"superv",
-				"supervision_msgs"
-			],
-			[
-				"navi",
-				"navigation_mode"
-			],
-			[
-				"move_to",
-				"move_to_action_server"
-			],
-			[
-				"poses",
-				"poses"
-			],
-			[
-				"has_",
-				"has_arrived"
-			],
-			[
-				"move_b",
-				"move_base_error"
-			],
-			[
-				"found_",
-				"found_elements"
-			],
-			[
-				"infor",
-				"information_screens"
-			],
-			[
-				"obj",
-				"object_types"
-			],
-			[
-				"old_",
-				"old_fact_list"
-			],
-			[
-				"remove_",
-				"remove_database_client"
-			],
-			[
-				"Serv",
-				"ServiceClient"
-			],
-			[
-				"database",
-				"add_database_client"
-			],
-			[
-				"to_",
-				"to_add"
-			],
-			[
-				"ol_",
-				"old_fact_found"
-			],
-			[
-				"old",
-				"old_fact_list"
-			],
-			[
-				"old_fa",
-				"old_fact_list"
-			],
-			[
-				"fact",
-				"factList"
-			],
-			[
-				"situation_asse",
-				"situation_assessment_msgs"
-			],
-			[
-				"po",
-				"position"
-			],
-			[
-				"object_",
-				"object_poses_	(tf_bridge.cpp)"
-			],
-			[
-				"geometry_msg",
-				"geometry_msgs::Point32"
-			],
-			[
-				"vertex_n",
-				"vertex_node"
-			],
-			[
-				"anno",
-				"annotation_node"
-			],
-			[
-				"annot",
-				"annotation"
-			],
-			[
-				"class",
-				"classDoc"
-			],
-			[
-				"main",
-				"main_doc_name_"
-			],
-			[
-				"main_",
-				"main_doc_name_"
-			],
-			[
-				"geoe",
-				"geometry_msgs::Polygon::ConstPtr	(area_visual.cpp)"
-			],
-			[
-				"sit",
-				"situation_assessment_msgs::AreaList"
-			],
-			[
-				"visualize_",
-				"visualize_situation	(visualize_areas.cpp)"
-			],
-			[
-				"visual",
-				"visuals_"
-			],
-			[
-				"Area",
-				"AreaDisplay	(area_display.h)"
-			],
-			[
-				"ge",
-				"geometry_msgs::Polygon::ConstPtr	(area_visual.h)"
-			],
-			[
-				"geom",
-				"geometry_msgs"
-			],
-			[
-				"area",
-				"areaPublisher=node_handle"
-			],
-			[
-				"poly",
-				"polygon_list"
-			],
-			[
-				"pol",
-				"polygon_stamped"
-			],
-			[
-				"visua",
-				"visualize_areas	(visualize_areas.h)"
-			],
-			[
-				"visuali",
-				"visualize_areas	(visualize_areas.cpp)"
-			],
-			[
-				"Visua",
-				"VisualizeAreas"
-			],
-			[
-				"vis",
-				"visualize_situation"
-			],
-			[
-				"visu",
-				"VisualizeAreas"
-			],
-			[
-				"Visualize",
-				"VisualizeAreasVisual	(visualize_areas_display.h)"
-			],
-			[
-				"polgyon",
-				"polygon_stamped_map"
-			],
-			[
-				"getAgent",
-				"getAgentGroups	(data_reader.h)"
-			],
-			[
-				"Entity",
-				"EntityMap"
-			],
-			[
-				"Enti",
-				"EntityMap	(data_reader.h)"
-			],
-			[
-				"Polygon",
-				"PolygonMap"
-			],
-			[
-				"geometry_msgs",
-				"geometry_msgs::Pose	(entity.h)"
-			],
-			[
-				"Entit",
-				"EntityMap::iterator"
-			],
-			[
-				"objecT",
-				"object_poses_"
-			],
-			[
-				"build",
-				"build_depend"
-			],
-			[
-				"getgroup",
-				"getGroupPoses	(data_reader.h)"
-			],
-			[
-				"Polygo",
-				"PolygonMap"
-			],
-			[
-				"Buffer",
-				"BufferMap::iterator"
-			],
-			[
-				"Buffe",
-				"BufferMap::iterator"
-			],
-			[
-				"mutex_ro",
-				"mutex_robot_poses_	(DataReader.h)"
-			],
-			[
-				"agent_",
-				"agent_groups_map_	(DataReader.h)"
-			],
-			[
-				"prese",
-				"present_groups"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/src/robot_guide.cpp",
+			"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/src/spencer_symbolic_map.cpp",
 			"settings":
 			{
-				"buffer_size": 15834,
+				"buffer_size": 3946,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/src/observation_manager.cpp",
+			"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_navigation/src/robot_navigation.cpp",
 			"settings":
 			{
-				"buffer_size": 9075,
+				"buffer_size": 21030,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_agent_monitor/src/simple_agent_monitor.cpp",
+			"settings":
+			{
+				"buffer_size": 13727,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_status/src/check_status.cpp",
+			"settings":
+			{
+				"buffer_size": 3094,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_status/include/spencer_status/check_status.h",
+			"settings":
+			{
+				"buffer_size": 1349,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/launch/spencer_map.launch",
+			"settings":
+			{
+				"buffer_size": 184,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_human_estimation/launch/spencer_human_estimation.launch",
+			"settings":
+			{
+				"buffer_size": 732,
 				"line_ending": "Unix"
 			}
 		},
@@ -771,15 +579,45 @@
 			"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/situation_assessment_params/situation_assessment_config.yaml",
 			"settings":
 			{
-				"buffer_size": 606,
+				"buffer_size": 971,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "observation_manager.h",
+			"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/launch/spencer_symbolic_map.launch",
 			"settings":
 			{
-				"buffer_size": 1671,
+				"buffer_size": 679,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/LAAS_new/LAAS_new_1.xml",
+			"settings":
+			{
+				"buffer_size": 177,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "<?xml version=\"1.0\" ?>\n<project>\n	<name>LAAS_new</name>\n	<map>\n		<path>LAAS_new.pgm</path>\n		<resolution>0.05</resolution>\n		<origin>\n			<x>-40.0</x>\n			<y>-40.0</y>\n		</origin>\n	</map>\n	<classes>/home/tzkr/temp/SPENCER/LAAS_new_classes.xml</classes>\n	<parts>/home/tzkr/temp/SPENCER/LAAS_new_parts.xml</parts>\n	<graph>/home/tzkr/temp/SPENCER/LAAS_new_graph.xml</graph>\n</project>\n",
+			"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/LAAS_new/LAAS_new.xml",
+			"file_size": 396,
+			"file_write_time": 130892011830000000,
+			"settings":
+			{
+				"buffer_size": 380,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "image: LAAS_new.png\nresolution: 0.05\norigin: [-40, -40, 0.0]\noccupied_thresh: 0.5\nfree_thresh: 0.5\nnegate: 0\n",
+			"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/LAAS_new/LAAS_new.yaml",
+			"file_size": 125,
+			"file_write_time": 130892105120000000,
+			"settings":
+			{
+				"buffer_size": 109,
 				"line_ending": "Unix"
 			}
 		}
@@ -791,10 +629,18 @@
 	"build_varint": "",
 	"command_palette":
 	{
-		"height": 392.0,
-		"last_filter": "git st",
+		"height": 243.0,
+		"last_filter": "branch",
 		"selected_items":
 		[
+			[
+				"branch",
+				"Git: Change Branch"
+			],
+			[
+				"git",
+				"Git: Graph All"
+			],
 			[
 				"git st",
 				"Git: Status"
@@ -847,147 +693,149 @@
 	[
 		"/home/mfiore/ros_workspaces/my_spencer_ws",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/data_bridges",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/appl",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/appl/srv",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/supervision_msgs",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/supervision_msgs/msg"
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/LAAS_new",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/src",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_navigation/src",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_goal_manager",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_goal_manager/src"
 	],
 	"file_history":
 	[
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/common_parameters/common_config.yaml",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/launch/robot_guide.launch",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_status/CMakeLists.txt",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_status_simulator/CMakeLists.txt",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/navigation_planner/CMakeLists.txt",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/supervision_parameters/supervision_config.yaml",
-		"/home/mfiore/pomdpModels/icsr/guide2.pomdpx",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/situation_assessment_params/situation_assessment_config.yaml",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/utilities/tf_joypad/launch/launch_joypad.launch",
-		"/home/mfiore/pomdpModels/icsr/guide.pomdpx",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/include/robot_guide/observation_manager.h",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/data_bridges/spencer_bridge/src/spencer_bridge.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/src/observation_manager.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_agent_monitor/src/simple_agent_monitor.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/launch/robot_guide_sim.launch",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/LAAS_new/LAAS_new_0.xml",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/LAAS_new/LAAS_new_0_1.yml",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/LAAS_new/LAAS_new_1_2.yml",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/LAAS_new/LAAS_new_3_0.yml",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/launch/spencer_symbolic_map.launch",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/src/spencer_map.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_agent_monitor/src/simple_agent_monitor.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/include/spencer_symbolic_map/node_info.h",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/launch/robot_guide.launch",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_navigation/launch/robot_navigation.launch",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_human_estimation/launch/spencer_human_estimation.launch",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_agent_monitor/include/simple_agent_monitor/entity.h",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_agent_monitor/CMakeLists.txt",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/CMakeLists.txt",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/situation_assessment_msgs/srv/AddArea.srv",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_human_estimation/src/spencer_human_estimation.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/src/robot_guide.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_database/src/database.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_database/src/simple_database.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/spencer_tests",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/data_bridges/data_lib/include/data_lib/data_lib.h",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/data_bridges/data_lib/CMakeLists.txt",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_agent_monitor/include/simple_agent_monitor/data_reader.h",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_agent_monitor/src/data_reader.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/situation_assessment_msgs/msg/NamedPose.msg",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/situation_assessment_msgs/srv/GetLocations.srv",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/situation_assessment_msgs/msg/NamedPoseList.msg",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_integration/robot_guide.launch",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/situation_assessment_msgs/msg/AreaList.msg",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/launch/robot_guide_sim.launch",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/navigation_planner/src/navigation_planner.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/data_bridges/spencer_bridge/src/spencer_bridge.cpp",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/data_bridges/data_lib/src/data_lib.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_navigation/src/robot_navigation.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/include/spencer_symbolic_map/spencer_map.h",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/situation_assessment_params/situation_assessment_config.yaml",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_integration/supervision_config.yaml",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_agent_monitor/src/agent_monitors.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/src/robot_guide.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_navigation/src/robot_navigation.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/src/spencer_symbolic_map.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/klm_fake/src/main.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/src/supervision_timer.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_goal_manager/src/status_manager.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/src/observation_manager.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_goal_manager/src/spencer_goal_manager.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_goal_manager/include/spencer_goal_manager/status_manager.h",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/supervision_msgs/action/MoveTo.action",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/CMakeLists.txt",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_goal_manager/CMakeLists.txt",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_goal_manager/package.xml",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/situation_assessment_msgs/srv/QueryDatabase.srv",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_human_estimation/src/spencer_human_estimation.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/klm_fake/CMakeLists.txt",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/supervision_parameters/supervision_config.yaml",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_integration/situation_assessment_config.yaml",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/include/robot_guide/observation_manager.h",
+		"/home/mfiore/Documents/doc/articoliMiei/icra2016/main.tex",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/launch/spencer_map.launch",
+		"/media/F28633248632E8AD/review-2222.txt",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_agent_monitor/CMakeLists.txt",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_agent_monitor/include/simple_agent_monitor/agent_monitors.h",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/navigation_planner/CMakeLists.txt",
+		"/home/mfiore/Documents/doc/spencer_reports/D6.2/d6_2.tex",
+		"/home/mfiore/ros_workspaces/spencer_ws/src/spencer_soft/supervision_system/supervision/navigation_planner/CMakeLists.txt",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/supervision_msgs/msg/SupervisionStatus.msg",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/supervision_msgs/action/GuideGroup.action",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/toDo.txt",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_status/src/check_status.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_status/src/spencer_status.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_status/include/spencer_status/check_status.h",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_navigation/launch/robot_navigation_with_situation_assessment.launch",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_navigation/launch/robot_navigation_sim.launch",
+		"/home/mfiore/.bashrc",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/data_bridges/tf_bridge/include/tf_bridge/tf_bridge.h",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/data_bridges/tf_bridge/src/tf_bridge.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/common_parameters/common_config.yaml",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/data_bridges/tf_bridge/src/main.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/data_bridges/spencer_bridge/include/spencer_bridge/spencer_bridge.h",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/data_bridges/data_lib/include/data_lib/data_lib.h",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_gui/src/mainwindow.ui",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_gui/include/mainwindow.h",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_gui/src/mainwindow.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_gui/src/main.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/supervision_msgs/action/RobotMission.action",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/supervision_msgs/srv/ChangeDestination.srv",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/supervision_msgs/msg/SupervisionStopped.msg",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_gui/srv/SetStatus.srv",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_gui/CMakeLists.txt",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_gui/src/qt_spencer.pro",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/data_bridges/spencer_bridge/CMakeLists.txt",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/data_bridges/spencer_bridge/package.xml",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/data_bridges/spencer_bridge/src/main.cpp",
+		"/home/mfiore/ros_workspaces/spencer_ws/src/spencer_soft/navigation/srl_global_planner/src/srl_global_planner.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/utilities/tf_joypad/src/TfJoypad.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/situation_assessment_msgs/CMakeLists.txt",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/situation_assessment_msgs/srv/SwitchOrientation.srv",
+		"/home/mfiore/ros_workspaces/spencer_ws/src/spencer_soft/visualization/spencer_gui_simple/src/spencer_gui_simple/gui.py",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_database/src/simple_database.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/situation_assessment_msgs/srv/EmptyRequest.srv",
+		"/home/mfiore/ros_workspaces/hydro_ws/src/shary3/common_launch/LAAS-big-v2.yaml",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_agent_monitor/include/simple_agent_monitor/entity.h",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/situation_assessment_msgs/srv/DatabaseRequest.srv",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_database/src/database_element.cpp",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_database/include/simple_database/database_element.h",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/database",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_database/CMakeLists.txt",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_database/src/database_tester.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/situation_assessment_msgs/msg/Fact.msg",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_navigation/package.xml",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_navigation/CMakeLists.txt",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/common_lib/tinyxml2/package.xml",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/CMakeLists.txt",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/situation_assessment_msgs/srv/AddArea.srv",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/package.xml",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/common_parameters/package.xml",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_database/include/simple_database/database.h",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_status/src/check_status.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/utilities/tf_joypad/src/TfJoypad.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_agent_monitor/include/simple_agent_monitor/ring_buffer.h",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_status_simulator/src/robot_status_simulator.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_status/src/spencer_status.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/supervision_msgs/action/MoveTo.action",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_navigation/launch/robot_navigation_sim.launch",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/spencer_map_0_6.yml",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/navigation_planner/src/navigation_planner.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/src/pomdp_interface.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/include/robot_guide/supervision_timer.h",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/include/robot_guide/guide_pomdp.h",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/src/control_speed_pomdp.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/include/robot_guide/control_speed_pomdp.h",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_status/CMakeLists.txt",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_status_simulator/CMakeLists.txt",
+		"/home/mfiore/pomdpModels/icsr/guide2.pomdpx",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/utilities/tf_joypad/launch/launch_joypad.launch",
+		"/home/mfiore/pomdpModels/icsr/guide.pomdpx",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_database/src/database.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/spencer_tests",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/data_bridges/data_lib/CMakeLists.txt",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/spencer_map_0_6.yml",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/spencer_map.xml",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/spencer_map_parts.xml",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/spencer_map_information_screen.yml",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/spencer_map_7_4.yml",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/spencer_map_7.xml",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/spencer_map_6_7.yml",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/spencer_map_6.xml",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/spencer_map_5.xml",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/spencer_map_4_5.yml",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/spencer_map_4.xml",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/spencer_map_3_7.yml",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/spencer_map_3.xml",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/spencer_map_2_3.yml",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/spencer_map_2.xml",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/spencer_map_1_2.yml",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/spencer_map_1.xml",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/src/guide_pomdp.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/spencer_map_0.xml",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/spencer_map_0_1.yml",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/appl/src/Controller/controlpipe.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_navigation/launch/robot_navigation_with_situation_assessment.launch",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/situation_assessment_params/CMakeLists.txt",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/situation_assessment_params/package.xml",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/common_launch/parameters.yaml",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/common_parameters/common_parameters.yaml",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_agent_monitor/launch/launch_spencer_agent_monitor",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_navigation/CMakeLists.txt",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/supervision_msgs/srv/CalculatePath.srv",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_navigation/src/tinyxml2.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/src/spencer_symbolic_map.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/src/spencer_map.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/include/spencer_symbolic_map/spencer_map.h",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/data_bridges/spencer_bridge/package.xml",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/data_bridges/spencer_bridge/CMakeLists.txt",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/data_bridges/spencer_bridge/include/spencer_bridge/spencer_bridge.h",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/situation_assessment_msgs/msg/Edge.msg",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/supervision_msgs/CMakeLists.txt",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_agent_monitor/src/data_reader.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/navigation_planner/src/PathPlanner.cpp~",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/navigation_planner/src/path_planner.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/navigation_planner/package.xml",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/CMakeLists.txt",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/src/node_info.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/include/spencer_symbolic_map/node_info.h",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/situation_assessment_msgs/srv/GetMap.srv",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/situation_assessment_msgs/msg/Node.msg",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/situation_assessment_msgs/msg/Graph.msg",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/situation_assessment_msgs/CMakeLists.txt",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/package.xml",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/include/spencer_symbolic_map/map_info.h",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/common_lib/graph/include/Node.h",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/src/map_info.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/utilities/tinyxml2/src/tinyxml2.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/utilities/tinyxml2/CMakeLists.txt",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/navigation_planner/msg/Property.msg",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/supervision_msgs/msg/Edge.msg",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/navigation_planner/src/map_handler.cpp~",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/navigation_planner/src/TestGui.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/navigation_planner/src/PathPlannerOprs.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/spencer_symbolic_map",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/supervision_msgs/action/MoveToPose.action",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/supervision_msgs/action/GuideGroup.action",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/spencer_human_estimation/src/spencer_human_estimation.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_agent_monitor/src/SimpleAgentMonitor.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_agent_monitor/include/simple_agent_monitor/agent_monitors.h",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/data_bridges/tf_bridge/src/tf_bridge.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/data_bridges/tf_bridge/include/tf_bridge/tf_bridge.h",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/data_bridges/spencer_bridge/include/spencer_bridge/spencer_bridge.h",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/data_bridges/spencer_bridge/CMakeLists.txt",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/data_bridges/spencer_bridge/src/tinyxml2.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/data_bridges/spencer_bridge/src/spencer_bridge.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_navigation/src/spencer_map.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/visualize_situation/include/visualize_situation/area_display.h",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/visualize_situation/include/visualize_situation/area_visual.h",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/visualize_situation/CMakeLists.txt",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/visualize_situation/src/visualize_areas.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/visualize_situation/src/area_visual.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/visualize_situation/src/area_display.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/visualize_situation/plugin_description.xml",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/visualize_situation/include/visualize_situation/visualize_areas.h",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/situation_assessment_msgs/msg/AreaList.msg",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/visualize_situation/package.xml",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/visualize_situation/include/visualize_situation/visualize_areas_visual.h",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/visualize_situation/src/visualize_areas_display.cpp"
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/spencer_map_6.xml"
 	],
 	"find":
 	{
-		"height": 40.0
+		"height": 38.0
 	},
 	"find_in_files":
 	{
@@ -1001,134 +849,134 @@
 		"case_sensitive": false,
 		"find_history":
 		[
-			"best_agent",
-			"aget",
-			"orientation",
-			"simple_mode",
-			"agentobser",
-			"distance_num",
-			"delta_distance_num",
-			"rotatepoint",
-			"addarea",
-			"entity",
-			"entitymap",
-			"simplegroup",
-			"speed_action",
-			"speed",
-			"ros_info",
-			"getelement",
-			"get elements",
-			"query",
-			"received",
-			"Found fact",
-			"found fact",
-			"element",
-			"set_Drivin",
-			"set_driving",
-			"set_driving_direc",
-			"n_nodes",
-			"emergency switch",
-			"supervision_statu",
-			"ros_in",
-			"observation_manager",
-			"group ob",
-			"waiting for group",
-			"waiting for gropu",
-			"while",
-			"lock",
-			"while",
-			"in loop",
-			"waiting for system",
-			"while",
-			"getmap",
-			"switch_map",
-			"/home/mfiore/ros_workspaces/spencer_ws/src/spencer_soft/mapping/annotated_mapping/map_tool/",
-			"_map_map_",
-			"while",
-			"cannot",
-			"situation_assessment_params",
-			"robot_location",
-			"spencermap",
-			"calculate",
-			"nodes_",
-			"tinyxml",
-			"datareade",
-			"vi",
-			"num_vertices",
-			"d",
-			"map",
-			"build",
-			"mapinfo",
-			"edges",
-			"nodes",
-			"graph",
-			"map_info",
-			"MapInfo",
-			"map_info",
-			"mapInfo",
-			"addAreaClient",
-			"build_depend",
-			"movetopose",
-			"task_comp",
-			"addfact",
-			"quaterniontftomsg",
+			"areapub",
+			"pub",
+			"status_pub",
+			"reached node",
+			"movetonext",
+			"resol",
+			"areapublish",
 			"pose",
-			"IMU_DISPLAY",
-			"IMU_VISUAL",
-			"msg_areas",
-			"msg_areas_map",
-			"arealist",
-			"polygon_stamped_map",
-			"namespace",
-			"visualize_situation",
-			"POLYGON_DISPLAY",
-			"PolygonDisplay",
-			"Arrow",
-			"ImuVisual",
-			"IMU_VISUAL",
-			"ImuDisplay",
-			"VisualizeAreas",
-			"SITUATION_DISPLAY",
-			"ros_info",
-			"agents_pub",
-			"agent_pub",
-			"0000",
-			"7f45",
-			".first",
-			".second",
-			"FOR_EACH",
-			"entity2.second",
-			"entity2.first",
-			"entity1.second",
-			"entity2.second",
-			"entity1.second",
-			"entity1.first",
-			"msg->",
-			"group_sub",
-			"anglethreshold",
-			"entity_d",
-			"entity",
-			"entity_di",
-			"BufferMap",
-			"RingBuffer",
-			"BufferMap",
-			"namedpose",
-			"PoseMap",
-			"build",
-			"simple_human_estimation",
-			"annotations",
-			"data_reader",
-			"agent",
-			"agent2",
-			"agent1",
-			"deltadis",
-			"agent2",
-			"agent1",
-			"agent2",
-			"agent1",
-			"insert",
-			"agent_poses",
-			"SpencerReader"
+			"addarea",
+			"locationshelp",
+			"location",
+			"type",
+			"approach",
+			"wait_timer",
+			"e",
+			"guidegroup",
+			"moveto",
+			"statusloop",
+			"status_opp",
+			"sendresult",
+			"socket",
+			"isrunning",
+			"while",
+			"status_msg",
+			"status_pub_",
+			"guide_group_",
+			"changeloop",
+			"unknown comm",
+			"last_pose",
+			"details",
+			"FAILURE",
+			"result",
+			"status_msg.status",
+			"status",
+			"}\n",
+			"wait_timer",
+			"lock",
+			"mutex",
+			"switch",
+			"reached_next_area",
+			"task_comp",
+			"switchor",
+			"mutex",
+			"status_manager_",
+			"status_pub",
+			"port_status",
+			"port_change",
+			"port_command",
+			"guide_status",
+			"robot_location",
+			"change_gate",
+			"	this_pose.position.x=boost::lexical_cast<double>(scx)*resolution+map_origin_x;\n					this_pose.position.y=boost::lexical_cast<double>(scy)*resolution+map_origin_y;",
+			"movetodestin",
+			"input",
+			"error on binding",
+			"getinputloop",
+			"boost",
+			"timer",
+			"start",
+			"timer",
+			"switching to map",
+			"map",
+			"cout",
+			"fprintf",
+			"observabl",
+			"situation assessment",
+			"task_comple",
+			"delta_distance_",
+			"to_string",
+			"command",
+			"should",
+			"shouldquit",
+			"should_quit",
+			"connect",
+			"server",
+			"getparame",
+			"read",
+			"include",
+			"sendresult",
+			"sen",
+			"ROS_ERROR(\"",
+			"ROS_INFO(\"",
+			"result_",
+			"sockfd",
+			"newsockfd_",
+			"newsoc",
+			"newsockfd",
+			"guidegroup",
+			"ROS_ERR",
+			"stop",
+			"stopped",
+			"result",
+			"guide_group_condition",
+			"mutex_guide_group",
+			"is_guiding",
+			"move_to_client",
+			"guide_group_client",
+			"completed",
+			"next_area_",
+			"reached_next_area",
+			"movetonext",
+			"ispaused",
+			"paused",
+			"Supervision paused",
+			"hasmovebaseerror",
+			"simulation_mode",
+			"hassystemerror",
+			"r",
+			"status_msg",
+			"symbolic_navigation",
+			"symbolic_navigatoin",
+			"status_pub",
+			"check_status",
+			"robot_name",
+			"mutex_location",
+			"use_map_switching",
+			"next_area",
+			"robot_location",
+			"robot_areas",
+			"switch_map_client",
+			"simple_database_client",
+			"hasPaused",
+			"f",
+			"test_mode",
+			"sendmove",
+			"is_moving",
+			"moveto",
+			"ros_info"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1136,6 +984,62 @@
 		"regex": false,
 		"replace_history":
 		[
+			"FAILED",
+			"reached_next_area_",
+			"port_status_",
+			"port_change_",
+			"port_command_",
+			"cout",
+			"boost::lexical_cast<string>",
+			"ROS_ERROR(\"SPENCER_GOAL_MANAGER ",
+			"ROS_INFO(\"SPENCER_GOAL_MANAGER ",
+			"server_socket",
+			"client_command_socket_",
+			"client_socket_",
+			"ROS_ERROR",
+			"guide_group_condition_",
+			"guide_group_condition",
+			"mutex_guide_group_",
+			"is_guiding_",
+			"move_to_client_",
+			"guide_group_client_",
+			"simulation_mode_",
+			"status_pub_",
+			"check_status_",
+			"robot_name_",
+			"mutex_location_",
+			"use_map_switching_",
+			"next_area_",
+			"robot_location_",
+			"robot_areas_",
+			"switch_map_client_",
+			"simple_database_client_",
+			"isPaused",
+			"ROS_INFO(\"ROBOT_GUIDE ",
+			"ROS_INFO(\"OBSERVATION_MANAGER ",
+			"ROS_INFO(\"DATA_LIB   ",
+			"ROS_INFO(\"DATA_READER   ",
+			"ROS_INFO(\"SPENCER_SYMBOLIC_MAP  ",
+			"ROS_INFO(\" SPENCER_SYMBOLIC_MAP ",
+			"ROS_INFO(\" SPENCER_SYMBOLIC_MAP",
+			"ROS_INFO(\" NAVIGATION_PLANNER ",
+			"pause_guide",
+			"move_to_client",
+			"guide_group_client_",
+			".y",
+			"agents_to_find",
+			"agent",
+			"ROS_INFO(\"SIMPLE_AGENT_MONITOR ",
+			"ROS_INFO(\"SIMPLE_AGENT_MONITOR",
+			"ROS_INFO(\"SIMPLE_DATABASE ",
+			"ROS_INFO(\"SIMPLE_DATABASE",
+			"ROS_INFO(\"ROBOT_NAVIGATION ",
+			"ROS_ERROR",
+			"QueryDatabase",
+			"response",
+			"request",
+			"to",
+			"now",
 			"it->second",
 			"agent",
 			"best_agent.distance",
@@ -1207,91 +1111,35 @@
 			"objects",
 			"agents",
 			"object_list_",
-			"agent_list_",
-			"agent_name",
-			"ObservationDatabase",
-			"OBSERVATION_DATABASE",
-			"observed_group_",
-			"mutex_observations_",
-			"in_slow_area_",
-			"group_distance_",
-			"robot_name_",
-			"distance_",
-			"delta_distance_",
-			"group_to_observe_",
-			"run_depend",
-			"build_depend",
-			"Client",
-			"New_project_",
-			"map_tool/",
-			"map_tool",
-			".position",
-			"pose",
-			"integration_map",
-			"new_group_pose",
-			"GuideServer",
-			"guide_action_server",
-			"run",
-			"Succeeded",
-			"move_base_goal",
-			"group_distance",
-			"run",
-			"run_depend",
-			"ControlSpeedPomdp",
-			"_client",
-			"run",
-			"plan_manager",
-			"shary3_msgs",
-			"robot_name",
-			"situation_assessment_msgs",
-			"run",
-			"node_handle",
-			"situation_assessment_msgs",
-			"database_client",
-			"situation_assessment_msgs",
-			"plans_failed",
-			"plans_done",
-			"situation_assessment_msgs",
-			"run",
-			"situation_assessment_msgs",
-			"robotName",
-			"situation_assessment_msgs",
-			"result",
-			"run",
-			"situation_assessment_msgs",
-			"run_depend",
-			"shary3",
-			"shary3_msgs",
-			"simple_database",
-			"run"
+			"agent_list_"
 		],
 		"reverse": false,
 		"show_context": true,
 		"use_buffer2": true,
 		"whole_word": false,
-		"wrap": false
+		"wrap": true
 	},
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 2,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/src/robot_guide.cpp",
+					"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/src/spencer_symbolic_map.cpp",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 15834,
+						"buffer_size": 3946,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6800,
-								6800
+								727,
+								727
 							]
 						],
 						"settings":
@@ -1299,31 +1147,16 @@
 							"BracketHighlighterBusy": false,
 							"bh_regions":
 							[
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
 								"bh_regex",
 								"bh_regex_center",
 								"bh_regex_open",
 								"bh_regex_close",
 								"bh_regex_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
 								"bh_c_define",
 								"bh_c_define_center",
 								"bh_c_define_open",
@@ -1334,52 +1167,67 @@
 								"bh_unmatched_open",
 								"bh_unmatched_close",
 								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
 								"bh_default",
 								"bh_default_center",
 								"bh_default_open",
 								"bh_default_close",
 								"bh_default_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
 								"bh_square",
 								"bh_square_center",
 								"bh_square_open",
 								"bh_square_close",
-								"bh_square_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content"
+								"bh_square_content"
 							],
 							"syntax": "Packages/C++/C++.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 4237.0,
+						"translation.y": 80.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 11,
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/src/observation_manager.cpp",
+					"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_navigation/src/robot_navigation.cpp",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 9075,
+						"buffer_size": 21030,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3709,
-								3709
+								13125,
+								13125
 							]
 						],
 						"settings":
@@ -1387,31 +1235,16 @@
 							"BracketHighlighterBusy": false,
 							"bh_regions":
 							[
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
 								"bh_regex",
 								"bh_regex_center",
 								"bh_regex_open",
 								"bh_regex_close",
 								"bh_regex_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
 								"bh_c_define",
 								"bh_c_define_center",
 								"bh_c_define_open",
@@ -1422,52 +1255,155 @@
 								"bh_unmatched_open",
 								"bh_unmatched_close",
 								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
 								"bh_default",
 								"bh_default_center",
 								"bh_default_open",
 								"bh_default_close",
 								"bh_default_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
 								"bh_square",
 								"bh_square_center",
 								"bh_square_open",
 								"bh_square_close",
-								"bh_square_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content"
+								"bh_square_content"
 							],
 							"syntax": "Packages/C++/C++.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1910.0,
+						"translation.y": 8866.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_agent_monitor/src/simple_agent_monitor.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 13727,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								12420,
+								12420
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 6755.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
 					"type": "text"
 				},
 				{
-					"buffer": 2,
-					"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/situation_assessment_params/situation_assessment_config.yaml",
+					"buffer": 3,
+					"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_status/src/check_status.cpp",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 606,
+						"buffer_size": 3094,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								582,
-								582
+								1940,
+								1940
 							]
 						],
 						"settings":
@@ -1475,31 +1411,16 @@
 							"BracketHighlighterBusy": false,
 							"bh_regions":
 							[
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
 								"bh_regex",
 								"bh_regex_center",
 								"bh_regex_open",
 								"bh_regex_close",
 								"bh_regex_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
 								"bh_c_define",
 								"bh_c_define_center",
 								"bh_c_define_open",
@@ -1510,26 +1431,333 @@
 								"bh_unmatched_open",
 								"bh_unmatched_close",
 								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
 								"bh_default",
 								"bh_default_center",
 								"bh_default_open",
 								"bh_default_close",
 								"bh_default_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
 								"bh_square",
 								"bh_square_center",
 								"bh_square_open",
 								"bh_square_close",
-								"bh_square_content",
+								"bh_square_content"
+							],
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": -0.0,
+						"translation.y": 946.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_status/include/spencer_status/check_status.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1349,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1159,
+								1159
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
 								"bh_angle",
 								"bh_angle_center",
 								"bh_angle_open",
 								"bh_angle_close",
 								"bh_angle_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
 								"bh_single_quote",
 								"bh_single_quote_center",
 								"bh_single_quote_open",
 								"bh_single_quote_close",
-								"bh_single_quote_content"
+								"bh_single_quote_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": -0.0,
+						"translation.y": 249.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/launch/spencer_map.launch",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 184,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								171,
+								171
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 10,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_human_estimation/launch/spencer_human_estimation.launch",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 732,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/situation_assessment_params/situation_assessment_config.yaml",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 971,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								441,
+								441
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
 							],
 							"syntax": "Packages/YAML/YAML.tmLanguage",
 							"tab_size": 4,
@@ -1539,24 +1767,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 8,
 					"type": "text"
 				},
 				{
-					"buffer": 3,
-					"file": "observation_manager.h",
+					"buffer": 8,
+					"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/launch/spencer_symbolic_map.launch",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1671,
+						"buffer_size": 679,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1516,
-								1516
+								292,
+								292
 							]
 						],
 						"settings":
@@ -1564,31 +1792,16 @@
 							"BracketHighlighterBusy": false,
 							"bh_regions":
 							[
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
 								"bh_regex",
 								"bh_regex_center",
 								"bh_regex_open",
 								"bh_regex_close",
 								"bh_regex_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
 								"bh_c_define",
 								"bh_c_define_center",
 								"bh_c_define_open",
@@ -1599,35 +1812,311 @@
 								"bh_unmatched_open",
 								"bh_unmatched_close",
 								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
 								"bh_default",
 								"bh_default_center",
 								"bh_default_open",
 								"bh_default_close",
 								"bh_default_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
 								"bh_square",
 								"bh_square_center",
 								"bh_square_open",
 								"bh_square_close",
-								"bh_square_content",
+								"bh_square_content"
+							],
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/LAAS_new/LAAS_new_1.xml",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 177,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								53,
+								53
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
 								"bh_angle",
 								"bh_angle_center",
 								"bh_angle_open",
 								"bh_angle_close",
 								"bh_angle_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
 								"bh_single_quote",
 								"bh_single_quote_center",
 								"bh_single_quote_open",
 								"bh_single_quote_close",
-								"bh_single_quote_content"
+								"bh_single_quote_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
 							],
-							"syntax": "Packages/C++/C++.tmLanguage",
+							"syntax": "Packages/XML/XML.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/LAAS_new/LAAS_new.xml",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 380,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								71,
+								71
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"syntax": "Packages/XML/XML.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 825.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/LAAS_new/LAAS_new.yaml",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 109,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								7,
+								7
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"syntax": "Packages/YAML/YAML.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
 					"type": "text"
 				}
 			]
@@ -1635,7 +2124,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 32.0
+		"height": 31.0
 	},
 	"input":
 	{
@@ -1676,7 +2165,7 @@
 	"project": "spencer.sublime-project",
 	"replace":
 	{
-		"height": 74.0
+		"height": 70.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -1686,311 +2175,11 @@
 		"selected_items":
 		[
 			[
-				"situat",
-				"src/situation_assessment/situation_assessment_params/situation_assessment_config.yaml"
-			],
-			[
-				"obser",
-				"src/supervision/robot_guide/include/robot_guide/observation_manager.h"
-			],
-			[
-				"yaml",
-				"src/common_parameters/common_config.yaml"
-			],
-			[
-				"situatio",
-				"src/situation_assessment/situation_assessment_params/situation_assessment_config.yaml"
-			],
-			[
-				"tf_joy",
-				"src/utilities/tf_joypad/launch/launch_joypad.launch"
-			],
-			[
-				"observat",
-				"src/supervision/robot_guide/src/observation_manager.cpp"
-			],
-			[
-				"navigatoin_pl",
-				"src/supervision/navigation_planner/CMakeLists.txt"
-			],
-			[
-				"robot_stat",
-				"src/supervision/robot_status_simulator/CMakeLists.txt"
-			],
-			[
-				"spencer_stat",
-				"src/supervision/spencer_status/CMakeLists.txt"
-			],
-			[
-				"spencer_br",
-				"src/spencer_situation_assessment/data_bridges/spencer_bridge/src/spencer_bridge.cpp"
-			],
-			[
-				"robot_guide",
-				"src/supervision/robot_guide/launch/robot_guide.launch"
-			],
-			[
-				"superv",
-				"src/supervision/supervision_parameters/supervision_config.yaml"
-			],
-			[
-				"obse_",
-				"src/supervision/robot_guide/include/robot_guide/observation_manager.h"
-			],
-			[
-				"observation",
-				"src/supervision/robot_guide/src/observation_manager.cpp"
-			],
-			[
-				"robot_g",
-				"src/supervision/robot_guide/src/robot_guide.cpp"
-			],
-			[
-				"launch",
-				"src/supervision/robot_navigation/launch/robot_navigation.launch"
-			],
-			[
-				"simple_agen",
-				"src/situation_assessment/simple_agent_monitor/src/simple_agent_monitor.cpp"
-			],
-			[
-				"simple_",
-				"src/situation_assessment/simple_agent_monitor/CMakeLists.txt"
-			],
-			[
-				"cmakelist",
-				"src/CMakeLists.txt"
-			],
-			[
-				"supervision_c",
-				"src/supervision/supervision_parameters/supervision_config.yaml"
-			],
-			[
-				"simple_a",
-				"src/situation_assessment/simple_agent_monitor/src/simple_agent_monitor.cpp"
-			],
-			[
-				"data_lib",
-				"src/situation_assessment/data_bridges/data_lib/src/data_lib.cpp"
-			],
-			[
-				"spencer_hu",
-				"src/spencer_situation_assessment/spencer_human_estimation/launch/spencer_human_estimation.launch"
-			],
-			[
-				"agent_",
-				"src/situation_assessment/simple_agent_monitor/src/agent_monitors.cpp"
-			],
-			[
-				"database",
-				"src/situation_assessment/simple_database/src/database.cpp"
-			],
-			[
-				"siple_da",
-				"src/situation_assessment/simple_database/src/simple_database.cpp"
-			],
-			[
-				"database_ele",
-				"src/situation_assessment/simple_database/include/simple_database/database_element.h"
-			],
-			[
-				"eleent",
-				"src/situation_assessment/simple_database/src/database_element.cpp"
-			],
-			[
-				"database.",
-				"src/situation_assessment/simple_database/include/simple_database/database.h"
-			],
-			[
 				"simple",
-				"src/situation_assessment/simple_database/src/simple_database.cpp"
+				"src/situation_assessment/simple_agent_monitor/src/simple_agent_monitor.cpp"
 			],
 			[
-				"robot_navi",
-				"src/supervision/robot_navigation/launch/robot_navigation.launch"
-			],
-			[
-				"config",
-				"src/situation_assessment/situation_assessment_params/situation_assessment_config.yaml"
-			],
-			[
-				"spencer_symbo",
-				"src/spencer_situation_assessment/spencer_symbolic_map/launch/spencer_symbolic_map.launch"
-			],
-			[
-				"spencer_sit",
-				"src/spencer_situation_assessment/spencer_human_estimation/launch/spencer_human_estimation.launch"
-			],
-			[
-				"situ",
-				"src/situation_assessment/situation_assessment_params/situation_assessment_config.yaml"
-			],
-			[
-				"robot_status",
-				"src/supervision/robot_status_simulator/src/robot_status_simulator.cpp"
-			],
-			[
-				"tf_joypad",
-				"src/utilities/tf_joypad/src/TfJoypad.cpp"
-			],
-			[
-				"robot_n",
-				"src/supervision/robot_navigation/src/robot_navigation.cpp"
-			],
-			[
-				"robot_guide_",
-				"src/supervision/robot_guide/launch/robot_guide_sim.launch"
-			],
-			[
-				"spencer_hum",
-				"src/spencer_situation_assessment/spencer_human_estimation/launch/spencer_human_estimation.launch"
-			],
-			[
-				"robot_gude",
-				"src/supervision/robot_guide/launch/robot_guide.launch"
-			],
-			[
-				"supervision_msgs/move",
-				"src/supervision/supervision_msgs/action/MoveTo.action"
-			],
-			[
-				"spencer_status",
-				"src/supervision/spencer_status/src/spencer_status.cpp"
-			],
-			[
-				"robotna",
-				"src/supervision/robot_navigation/src/robot_navigation.cpp"
-			],
-			[
-				"robot_na",
-				"src/supervision/robot_navigation/src/robot_navigation.cpp"
-			],
-			[
-				"naviga",
-				"src/supervision/navigation_planner/src/navigation_planner.cpp"
-			],
-			[
-				"robot_nav",
-				"src/supervision/robot_navigation/launch/robot_navigation.launch"
-			],
-			[
-				"robot_gui",
-				"src/supervision/robot_guide/launch/robot_guide.launch"
-			],
-			[
-				"supervi",
-				"src/supervision/supervision_parameters/supervision_config.yaml"
-			],
-			[
-				"spencer_human",
-				"src/spencer_situation_assessment/spencer_human_estimation/launch/spencer_human_estimation.launch"
-			],
-			[
-				"roobt_g",
-				"src/supervision/robot_guide/launch/robot_guide_sim.launch"
-			],
-			[
-				"root",
-				"src/supervision/robot_guide/src/robot_guide.cpp"
-			],
-			[
-				"controlspe",
-				"src/supervision/robot_guide/src/control_speed_pomdp.cpp"
-			],
-			[
-				"guidepom",
-				"src/supervision/robot_guide/src/guide_pomdp.cpp"
-			],
-			[
-				"controlpi",
-				"src/supervision/appl/src/Controller/controlpipe.cpp"
-			],
-			[
-				"tf",
-				"src/utilities/tf_joypad/src/TfJoypad.cpp"
-			],
-			[
-				"navigation",
-				"src/supervision/navigation_planner/src/navigation_planner.cpp"
-			],
-			[
-				"calculate",
-				"src/supervision/supervision_msgs/srv/CalculatePath.srv"
-			],
-			[
-				"calculatep",
-				"src/supervision/supervision_msgs/srv/CalculatePath.srv"
-			],
-			[
-				"spencer_map.h",
-				"src/spencer_situation_assessment/spencer_symbolic_map/include/spencer_symbolic_map/spencer_map.h"
-			],
-			[
-				"paramete",
-				"src/common_launch/parameters.yaml"
-			],
-			[
-				"spencer_",
-				"src/spencer_situation_assessment/spencer_symbolic_map/src/spencer_map.cpp"
-			],
-			[
-				"navigatio",
-				"src/supervision/navigation_planner/src/navigation_planner.cpp"
-			],
-			[
-				"spencer_sy",
-				"src/spencer_situation_assessment/spencer_symbolic_map/src/spencer_symbolic_map.cpp"
-			],
-			[
-				"spencer_bridge",
-				"src/spencer_situation_assessment/data_bridges/spencer_bridge/package.xml"
-			],
-			[
-				"param",
-				"src/common_launch/parameters.yaml"
-			],
-			[
-				"common",
-				"src/common_launch/parameters.yaml"
-			],
-			[
-				"tf_br",
-				"src/situation_assessment/data_bridges/tf_bridge/src/tf_bridge.cpp"
-			],
-			[
-				"tf_bri",
-				"src/situation_assessment/data_bridges/tf_bridge/include/tf_bridge/tf_bridge.h"
-			],
-			[
-				"simple_age",
-				"src/situation_assessment/simple_agent_monitor/src/SimpleAgentMonitor.cpp"
-			],
-			[
-				"simple_agent_monitor.cpp",
-				"src/situation_assessment/simple_agent_monitor/src/SimpleAgentMonitor.cpp"
-			],
-			[
-				"data_bridge.h",
-				"src/situation_assessment/data_bridges/tf_bridge/include/tf_bridge/tf_bridge.h"
-			],
-			[
-				"data_lib.cpp",
-				"src/situation_assessment/data_bridges/data_lib/src/data_lib.cpp"
-			],
-			[
-				"tf_bridge.cpp",
-				"src/situation_assessment/data_bridges/tf_bridge/src/tf_bridge.cpp"
-			],
-			[
-				"simpleage",
-				"src/situation_assessment/simple_agent_monitor/src/SimpleAgentMonitor.cpp"
-			],
-			[
-				"spencer_status.c",
-				"src/supervision/spencer_status/src/spencer_status.cpp"
-			],
-			[
-				"check_stat",
+				"check_sta",
 				"src/supervision/spencer_status/include/spencer_status/check_status.h"
 			],
 			[
@@ -1998,204 +2187,504 @@
 				"src/supervision/spencer_status/src/check_status.cpp"
 			],
 			[
-				"robot_navcpp",
+				"yaml",
+				"src/situation_assessment/situation_assessment_params/situation_assessment_config.yaml"
+			],
+			[
+				"launch",
+				"src/spencer_situation_assessment/spencer_symbolic_map/launch/spencer_map.launch"
+			],
+			[
+				"robot_na",
 				"src/supervision/robot_navigation/src/robot_navigation.cpp"
 			],
 			[
-				"robotn",
-				"devel/lib/robot_navigation/robot_navigation"
+				"navi",
+				"src/supervision/robot_navigation/launch/robot_navigation.launch"
 			],
 			[
-				"contro_speed.h",
-				"src/supervision/robot_guide/include/robot_guide/control_speed_pomdp.h"
+				"data_r",
+				"src/situation_assessment/simple_agent_monitor/include/simple_agent_monitor/data_reader.h"
 			],
 			[
-				"guidepo",
-				"src/supervision/robot_guide/src/guide_pomdp.cpp"
+				"namedpo",
+				"src/situation_assessment/situation_assessment_msgs/msg/NamedPoseList.msg"
 			],
 			[
-				"controlspeed",
-				"src/supervision/robot_guide/src/control_speed_pomdp.cpp"
+				"getlo",
+				"src/situation_assessment/situation_assessment_msgs/srv/GetLocations.srv"
 			],
 			[
-				"observationma",
-				"src/supervision/robot_guide/src/observation_manager.cpp"
+				"data_reader",
+				"src/situation_assessment/simple_agent_monitor/include/simple_agent_monitor/data_reader.h"
 			],
 			[
-				"observation_manager.",
-				"src/supervision/robot_guide/include/robot_guide/observation_manager.h"
+				"nodeinfo",
+				"src/spencer_situation_assessment/spencer_symbolic_map/include/spencer_symbolic_map/node_info.h"
 			],
 			[
-				"robot_guide.cpp",
-				"src/supervision/robot_guide/src/robot_guide.cpp"
+				"area",
+				"src/situation_assessment/situation_assessment_msgs/msg/AreaList.msg"
 			],
 			[
-				"robot_guidecmakeli",
+				"robot_g",
+				"src/supervision/spencer_integration/robot_guide.launch"
+			],
+			[
+				"robot_guide_s",
+				"src/supervision/robot_guide/launch/robot_guide_sim.launch"
+			],
+			[
+				"robot_guide.",
+				"src/supervision/spencer_integration/robot_guide.launch"
+			],
+			[
+				"spencermap",
+				"src/spencer_situation_assessment/spencer_symbolic_map/src/spencer_map.cpp"
+			],
+			[
+				"navig",
+				"src/supervision/navigation_planner/src/navigation_planner.cpp"
+			],
+			[
+				"named",
+				"src/situation_assessment/situation_assessment_msgs/msg/NamedPoseList.msg"
+			],
+			[
+				"namedposeli",
+				"src/situation_assessment/situation_assessment_msgs/msg/NamedPoseList.msg"
+			],
+			[
+				"getloc",
+				"src/situation_assessment/situation_assessment_msgs/srv/GetLocations.srv"
+			],
+			[
+				"spencer_map.h",
+				"src/spencer_situation_assessment/spencer_symbolic_map/include/spencer_symbolic_map/spencer_map.h"
+			],
+			[
+				"getloca",
+				"src/situation_assessment/situation_assessment_msgs/srv/GetLocations.srv"
+			],
+			[
+				"data_",
+				"src/situation_assessment/simple_agent_monitor/src/data_reader.cpp"
+			],
+			[
+				"data_br",
+				"src/situation_assessment/data_bridges/data_lib/src/data_lib.cpp"
+			],
+			[
+				"spencer_br",
+				"src/spencer_situation_assessment/data_bridges/spencer_bridge/src/spencer_bridge.cpp"
+			],
+			[
+				"spencer_map",
+				"src/spencer_situation_assessment/spencer_symbolic_map/src/spencer_map.cpp"
+			],
+			[
+				"spencer_sy",
+				"src/spencer_situation_assessment/spencer_symbolic_map/src/spencer_symbolic_map.cpp"
+			],
+			[
+				"agent",
+				"src/situation_assessment/simple_agent_monitor/src/agent_monitors.cpp"
+			],
+			[
+				"robot_",
+				"src/supervision/robot_navigation/src/robot_navigation.cpp"
+			],
+			[
+				"ndoeinf",
+				"src/spencer_situation_assessment/spencer_symbolic_map/include/spencer_symbolic_map/node_info.h"
+			],
+			[
+				"planner",
+				"src/supervision/navigation_planner/src/navigation_planner.cpp"
+			],
+			[
+				"robot_n",
+				"src/supervision/robot_navigation/src/robot_navigation.cpp"
+			],
+			[
+				"timer",
+				"src/supervision/robot_guide/src/supervision_timer.cpp"
+			],
+			[
+				"movet",
+				"src/supervision/supervision_msgs/action/MoveTo.action"
+			],
+			[
+				"status_m",
+				"src/supervision/spencer_goal_manager/include/spencer_goal_manager/status_manager.h"
+			],
+			[
+				"spencer_oal",
+				"src/supervision/spencer_goal_manager/src/spencer_goal_manager.cpp"
+			],
+			[
+				"klm_fakemain",
+				"src/klm_fake/src/main.cpp"
+			],
+			[
+				"robot_guidecmake",
 				"src/supervision/robot_guide/CMakeLists.txt"
 			],
 			[
-				"pomdpinter",
-				"src/supervision/robot_guide/include/robot_guide/pomdp_interface.h"
+				"obser",
+				"src/supervision/robot_guide/src/observation_manager.cpp"
 			],
 			[
-				"controlpipe.cpp",
-				"src/supervision/appl/src/Controller/controlpipe.cpp"
+				"spencer_goa",
+				"src/supervision/spencer_goal_manager/src/spencer_goal_manager.cpp"
 			],
 			[
-				"controlp",
-				"src/supervision/appl/devel/lib/appl/controlpipe"
+				"klm_fake",
+				"src/klm_fake/src/main.cpp"
 			],
 			[
-				"applcmakel",
-				"src/supervision/appl/CMakeLists.txt"
+				"robot_nav",
+				"src/supervision/robot_navigation/src/robot_navigation.cpp"
 			],
 			[
-				"para",
-				"src/common_launch/parameters.yaml"
+				"observ",
+				"src/supervision/robot_guide/src/observation_manager.cpp"
 			],
 			[
-				"fact",
-				"src/situation_assessment/situation_assessment_msgs/msg/Fact.msg"
+				"query",
+				"src/situation_assessment/situation_assessment_msgs/srv/QueryDatabase.srv"
 			],
 			[
-				"fa",
-				"src/situation_assessment/situation_assessment_msgs/msg/FactList.msg"
+				"status_",
+				"src/supervision/spencer_goal_manager/src/status_manager.cpp"
 			],
 			[
-				"factli",
-				"src/situation_assessment/situation_assessment_msgs/msg/FactList.msg"
+				"spencer_goal_",
+				"src/supervision/spencer_goal_manager/package.xml"
 			],
 			[
-				"planre",
-				"shary3/shary3_msgs/msg/PlanReport.msg"
+				"spencer_sit",
+				"src/spencer_situation_assessment/spencer_human_estimation/src/spencer_human_estimation.cpp"
 			],
 			[
-				"sequentialplanac",
-				"shary3/shary3_msgs/msg/SequentialPlanAction.msg"
+				"spencer_hu",
+				"src/spencer_situation_assessment/spencer_human_estimation/src/spencer_human_estimation.cpp"
 			],
 			[
-				"sequentialpla",
-				"shary3/shary3_msgs/msg/SequentialPlanActionList.msg"
+				"spencer_human",
+				"src/spencer_situation_assessment/spencer_human_estimation/src/spencer_human_estimation.cpp"
 			],
 			[
-				"sequentialta",
-				"shary3/shary3_msgs/msg/SequentialTaskPlan.msg"
+				"spencer_goal",
+				"src/supervision/spencer_goal_manager/src/spencer_goal_manager.cpp"
 			],
 			[
-				"sequentialplan",
-				"shary3/shary3_msgs/msg/SequentialPlanActionList.msg"
+				"klm_fakemain.",
+				"src/klm_fake/src/main.cpp"
 			],
 			[
-				"sequentia",
-				"shary3/shary3_msgs/msg/SequentialTaskPlan.msg"
+				"klm_fame",
+				"src/klm_fake/CMakeLists.txt"
 			],
 			[
-				"managesequenti",
-				"shary3/shary3_msgs/action/ManageSequentialPlan.action"
+				"situat",
+				"src/supervision/spencer_integration/situation_assessment_config.yaml"
 			],
 			[
-				"plan_managerpa",
-				"shary3/plan_manager/package.xml"
+				"obs",
+				"src/supervision/robot_guide/src/observation_manager.cpp"
 			],
 			[
-				"shary3pa",
-				"shary3/plan_manager/package.xml"
+				"superv",
+				"src/supervision/supervision_parameters/supervision_config.yaml"
 			],
 			[
-				"managesequen",
-				"shary3/shary3_msgs/action/ManageSequentialPlan.action"
+				"situ",
+				"src/situation_assessment/situation_assessment_params/situation_assessment_config.yaml"
 			],
 			[
-				"sequentialtask",
-				"shary3/shary3_msgs/msg/SequentialTaskPlan.msg"
+				"robot",
+				"src/supervision/robot_guide/src/robot_guide.cpp"
 			],
 			[
-				"managesequential",
-				"shary3/shary3_msgs/action/ManageSequentialPlan.action"
+				"robot_guide",
+				"src/supervision/robot_guide/launch/robot_guide.launch"
 			],
 			[
-				"manageseq",
-				"shary3/plan_manager/action/ManageSequentialPlan.action"
+				"navigation",
+				"src/supervision/navigation_planner/CMakeLists.txt"
 			],
 			[
-				"plan_managerc",
-				"shary3/plan_manager/CMakeLists.txt"
+				"agent_",
+				"src/situation_assessment/simple_agent_monitor/include/simple_agent_monitor/agent_monitors.h"
 			],
 			[
-				"fibon",
-				"learning_actionlib/src/fibonacci_client.cpp"
+				"agentmon",
+				"src/situation_assessment/simple_agent_monitor/src/agent_monitors.cpp"
 			],
 			[
-				"sequentialtas",
-				"shary3/shary3_msgs/msg/SequentialTaskPlan.msg"
+				"simple_agent_monitor",
+				"src/situation_assessment/simple_agent_monitor/CMakeLists.txt"
 			],
 			[
-				"managesequentialpla",
-				"shary3/shary3_msgs/action/ManageSequentialPlan.action"
+				"simple_",
+				"src/situation_assessment/simple_agent_monitor/src/simple_agent_monitor.cpp"
 			],
 			[
-				"simple_ro",
-				"shary3/plan_manager/src/simple_robot_manager.cpp"
+				"spencer_goal_manager",
+				"src/supervision/spencer_goal_manager/CMakeLists.txt"
 			],
 			[
-				"plan_",
-				"shary3/plan_manager/include/plan_manager.h"
+				"simple_age",
+				"src/situation_assessment/simple_agent_monitor/CMakeLists.txt"
 			],
 			[
-				"parameter",
-				"common_launch/parameters.yaml"
+				"spencer_g",
+				"src/supervision/spencer_goal_manager/src/spencer_goal_manager.cpp"
 			],
 			[
-				"plan",
-				"shary3/plan_manager/src/plan_manager.cpp"
+				"guidegroup",
+				"src/supervision/supervision_msgs/action/GuideGroup.action"
 			],
 			[
-				"situation_assessment_msgs",
-				"situation_assessment/situation_assessment_msgs/msg/Fact.msg"
+				"supervisio",
+				"src/supervision/supervision_msgs/msg/SupervisionStatus.msg"
 			],
 			[
-				"simpled",
-				"situation_assessment/simple_database/src/simple_database.cpp"
+				"moveto",
+				"src/supervision/supervision_msgs/action/MoveTo.action"
 			],
 			[
-				"action.msg",
-				"shary3/shary3_msgs/msg/Action.msg"
+				"supervisionstatus",
+				"src/supervision/spencer_status/src/spencer_status.cpp"
 			],
 			[
-				"managesequ",
-				"shary3/shary3_msgs/action/ManageSequentialPlan.action"
+				"check_status",
+				"src/supervision/spencer_status/include/spencer_status/check_status.h"
 			],
 			[
-				"planrepo",
-				"shary3/shary3_msgs/msg/PlanReport.msg"
+				"checks",
+				"src/supervision/spencer_status/src/check_status.cpp"
 			],
 			[
-				"managesequentialplan",
-				"shary3/shary3_msgs/action/ManageSequentialPlan.action"
+				"robot_navi",
+				"src/supervision/robot_navigation/src/robot_navigation.cpp"
 			],
 			[
-				"databasele",
-				"situation_assessment/simple_database/include/simple_database/database_element.h"
+				"checkst",
+				"src/supervision/spencer_status/src/check_status.cpp"
 			],
 			[
-				"databaselee",
-				"situation_assessment/simple_database/src/database_element.cpp"
+				"symbolic",
+				"src/spencer_situation_assessment/spencer_symbolic_map/launch/spencer_symbolic_map.launch"
 			],
 			[
-				"database.h",
-				"situation_assessment/simple_database/include/simple_database/database.h"
+				"observation",
+				"src/supervision/robot_guide/src/observation_manager.cpp"
 			],
 			[
-				"data",
-				"situation_assessment/simple_database/src/database.cpp"
+				"observa",
+				"src/supervision/robot_guide/src/observation_manager.cpp"
 			],
 			[
-				"factlist",
-				"situation_assessment/situation_assessment_msgs/msg/FactList.msg"
+				"tf_br",
+				"src/situation_assessment/data_bridges/tf_bridge/include/tf_bridge/tf_bridge.h"
 			],
 			[
-				"databasereq",
-				"situation_assessment/situation_assessment_msgs/srv/DatabaseRequest.srv"
+				"robo",
+				"src/supervision/robot_guide/src/robot_guide.cpp"
+			],
+			[
+				"simple_a",
+				"src/situation_assessment/simple_agent_monitor/src/simple_agent_monitor.cpp"
+			],
+			[
+				"datalib",
+				"src/situation_assessment/data_bridges/data_lib/src/data_lib.cpp"
+			],
+			[
+				"simple_ae",
+				"src/situation_assessment/simple_agent_monitor/src/simple_agent_monitor.cpp"
+			],
+			[
+				"data_lib",
+				"src/situation_assessment/data_bridges/data_lib/src/data_lib.cpp"
+			],
+			[
+				"datarea",
+				"src/situation_assessment/simple_agent_monitor/src/data_reader.cpp"
+			],
+			[
+				"spencer_amp",
+				"src/spencer_situation_assessment/spencer_symbolic_map/src/spencer_map.cpp"
+			],
+			[
+				"robot_gui",
+				"src/supervision/robot_guide/src/robot_guide.cpp"
+			],
+			[
+				"tf_",
+				"src/situation_assessment/data_bridges/tf_bridge/src/tf_bridge.cpp"
+			],
+			[
+				"guidegropu",
+				"src/supervision/supervision_msgs/action/GuideGroup.action"
+			],
+			[
+				"guidegorup",
+				"src/supervision/supervision_msgs/action/GuideGroup.action"
+			],
+			[
+				"robotg",
+				"src/supervision/robot_guide/src/robot_guide.cpp"
+			],
+			[
+				"robotmis",
+				"src/supervision/supervision_msgs/action/RobotMission.action"
+			],
+			[
+				"spencersta",
+				"src/supervision/spencer_status/src/spencer_status.cpp"
+			],
+			[
+				"spencer_stat",
+				"src/supervision/spencer_status/src/spencer_status.cpp"
+			],
+			[
+				"data_lb",
+				"src/situation_assessment/data_bridges/data_lib/include/data_lib/data_lib.h"
+			],
+			[
+				"spencer_gui",
+				"src/spencer_gui/CMakeLists.txt"
+			],
+			[
+				"spencer_bri",
+				"src/spencer_situation_assessment/data_bridges/spencer_bridge/package.xml"
+			],
+			[
+				"spencer_bridge",
+				"src/spencer_situation_assessment/data_bridges/spencer_bridge/include/spencer_bridge/spencer_bridge.h"
+			],
+			[
+				"spencer_s",
+				"src/spencer_situation_assessment/spencer_symbolic_map/launch/spencer_symbolic_map.launch"
+			],
+			[
+				"observat",
+				"src/supervision/robot_guide/src/observation_manager.cpp"
+			],
+			[
+				"observation_ma",
+				"src/supervision/robot_guide/include/robot_guide/observation_manager.h"
+			],
+			[
+				"commo",
+				"src/common_parameters/common_config.yaml"
+			],
+			[
+				"common",
+				"src/common_parameters/common_config.yaml"
+			],
+			[
+				"tf_jo",
+				"src/utilities/tf_joypad/src/TfJoypad.cpp"
+			],
+			[
+				"situa",
+				"src/situation_assessment/situation_assessment_params/situation_assessment_config.yaml"
+			],
+			[
+				"goal",
+				"src/supervision/spencer_goal_manager/src/spencer_goal_manager.cpp"
+			],
+			[
+				"obse",
+				"src/supervision/robot_guide/include/robot_guide/observation_manager.h"
+			],
+			[
+				"querydata",
+				"src/situation_assessment/situation_assessment_msgs/srv/QueryDatabase.srv"
+			],
+			[
+				"simple_da",
+				"src/situation_assessment/simple_database/src/simple_database.cpp"
+			],
+			[
+				"yalm",
+				"src/situation_assessment/situation_assessment_params/situation_assessment_config.yaml"
+			],
+			[
+				"data_re",
+				"src/situation_assessment/simple_agent_monitor/src/data_reader.cpp"
+			],
+			[
+				"entity",
+				"src/situation_assessment/simple_agent_monitor/include/simple_agent_monitor/entity.h"
+			],
+			[
+				"agentmo",
+				"src/situation_assessment/simple_agent_monitor/include/simple_agent_monitor/agent_monitors.h"
+			],
+			[
+				"spenncer_br",
+				"src/spencer_situation_assessment/data_bridges/spencer_bridge/src/spencer_bridge.cpp"
+			],
+			[
+				"databaser",
+				"src/situation_assessment/situation_assessment_msgs/srv/DatabaseRequest.srv"
+			],
+			[
+				"data_rea",
+				"src/situation_assessment/simple_agent_monitor/include/simple_agent_monitor/data_reader.h"
+			],
+			[
+				"data_reade",
+				"src/situation_assessment/simple_agent_monitor/src/data_reader.cpp"
+			],
+			[
+				"datareade",
+				"src/situation_assessment/simple_agent_monitor/src/data_reader.cpp"
+			],
+			[
+				"data_bridge.cpp",
+				"src/situation_assessment/data_bridges/data_lib/src/data_lib.cpp"
+			],
+			[
+				"agent_moni",
+				"src/situation_assessment/simple_agent_monitor/src/agent_monitors.cpp"
+			],
+			[
+				"database_",
+				"src/situation_assessment/simple_database/src/database_element.cpp"
+			],
+			[
+				"database_el",
+				"src/situation_assessment/simple_database/include/simple_database/database_element.h"
+			],
+			[
+				"simple_agent",
+				"src/situation_assessment/simple_agent_monitor/src/simple_agent_monitor.cpp"
+			],
+			[
+				"databa",
+				"database"
+			],
+			[
+				"agent_monitors",
+				"src/situation_assessment/simple_agent_monitor/include/simple_agent_monitor/agent_monitors.h"
+			],
+			[
+				"databaseele",
+				"src/situation_assessment/simple_database/src/database_element.cpp"
+			],
+			[
+				"spencer_data_bri",
+				"src/spencer_situation_assessment/data_bridges/spencer_bridge/src/spencer_bridge.cpp"
+			],
+			[
+				"spencer_hua",
+				"src/spencer_situation_assessment/spencer_human_estimation/src/spencer_human_estimation.cpp"
 			]
 		],
 		"width": 0.0
@@ -2208,7 +2697,7 @@
 		[
 			[
 				"",
-				"~/papers.sublime-project"
+				"~/.config/sublime-text-3/Packages/User/oprs.sublime-project"
 			]
 		],
 		"width": 380.0

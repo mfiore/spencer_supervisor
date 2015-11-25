@@ -9,7 +9,7 @@ supervision:
     use_map_switching: false
     use_driving_direction: false
     use_control_speed: false
-    wait_time: 30
+    wait_time: 10
     guide_pomdp:
         appl_problem: /home/mfiore/pomdpModels/icsr/guide.pomdpx
         appl_policy: /home/mfiore/pomdpModels/icsr/guide.out

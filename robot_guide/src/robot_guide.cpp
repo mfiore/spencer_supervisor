@@ -258,6 +258,8 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 		ROS_INFO("ROBOT_GUIDE Received request to guide group %s to %f %f",group_id.c_str(),last_pose.position.x,
 			last_pose.position.y);
 	}
+	//when the robot guides people, it will move backward, so that they can see the screen
+	switchDrivingDirection(true,set_driving_direction_client);
 
 	if (test_mode>0) {
 		ROS_INFO("ROBOT_GUIDE sleeping %f seconds for test mode",test_mode);
@@ -310,8 +312,6 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 	bool got_error=false;
 	bool is_preempted=false;
 
-	//when the robot guides people, it will move backward, so that they can see the screen
-	switchDrivingDirection(true,set_driving_direction_client);
 
 
 	ROS_INFO("ROBOT_GUIDE Starting POMDPs");
@@ -480,7 +480,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 			string s_timer;
 			if (wait_timer.isElapsed()) {
 				s_timer="expired";
-				ROS_INFO("Timer expired");
+				ROS_INFO("ROBOT_GUIDE Timer expired");
 			}
 			else {
 				s_timer="ok";
@@ -492,10 +492,11 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 				observation_manager->getOrientation(),
 				observation_manager->getGroupIsMoving());
 			if (guide_action=="abandon") {
-				ROS_INFO("Abandoning task");
+				ROS_INFO("ROBOT_GUIDE Abandoning task");
 			}
 		}
 	}
+	wait_timer.stop();
 	
 	//at the end of the task reset the driving direction to forward
 	if (!ros::ok()) return;
@@ -510,6 +511,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 		result.status="COMPLETED";
 		result.details="";
 		guide_action_server->setSucceeded(result);
+
 		status_pub.publish(status_msg);
 
 	}
@@ -524,7 +526,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 			 	 move_to_client->getState()==actionlib::SimpleClientGoalState::LOST ||
 			     move_to_client->getState()==actionlib::SimpleClientGoalState::PREEMPTED) {
 			status_msg.details="Navigation Error";
-		ROS_INFO("Navigation Error");
+		ROS_INFO("ROBOT_GUIDE Navigation Error");
 		}
 		else  {
 			status_msg.details=check_status->getCommonErrorString();

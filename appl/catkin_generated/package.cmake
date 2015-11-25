@@ -1,7 +1,0 @@
-set(_CATKIN_CURRENT_PACKAGE "appl")
-set(appl_MAINTAINER "mfiore <mfiore@laas.fr>")
-set(appl_DEPRECATED "")
-set(appl_VERSION "0.0.0")
-set(appl_BUILD_DEPENDS "message_generation" "roscpp" "rospy" "std_msgs")
-set(appl_RUN_DEPENDS "message_runtime" "roscpp" "rospy" "std_msgs")
-set(appl_BUILDTOOL_DEPENDS "catkin")

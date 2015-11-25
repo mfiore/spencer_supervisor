@@ -25,12 +25,16 @@
 
 #include <supervision_msgs/CalculatePath.h>
 
+
+
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/locks.hpp> 
 #include <boost/lexical_cast.hpp>
 
 //services
 #include <annotated_mapping/SwitchMap.h>
+#include <situation_assessment_msgs/QueryDatabase.h>
+#include <situation_assessment_msgs/EmptyRequest.h>
 
 
 //libraries
@@ -533,7 +537,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		status_msg.status="COMPLETED";
 		status_msg.details="";
 
-		ROS_INFO("Task completed");
+		ROS_INFO("ROBOT_NAVIGATION Task completed");
 		result.status="COMPLETED";
 		status_pub_.publish(status_msg);
 		move_to_action_server->setSucceeded(result);

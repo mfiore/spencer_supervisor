@@ -234,7 +234,7 @@ void ObservationManager::getSimpleObservations(vector<situation_assessment_msgs:
 		orientation_="unknown";
 		group_is_moving_="unknown";
 		group_distance_="outOfRange";
-		delta_distance_="unknown";
+		delta_distance_="stable";
 	}
 }
 

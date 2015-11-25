@@ -1,1 +1,0 @@
-/usr/bin/g++  -fPIC -g3 -gdwarf-2   -shared -Wl,-soname,libgtest_main.so -o libgtest_main.so CMakeFiles/gtest_main.dir/src/gtest_main.cc.o -L/home/mfiore/catkin_ws/src/appl/gtest/src -lpthread libgtest.so -lpthread -Wl,-rpath,/home/mfiore/catkin_ws/src/appl/gtest/src:/home/mfiore/catkin_ws/src/appl/gtest 
