@@ -1,10 +1,10 @@
 #include <robot_guide/guide_pomdp.h>
 
 GuidePomdp::GuidePomdp(ros::NodeHandle node_handle):PomdpInterface(node_handle) {
-	ROS_INFO("Waiting for Guide Pomdp");
+	ROS_INFO("ROBOT_GUIDE Waiting for Guide Pomdp");
 	pomdp_client_=node_handle_.serviceClient<appl::GetAction>("appl_request/guide_pomdp");
 	pomdp_client_.waitForExistence();
-	ROS_INFO("Connected to Guide Pomdp");
+	ROS_INFO("ROBOT_GUIDE Connected to Guide Pomdp");
 
 	action_mapping_[0]="continue";
 	action_mapping_[1]="wait";

@@ -8,10 +8,10 @@
 #include <robot_guide/control_speed_pomdp.h>
 
 ControlSpeedPomdp::ControlSpeedPomdp(ros::NodeHandle node_handle):PomdpInterface(node_handle) {
-	ROS_INFO("Waiting for Control Speed Pomdp");
+	ROS_INFO("ROBOT_GUIDE Waiting for Control Speed Pomdp");
 	pomdp_client_=node_handle_.serviceClient<appl::GetAction>("appl_request/control_speed_pomdp");
 	pomdp_client_.waitForExistence();
-	ROS_INFO("Connected to Control Speed Pomdp");
+	ROS_INFO("ROBOT_GUIDE Connected to Control Speed Pomdp");
 
 	//actions are returned as integers from appl and translated to string for the rest of the system.
 	action_mapping_[0]="decelerate";

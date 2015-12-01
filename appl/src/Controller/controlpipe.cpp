@@ -29,12 +29,12 @@ SharedPointer<MOMDP> problem;
 
 /*service callback function to process the command from client*/
 bool servicefn(appl::GetAction::Request &req, appl::GetAction::Response &res) {
-    ROS_INFO("Received request");
+    ROS_INFO("APPL Received request");
     //command 0,1,2   ping init request
     int command = req.cmd;
-    ROS_INFO("command %d", req.cmd);
-    ROS_INFO("xstate %s", req.xstate.c_str());
-    ROS_INFO("obs %s", req.obs.c_str());
+    ROS_INFO("APPL command %d", req.cmd);
+    ROS_INFO("APPL xstate %s", req.xstate.c_str());
+    ROS_INFO("APPL obs %s", req.obs.c_str());
     string xstate = req.xstate;
     string obs = req.obs;
     int action;
@@ -50,14 +50,14 @@ bool servicefn(appl::GetAction::Request &req, appl::GetAction::Response &res) {
         cout << "action:" << action << endl;
         map<string, string> actState = problem->getActionsSymbols(action);
         for (map<string, string>::iterator i = actState.begin(); i != actState.end(); i++) {
-            ROS_INFO("%s %s", i->first.c_str(), i->second.c_str());
+            ROS_INFO("APPL %s %s", i->first.c_str(), i->second.c_str());
         }
-//        ROS_INFO("states");
+//        ROS_INFO("APPL states");
         vector<string> ystate;
         int mostProbY = p_control->currBelief()->bvec->argmax(); //get the most probable Y state
         map<string, string> mostProbYState = problem->getFactoredUnobservedStatesSymbols(mostProbY);
         for (map<string, string>::iterator i = mostProbYState.begin(); i != mostProbYState.end(); i++) {
-//            ROS_INFO("%s %s", i->first.c_str(), i->second.c_str());
+//            ROS_INFO("APPL %s %s", i->first.c_str(), i->second.c_str());
             ystate.push_back(i->second);
         }
         res.ystate = ystate;
@@ -70,14 +70,14 @@ bool servicefn(appl::GetAction::Request &req, appl::GetAction::Response &res) {
         cout << "action:" << action << endl;
         map<string, string> actState = problem->getActionsSymbols(action);
         for (map<string, string>::iterator i = actState.begin(); i != actState.end(); i++) {
-            ROS_INFO("%s %s", i->first.c_str(), i->second.c_str());
+            ROS_INFO("APPL %s %s", i->first.c_str(), i->second.c_str());
         }
-//        ROS_INFO("states");
+//        ROS_INFO("APPL states");
         vector<string> ystate;
         int mostProbY = p_control->currBelief()->bvec->argmax(); //get the most probable Y state
         map<string, string> mostProbYState = problem->getFactoredUnobservedStatesSymbols(mostProbY);
         for (map<string, string>::iterator i = mostProbYState.begin(); i != mostProbYState.end(); i++) {
-//            ROS_INFO("%s %s", i->first.c_str(), i->second.c_str());
+//            ROS_INFO("APPL %s %s", i->first.c_str(), i->second.c_str());
             ystate.push_back(i->second);
         }
         res.ystate = ystate;
@@ -89,14 +89,14 @@ bool servicefn(appl::GetAction::Request &req, appl::GetAction::Response &res) {
             iter != p_control->currBelief()->bvec->data.end(); iter++) {
         map<string, string> yState = problem->getFactoredUnobservedStatesSymbols(iter->index);
         for (map<string, string>::iterator i = yState.begin(); i != yState.end(); i++) {
-            ROS_INFO("%s %s", i->first.c_str(), i->second.c_str());
+            ROS_INFO("APPL %s %s", i->first.c_str(), i->second.c_str());
             
         }
-        ROS_INFO("prob %f",iter->value);
+        ROS_INFO("APPL prob %f",iter->value);
     }
     cout << endl;
 
-    ROS_INFO("action service ended");
+    ROS_INFO("APPL action service ended");
     return true;
 }
 
@@ -110,11 +110,11 @@ int main(int argc, char **argv) {
     std::string problem_name, policy_name, default_param;
     string name;
     nh2.getParam("problem_name", name);
-    ROS_INFO("%s",name.c_str());
+    ROS_INFO("APPL %s",name.c_str());
     nh.getParam("/supervision/"+name+"/appl_problem", problem_name);
     nh.getParam("/supervision/"+name+"/appl_policy", policy_name);
-    ROS_INFO("%s!!!!!!!!!!!!!!!!!!", problem_name.c_str());
-    ROS_INFO("%s",policy_name.c_str());
+    ROS_INFO("APPL %s!!!!!!!!!!!!!!!!!!", problem_name.c_str());
+    ROS_INFO("APPL %s",policy_name.c_str());
 
 
     SolverParams* p = &GlobalResource::getInstance()->solverParams;
@@ -123,7 +123,7 @@ int main(int argc, char **argv) {
     p->policyFile = policy_name;
     p->problemName = problem_name;
 
-    ROS_INFO("before loading the model");
+    ROS_INFO("APPL before loading the model");
 
     cout << "\nLoading the model ...\n   ";
     problem = ParserSelector::loadProblem(p->problemName, *p);
@@ -152,8 +152,8 @@ int main(int argc, char **argv) {
             state_str.append(iter->second);
         }
         obsStateMapping[state_str] = i;
-        ROS_INFO("\n list of observable variables\n");
-        ROS_INFO("\n %s %d", state_str.c_str(), i);
+        ROS_INFO("APPL \n list of observable variables\n");
+        ROS_INFO("APPL \n %s %d", state_str.c_str(), i);
     }
 
     for (int i = 0; i < problem->observations->size(); i++) {
@@ -164,8 +164,8 @@ int main(int argc, char **argv) {
         }
         obsSymbolMapping[obs_str] = i;
 
-        ROS_INFO("\n list of observations\n");
-        ROS_INFO("\n %s %d", obs_str.c_str(), i);
+        ROS_INFO("APPL \n list of observations\n");
+        ROS_INFO("APPL \n %s %d", obs_str.c_str(), i);
     }
 
 

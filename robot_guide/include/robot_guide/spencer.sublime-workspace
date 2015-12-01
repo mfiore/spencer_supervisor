@@ -520,86 +520,6 @@
 	"buffers":
 	[
 		{
-			"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/src/spencer_symbolic_map.cpp",
-			"settings":
-			{
-				"buffer_size": 3946,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_navigation/src/robot_navigation.cpp",
-			"settings":
-			{
-				"buffer_size": 21030,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_agent_monitor/src/simple_agent_monitor.cpp",
-			"settings":
-			{
-				"buffer_size": 13727,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_status/src/check_status.cpp",
-			"settings":
-			{
-				"buffer_size": 3094,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_status/include/spencer_status/check_status.h",
-			"settings":
-			{
-				"buffer_size": 1349,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/launch/spencer_map.launch",
-			"settings":
-			{
-				"buffer_size": 184,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_human_estimation/launch/spencer_human_estimation.launch",
-			"settings":
-			{
-				"buffer_size": 732,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/situation_assessment_params/situation_assessment_config.yaml",
-			"settings":
-			{
-				"buffer_size": 971,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/launch/spencer_symbolic_map.launch",
-			"settings":
-			{
-				"buffer_size": 679,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/LAAS_new/LAAS_new_1.xml",
-			"settings":
-			{
-				"buffer_size": 177,
-				"line_ending": "Unix"
-			}
-		},
-		{
 			"contents": "<?xml version=\"1.0\" ?>\n<project>\n	<name>LAAS_new</name>\n	<map>\n		<path>LAAS_new.pgm</path>\n		<resolution>0.05</resolution>\n		<origin>\n			<x>-40.0</x>\n			<y>-40.0</y>\n		</origin>\n	</map>\n	<classes>/home/tzkr/temp/SPENCER/LAAS_new_classes.xml</classes>\n	<parts>/home/tzkr/temp/SPENCER/LAAS_new_parts.xml</parts>\n	<graph>/home/tzkr/temp/SPENCER/LAAS_new_graph.xml</graph>\n</project>\n",
 			"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/LAAS_new/LAAS_new.xml",
 			"file_size": 396,
@@ -611,13 +531,26 @@
 			}
 		},
 		{
-			"contents": "image: LAAS_new.png\nresolution: 0.05\norigin: [-40, -40, 0.0]\noccupied_thresh: 0.5\nfree_thresh: 0.5\nnegate: 0\n",
-			"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/LAAS_new/LAAS_new.yaml",
-			"file_size": 125,
-			"file_write_time": 130892105120000000,
+			"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/src/robot_guide.cpp",
 			"settings":
 			{
-				"buffer_size": 109,
+				"buffer_size": 23185,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/data_bridges/spencer_bridge/src/spencer_bridge.cpp",
+			"settings":
+			{
+				"buffer_size": 13809,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/src/spencer_map.cpp",
+			"settings":
+			{
+				"buffer_size": 6155,
 				"line_ending": "Unix"
 			}
 		}
@@ -695,26 +628,33 @@
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/LAAS_new",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/src",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_navigation/src",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_goal_manager",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_goal_manager/src"
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/src"
 	],
 	"file_history":
 	[
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/LAAS_new/LAAS_new.yaml",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/supervision_msgs/action/MoveTo.action",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/src/observation_manager.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/notes_recruitment",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/LAAS_new/LAAS_new_1.xml",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/src/spencer_symbolic_map.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_navigation/src/robot_navigation.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_integration/supervision_config.yaml",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_agent_monitor/src/simple_agent_monitor.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_status/src/check_status.cpp",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_status/include/spencer_status/check_status.h",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/launch/spencer_map.launch",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_human_estimation/launch/spencer_human_estimation.launch",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/situation_assessment_params/situation_assessment_config.yaml",
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/launch/spencer_symbolic_map.launch",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/LAAS_new/LAAS_new_0.xml",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/LAAS_new/LAAS_new_0_1.yml",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/LAAS_new/LAAS_new_1_2.yml",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/LAAS_new/LAAS_new_3_0.yml",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/launch/spencer_symbolic_map.launch",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/src/spencer_map.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_agent_monitor/src/simple_agent_monitor.cpp",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/include/spencer_symbolic_map/node_info.h",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/launch/robot_guide.launch",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_navigation/launch/robot_navigation.launch",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_human_estimation/launch/spencer_human_estimation.launch",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_agent_monitor/include/simple_agent_monitor/data_reader.h",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_agent_monitor/src/data_reader.cpp",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/situation_assessment_msgs/msg/NamedPose.msg",
@@ -727,19 +667,13 @@
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/data_bridges/spencer_bridge/src/spencer_bridge.cpp",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/data_bridges/data_lib/src/data_lib.cpp",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/include/spencer_symbolic_map/spencer_map.h",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/situation_assessment_params/situation_assessment_config.yaml",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_integration/supervision_config.yaml",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_agent_monitor/src/agent_monitors.cpp",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/src/robot_guide.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_navigation/src/robot_navigation.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/src/spencer_symbolic_map.cpp",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/klm_fake/src/main.cpp",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/src/supervision_timer.cpp",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_goal_manager/src/status_manager.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/src/observation_manager.cpp",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_goal_manager/src/spencer_goal_manager.cpp",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_goal_manager/include/spencer_goal_manager/status_manager.h",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/supervision_msgs/action/MoveTo.action",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/CMakeLists.txt",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_goal_manager/CMakeLists.txt",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_goal_manager/package.xml",
@@ -750,7 +684,6 @@
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_integration/situation_assessment_config.yaml",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/include/robot_guide/observation_manager.h",
 		"/home/mfiore/Documents/doc/articoliMiei/icra2016/main.tex",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/launch/spencer_map.launch",
 		"/media/F28633248632E8AD/review-2222.txt",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_agent_monitor/CMakeLists.txt",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_agent_monitor/include/simple_agent_monitor/agent_monitors.h",
@@ -760,9 +693,7 @@
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/supervision_msgs/msg/SupervisionStatus.msg",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/supervision_msgs/action/GuideGroup.action",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/toDo.txt",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_status/src/check_status.cpp",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_status/src/spencer_status.cpp",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_status/include/spencer_status/check_status.h",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_navigation/launch/robot_navigation_with_situation_assessment.launch",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_navigation/launch/robot_navigation_sim.launch",
 		"/home/mfiore/.bashrc",
@@ -828,10 +759,7 @@
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/spencer_map.xml",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/spencer_map_parts.xml",
 		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/spencer_map_information_screen.yml",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/spencer_map_7_4.yml",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/spencer_map_7.xml",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/spencer_map_6_7.yml",
-		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/spencer_map_6.xml"
+		"/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/spencer_map_7_4.yml"
 	],
 	"find":
 	{
@@ -849,6 +777,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"approach",
+			"observat",
 			"areapub",
 			"pub",
 			"status_pub",
@@ -974,9 +904,7 @@
 			"f",
 			"test_mode",
 			"sendmove",
-			"is_moving",
-			"moveto",
-			"ros_info"
+			"is_moving"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1122,830 +1050,11 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 3,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/src/spencer_symbolic_map.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3946,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								727,
-								727
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content"
-							],
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 80.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 11,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_navigation/src/robot_navigation.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 21030,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								13125,
-								13125
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content"
-							],
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 8866.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/simple_agent_monitor/src/simple_agent_monitor.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 13727,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								12420,
-								12420
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content"
-							],
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 6755.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_status/src/check_status.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3094,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1940,
-								1940
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content"
-							],
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": -0.0,
-						"translation.y": 946.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/spencer_status/include/spencer_status/check_status.h",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1349,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1159,
-								1159
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content"
-							],
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": -0.0,
-						"translation.y": 249.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/launch/spencer_map.launch",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 184,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								171,
-								171
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content"
-							],
-							"syntax": "Packages/Text/Plain text.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 10,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_human_estimation/launch/spencer_human_estimation.launch",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 732,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"syntax": "Packages/Text/Plain text.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 9,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/situation_assessment/situation_assessment_params/situation_assessment_config.yaml",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 971,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								441,
-								441
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content"
-							],
-							"syntax": "Packages/YAML/YAML.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 8,
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/launch/spencer_symbolic_map.launch",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 679,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								292,
-								292
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content"
-							],
-							"syntax": "Packages/Text/Plain text.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 9,
-					"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/LAAS_new/LAAS_new_1.xml",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 177,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								53,
-								53
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content"
-							],
-							"syntax": "Packages/XML/XML.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				},
-				{
-					"buffer": 10,
 					"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/LAAS_new/LAAS_new.xml",
 					"semi_transient": false,
 					"settings":
@@ -1966,21 +1075,51 @@
 							"BracketHighlighterBusy": false,
 							"bh_regions":
 							[
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
 								"bh_regex",
 								"bh_regex_center",
 								"bh_regex_open",
 								"bh_regex_close",
 								"bh_regex_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
 								"bh_c_define",
 								"bh_c_define_center",
 								"bh_c_define_open",
 								"bh_c_define_close",
 								"bh_c_define_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
 								"bh_unmatched",
 								"bh_unmatched_center",
 								"bh_unmatched_open",
@@ -1990,37 +1129,7 @@
 								"bh_single_quote_center",
 								"bh_single_quote_open",
 								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content"
+								"bh_single_quote_content"
 							],
 							"syntax": "Packages/XML/XML.tmLanguage",
 							"translate_tabs_to_spaces": false
@@ -2029,24 +1138,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
-					"buffer": 11,
-					"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/maps/LAAS_new/LAAS_new.yaml",
+					"buffer": 1,
+					"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/supervision/robot_guide/src/robot_guide.cpp",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 109,
+						"buffer_size": 23185,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								7,
-								7
+								23185,
+								23185
 							]
 						],
 						"settings":
@@ -2059,64 +1168,241 @@
 								"bh_angle_open",
 								"bh_angle_close",
 								"bh_angle_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
 								"bh_round",
 								"bh_round_center",
 								"bh_round_open",
 								"bh_round_close",
 								"bh_round_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
 								"bh_default",
 								"bh_default_center",
 								"bh_default_open",
 								"bh_default_close",
 								"bh_default_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
 								"bh_curly",
 								"bh_curly_center",
 								"bh_curly_open",
 								"bh_curly_close",
 								"bh_curly_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content"
+							],
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 14571.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/data_bridges/spencer_bridge/src/spencer_bridge.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 13809,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								515,
+								515
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
 								"bh_square",
 								"bh_square_center",
 								"bh_square_open",
 								"bh_square_close",
-								"bh_square_content"
+								"bh_square_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content"
 							],
-							"syntax": "Packages/YAML/YAML.tmLanguage"
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 5544.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/home/mfiore/ros_workspaces/my_spencer_ws/src/spencer_situation_assessment/spencer_symbolic_map/src/spencer_map.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6155,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3186,
+								3186
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content"
+							],
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1562.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
 					"type": "text"
 				}
 			]
@@ -2175,6 +1461,34 @@
 		"selected_items":
 		[
 			[
+				"spencer_br",
+				"src/spencer_situation_assessment/data_bridges/spencer_bridge/src/spencer_bridge.cpp"
+			],
+			[
+				"movetoa",
+				"src/supervision/supervision_msgs/action/MoveTo.action"
+			],
+			[
+				"obser",
+				"src/supervision/robot_guide/src/observation_manager.cpp"
+			],
+			[
+				"robot_g",
+				"src/supervision/robot_guide/src/robot_guide.cpp"
+			],
+			[
+				"launch",
+				"src/spencer_situation_assessment/spencer_symbolic_map/launch/spencer_symbolic_map.launch"
+			],
+			[
+				"yaml",
+				"src/supervision/spencer_integration/supervision_config.yaml"
+			],
+			[
+				"robot_n",
+				"src/supervision/robot_navigation/src/robot_navigation.cpp"
+			],
+			[
 				"simple",
 				"src/situation_assessment/simple_agent_monitor/src/simple_agent_monitor.cpp"
 			],
@@ -2185,14 +1499,6 @@
 			[
 				"check",
 				"src/supervision/spencer_status/src/check_status.cpp"
-			],
-			[
-				"yaml",
-				"src/situation_assessment/situation_assessment_params/situation_assessment_config.yaml"
-			],
-			[
-				"launch",
-				"src/spencer_situation_assessment/spencer_symbolic_map/launch/spencer_map.launch"
 			],
 			[
 				"robot_na",
@@ -2225,10 +1531,6 @@
 			[
 				"area",
 				"src/situation_assessment/situation_assessment_msgs/msg/AreaList.msg"
-			],
-			[
-				"robot_g",
-				"src/supervision/spencer_integration/robot_guide.launch"
 			],
 			[
 				"robot_guide_s",
@@ -2275,10 +1577,6 @@
 				"src/situation_assessment/data_bridges/data_lib/src/data_lib.cpp"
 			],
 			[
-				"spencer_br",
-				"src/spencer_situation_assessment/data_bridges/spencer_bridge/src/spencer_bridge.cpp"
-			],
-			[
 				"spencer_map",
 				"src/spencer_situation_assessment/spencer_symbolic_map/src/spencer_map.cpp"
 			],
@@ -2303,10 +1601,6 @@
 				"src/supervision/navigation_planner/src/navigation_planner.cpp"
 			],
 			[
-				"robot_n",
-				"src/supervision/robot_navigation/src/robot_navigation.cpp"
-			],
-			[
 				"timer",
 				"src/supervision/robot_guide/src/supervision_timer.cpp"
 			],
@@ -2329,10 +1623,6 @@
 			[
 				"robot_guidecmake",
 				"src/supervision/robot_guide/CMakeLists.txt"
-			],
-			[
-				"obser",
-				"src/supervision/robot_guide/src/observation_manager.cpp"
 			],
 			[
 				"spencer_goa",
@@ -2681,10 +1971,6 @@
 			[
 				"spencer_data_bri",
 				"src/spencer_situation_assessment/data_bridges/spencer_bridge/src/spencer_bridge.cpp"
-			],
-			[
-				"spencer_hua",
-				"src/spencer_situation_assessment/spencer_human_estimation/src/spencer_human_estimation.cpp"
 			]
 		],
 		"width": 0.0

@@ -25,16 +25,12 @@
 
 #include <supervision_msgs/CalculatePath.h>
 
-
-
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/locks.hpp> 
 #include <boost/lexical_cast.hpp>
 
 //services
 #include <annotated_mapping/SwitchMap.h>
-#include <situation_assessment_msgs/QueryDatabase.h>
-#include <situation_assessment_msgs/EmptyRequest.h>
 
 
 //libraries
@@ -49,9 +45,15 @@ ros::ServiceClient switch_map_client_;
 ros::ServiceClient simple_database_client_;
 
 //location of the robot
+<<<<<<< HEAD
 vector<string> robot_areas_;
 string robot_location_;
 string next_area_;
+=======
+vector<string> robot_areas;
+string robot_location;
+string next_area;
+>>>>>>> master
 bool reached_next_area_=false;
 
 bool use_map_switching_;
@@ -435,7 +437,6 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 				path_request.request.source=getRobotLocation();
 				path_request.request.dest=location_destination;
 				if (calculate_path_client->call(path_request)) {
-					ROS_INFO("ROBOT_NAVIGATION calculated path to destination");
 					nodes=path_request.response.path;
 					n_nodes=nodes.size();
 				}
@@ -481,10 +482,18 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 				goal_x=node_pose.position.x;
 				goal_y=node_pose.position.y;
 
+<<<<<<< HEAD
 				mutex_location_.lock();
 				next_area_=nodes[current_node+1];
 				reached_next_area_=false;
 				mutex_location_.unlock();
+=======
+				mutex_location.lock();
+				next_area=nodes[current_node+1];
+				reached_next_area_=false;
+				mutex_location.unlock();
+
+>>>>>>> master
 			}
 			else {
 				goal_x=poses[current_node+1].position.x;
@@ -494,6 +503,54 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 			goal_pose.position.y=goal_y;	
 
 			goal_pose.orientation.w=1.0;
+<<<<<<< HEAD
+=======
+			
+			sendMoveBaseGoal(goal_pose,move_base_client);
+
+			is_moving=true;
+			if (symbolic_navigation) {
+				ROS_INFO("ROBOT_NAVIGATION Starting to move to %s",nodes[current_node+1].c_str());
+				status_msg.status="Moving to "+nodes[current_node+1];
+			}
+			else {
+				ROS_INFO("ROBOT_NAVIGATION Starting to move to %f %f",poses[current_node+1].position.x,
+					poses[current_node+1].position.y);
+			    status_msg.status="Moving to "+
+			    boost::lexical_cast<string>(poses[current_node+1].position.x)+" "+
+			    boost::lexical_cast<string>(poses[current_node+1].position.y);
+			}
+			status_msg.details="";
+			status_pub.publish(status_msg);
+
+			bool move_base_error=false;
+			bool move_base_arrived=false;
+			
+
+			bool node_has_area=false;
+			//if the node has a semantic area associated, we will move until we reach the area and not just it.
+			if (symbolic_navigation) {
+				node_has_area=hasArea(nodes[current_node+1]);
+			}
+
+			bool robot_arrived=false;
+			//continue until we arrive or have a n error
+			while (!got_error && !move_base_error && !move_base_arrived && !robot_arrived && !move_to_action_server->isPreemptRequested()) {
+				got_error=check_status->isBatteryLow()||check_status->isBumperPressed() || !ros::ok();
+				move_base_error=hasMoveBaseError(move_base_client);
+		
+				if (symbolic_navigation) {
+					mutex_location.lock();
+					robot_arrived=reached_next_area_;
+					mutex_location.unlock();
+				}			
+				if (!simulation_mode) {
+					move_base_arrived=move_base_client->getState()==actionlib::SimpleClientGoalState::SUCCEEDED;
+				}
+
+				r.sleep();
+			}
+>>>>>>> master
 
 			bool move_status=moveToNext(goal_pose,move_base_client,move_to_action_server,next_area_,symbolic_navigation);
 			got_error=!move_status;
@@ -517,7 +574,16 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 					task_completed=true;
 				}
 			}
+<<<<<<< HEAD
 		} 		
+=======
+			else if (move_base_arrived && (current_node+1)==n_nodes-1) {
+				is_moving=false;
+				task_completed=true;
+			}
+		
+		}
+>>>>>>> master
 	}
 	else {
 		task_completed=true; //if there are no nodes in the path we're already arrived
@@ -530,7 +596,50 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 
 		geometry_msgs::Pose goal_pose=getPose(destination);
 
+<<<<<<< HEAD
 		task_completed=moveToNext(goal_pose,move_base_client,move_to_action_server,destination,symbolic_navigation);
+=======
+		ROS_INFO("ROBOT_NAVIGATION Starting to move to %s",destination.c_str());
+
+		sendMoveBaseGoal(goal_pose,move_base_client);
+		is_moving=true;
+		
+		bool node_has_area=hasArea(destination);
+		ROS_INFO("goal pose is %f %f ", goal_pose.position.x,goal_pose.position.y);
+		ROS_INFO("node has areas %d",node_has_area);
+
+		bool move_base_error=false;
+		bool got_error=false;
+		bool move_base_arrived=false;
+		bool robot_arrived=false;
+
+		mutex_location.lock();
+		next_area=destination;
+		reached_next_area_=false;
+		mutex_location.unlock();
+
+		while (!got_error && !move_base_error && !move_base_arrived && !robot_arrived && !move_to_action_server->isPreemptRequested()) {
+			got_error=check_status->isBatteryLow()||check_status->isBumperPressed() || !ros::ok();
+			move_base_error=hasMoveBaseError(move_base_client);
+		
+			if (hasArea) {
+				mutex_location.lock();
+				robot_arrived=reached_next_area_;
+				mutex_location.unlock();
+			}			
+			if (!simulation_mode) {
+				move_base_arrived=move_base_client->getState()==actionlib::SimpleClientGoalState::SUCCEEDED;
+			}
+
+			r.sleep();
+		}
+		if (move_base_arrived || robot_arrived) {
+			task_completed=true;
+		}
+		if (robot_arrived && !simulation_mode) {
+			move_base_client->cancelGoal();
+		}
+>>>>>>> master
 	}
 
 	//publish final task information
@@ -538,7 +647,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		status_msg.status="COMPLETED";
 		status_msg.details="";
 
-		ROS_INFO("ROBOT_NAVIGATION Task completed");
+		ROS_INFO("Task completed");
 		result.status="COMPLETED";
 		status_pub_.publish(status_msg);
 		move_to_action_server->setSucceeded(result);
