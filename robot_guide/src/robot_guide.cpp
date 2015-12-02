@@ -22,7 +22,7 @@ Main file for the spencer supervisor, which guides groups of passengers to a des
 #include <situation_assessment_msgs/FactList.h>
 
 //services
-//#include <spencer_control_msgs/SetMaxVelocity.h>
+#include <spencer_control_msgs/SetMaxVelocity.h>
 #include <supervision_msgs/EmptyRequest.h>
 #include <supervision_msgs/CalculatePath.h>
 #include <spencer_nav_msgs/SetDrivingDirection.h>
@@ -197,10 +197,10 @@ void switchDrivingDirection(bool backward, ros::ServiceClient* set_driving_direc
 }
 
 void switchSpeed(double newSpeed, ros::ServiceClient* control_speed_client) {
-	// spencer_control_msgs::SetMaxVelocity srv;
-	// srv.request.max_linear_velocity=actual_speed;
-	// srv.request.max_angular_velocity=angular_velocity;
-	// control_speed_client.call(srv);
+	spencer_control_msgs::SetMaxVelocity srv;
+	srv.request.max_linear_velocity=actual_speed;
+	srv.request.max_angular_velocity=angular_velocity;
+	control_speed_client->call(srv);
 }
 
 
@@ -618,20 +618,20 @@ int main(int argc, char **argv) {
 	ros::Rate r(10);
 
 
-	// ROS_INFO<<"Connecting to control speed\n";
-	// // control_speed_client=n.serviceClient<spencer_control_msgs::SetMaxVelocity>("/spencer/control/set_max_velocity",true);
-	// if (use_control_speed) {
-	// 	control_speed_client.waitForExistence();
-	// 	ROS_INFO<<"Connected\n";
+	ROS_INFO("ROBOT_GUIDE Connecting to control speed");
+	control_speed_client=n.serviceClient<spencer_control_msgs::SetMaxVelocity>("/spencer/control/set_max_velocity",true);
+	if (use_control_speed) {
+		control_speed_client.waitForExistence();
+		ROS_INFO("Connected");
 
-	// 	// set the starting speed of the robot
-	// 	spencer_control_msgs::SetMaxVelocity srv;
-	// 	srv.request.max_linear_velocity=starting_speed;
-	// 	srv.request.max_angular_velocity=angular_velocity;
-	// 	control_speed_client.call(srv);
-	// 	cout<<"Starting speed is "<<starting_speed<<"\n";
-	// 	 actual_speed=starting_speed;
-	// }
+		// set the starting speed of the robot
+		spencer_control_msgs::SetMaxVelocity srv;
+		srv.request.max_linear_velocity=starting_speed;
+		srv.request.max_angular_velocity=angular_velocity;
+		control_speed_client.call(srv);
+		ROS_INFO("ROBOT_GUIDE Starting speed is %f",starting_speed);
+		 actual_speed=starting_speed;
+	}
 	
 	if (!ros::ok()) {
 		ROS_INFO("ROBOT_GUIDE Shutdown request");
@@ -699,7 +699,7 @@ int main(int argc, char **argv) {
 	supervision_msgs::SupervisionStatus status_msg; 
 
 	status_msg.status="IDLE";
-	// status_pub.publish(status_msg);
+	status_pub.publish(status_msg);
 	ROS_INFO("ROBOT_GUIDE Ready");
 
 	ros::spin();
