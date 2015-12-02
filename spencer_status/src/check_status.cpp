@@ -29,8 +29,8 @@ CheckStatus::CheckStatus(ros::NodeHandle node_handle):node_handle_(node_handle) 
 	status_sub = node_handle_.subscribe("/supervision/is_stopped", 1000, 
 		&CheckStatus::stoppedCallback,this);
 
-	planner_blocked_sub_ = node_handle_.subscribe("/spencer/navigation/planner_blocked", 1000, 
-		&CheckStatus::plannerBlockedCallback,this);
+	// planner_blocked_sub_ = node_handle_.subscribe("/spencer/navigation/planner_blocked", 1000, 
+		// &CheckStatus::plannerBlockedCallback,this);
 
 	battery_low_=false;
 	bumper_pressed_=false;
@@ -69,10 +69,10 @@ void CheckStatus::stoppedCallback(const supervision_msgs::SupervisionStopped& ms
 	paused_=msg.is_paused;
 }
 
-void CheckStatus::plannerBlockedCallback(const std_msgs::Bool& msg) {
-	boost::lock_guard<boost::mutex> guard(mutex_planner_blocked_);
-	planner_blocked_=msg.data;
-}
+// void CheckStatus::plannerBlockedCallback(const std_msgs::Bool& msg) {
+// 	boost::lock_guard<boost::mutex> guard(mutex_planner_blocked_);
+// 	planner_blocked_=msg.data;
+// }
 
 
 bool CheckStatus::isBatteryLow() {
@@ -96,7 +96,7 @@ bool CheckStatus::isPaused() {
 }
 
 bool CheckStatus::isPlannerBlocked() {
-	boost::lock_guard<boost::mutex> guard(mutex_planner_blocked_);
+	// boost::lock_guard<boost::mutex> guard(mutex_planner_blocked_);
 	return planner_blocked_;
 }
 

@@ -33,7 +33,7 @@ private:
 	void bumperCallback(const spencer_control_msgs::SystemStatus& msg);
 	void batteryCallback(const std_msgs::Float32& msg);
 	void stoppedCallback(const supervision_msgs::SupervisionStopped& msg);
-	void plannerBlockedCallback(const std_msgs::Bool& msg);
+	// void plannerBlockedCallback(const std_msgs::Bool& msg);
 
 	ros::NodeHandle node_handle_;
 
