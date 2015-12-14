@@ -201,7 +201,7 @@ void ObservationManager::getSimpleObservations(vector<situation_assessment_msgs:
 	vector<string> agents,agents_to_find;
 
 	BOOST_FOREACH(situation_assessment_msgs::Fact f, fact_list) {
-		if (f.predicate.size>1) {
+		if (f.predicate.size()>1) {
 			if (f.predicate[0]=="type" && f.value[0]=="agent" && f.value[1]=="HUMAN") {
 					agents.push_back(f.subject);
 			}

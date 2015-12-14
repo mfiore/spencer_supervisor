@@ -176,7 +176,7 @@ vector<string> getAgentsInGroup() {
 			ROS_ERROR("ROBOT_GUIDE error! no human returned!");
 			return result;
 		}
-		else if (human_query.response.result[0].value()<2) {
+		else if (human_query.response.result[0].value.size()<2) {
 			ROS_ERROR("ROBOT_GUIDE error! human class incomplete");
 			return result;
 		}
