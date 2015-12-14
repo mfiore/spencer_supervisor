@@ -150,32 +150,39 @@ map<string,AgentObservation> ObservationManager::createAgentObservations(vector<
 	map<string,AgentObservation> agent_observations;
 	BOOST_FOREACH(situation_assessment_msgs::Fact f, fact_list) {
 		if (f.subject!=robot_name_) {
-			if (f.predicate[0]=="distance" && f.predicate[1]==robot_name_) {
-				if (std::find(agents_to_find.begin(),agents_to_find.end(),f.subject)!=agents_to_find.end()) {
-					double distance_num=boost::lexical_cast<double>(f.value[0]);
-					agent_observations[f.subject].distance=distance_num;
+			if (f.predicate.size()>0) {
+				if (f.predicate.size()>1) {
+					if (f.predicate[0]=="distance" && f.predicate[1]==robot_name_) {
+						if (std::find(agents_to_find.begin(),agents_to_find.end(),f.subject)!=agents_to_find.end()) {
+							double distance_num=boost::lexical_cast<double>(f.value[0]);
+							agent_observations[f.subject].distance=distance_num;
+						}
+					}
+					else if (f.predicate[0]=="delta_distance" && f.predicate[1]==robot_name_) {
+						if (std::find(agents_to_find.begin(),agents_to_find.end(),f.subject)!=agents_to_find.end()) {
+							double delta_distance_num=boost::lexical_cast<double>(f.value[0]);
+							agent_observations[f.subject].delta_distance=delta_distance_num;
+						}
+					}
+					else if (f.predicate[0]=="orientation" && f.predicate[1]==robot_name_) {
+						if (std::find(agents_to_find.begin(),agents_to_find.end(),f.subject)!=agents_to_find.end()) {
+							agent_observations[f.subject].orientation=f.value[0];
+						}
+					}	
+				}
+				else if (f.predicate[0]=="isMoving") {
+					if (std::find(agents_to_find.begin(),agents_to_find.end(),f.subject)!=agents_to_find.end()) {
+						if (f.value[0]=="0") {
+							agent_observations[f.subject].is_moving="notMoving";
+						}
+						else {
+							agent_observations[f.subject].is_moving="moving";
+						}
+					}
 				}
 			}
-			else if (f.predicate[0]=="delta_distance" && f.predicate[1]==robot_name_) {
-				if (std::find(agents_to_find.begin(),agents_to_find.end(),f.subject)!=agents_to_find.end()) {
-					double delta_distance_num=boost::lexical_cast<double>(f.value[0]);
-					agent_observations[f.subject].delta_distance=delta_distance_num;
-				}
-			}
-			else if (f.predicate[0]=="orientation" && f.predicate[1]==robot_name_) {
-				if (std::find(agents_to_find.begin(),agents_to_find.end(),f.subject)!=agents_to_find.end()) {
-					agent_observations[f.subject].orientation=f.value[0];
-				}
-			}	
-			else if (f.predicate[0]=="isMoving") {
-				if (std::find(agents_to_find.begin(),agents_to_find.end(),f.subject)!=agents_to_find.end()) {
-					if (f.value[0]=="0") {
-						agent_observations[f.subject].is_moving="notMoving";
-					}
-					else {
-						agent_observations[f.subject].is_moving="moving";
-					}
-				}
+			else {
+				ROS_ERROR("OBSERVATION_MANAGER no predicate in fact");
 			}
 		}
 	}
@@ -194,19 +201,29 @@ void ObservationManager::getSimpleObservations(vector<situation_assessment_msgs:
 	vector<string> agents,agents_to_find;
 
 	BOOST_FOREACH(situation_assessment_msgs::Fact f, fact_list) {
-		if (f.predicate[0]=="type" && f.value[0]=="agent" && f.value[1]=="HUMAN") {
-				agents.push_back(f.subject);
+		if (f.predicate.size>1) {
+			if (f.predicate[0]=="type" && f.value[0]=="agent" && f.value[1]=="HUMAN") {
+					agents.push_back(f.subject);
+			}
+		}
+		else {
+			ROS_ERROR("OBSERVATION_MANAGER entity misses class or type");
 		}
 
 	}
 
 	BOOST_FOREACH(situation_assessment_msgs::Fact f, fact_list) {
 		if (f.subject!=robot_name_) {
-			if (f.predicate[0]=="isInArea") {
-				if (std::find(agents.begin(),agents.end(),f.subject)!=agents.end() 
-					&& std::find(f.value.begin(),f.value.end(),robot_name_)!=f.value.end())  {
-					agents_to_find.push_back(f.subject);
+			if (f.predicate.size()>0) {
+				if (f.predicate[0]=="isInArea") {
+					if (std::find(agents.begin(),agents.end(),f.subject)!=agents.end() 
+						&& std::find(f.value.begin(),f.value.end(),robot_name_)!=f.value.end())  {
+						agents_to_find.push_back(f.subject);
+					}
 				}
+			}
+			else {
+				ROS_ERROR("OBSERVATION_MANAGER no predicate in fact");
 			}
 		}
 	}	
@@ -263,76 +280,80 @@ void ObservationManager::agentFactCallback(const situation_assessment_msgs::Fact
  	else {
  		//in the loop we collect observations of the group and of its members
 		BOOST_FOREACH(situation_assessment_msgs::Fact f, fact_list) {
-			if (f.subject==observed_group_ && f.predicate[0]=="contains") {
-				agents_in_group=f.value;
-			}
-			if (f.subject==observed_group_ && f.predicate[0]=="delta_distance" && f.predicate[1]==robot_name_) {
-				double delta_distance_num=boost::lexical_cast<double>(f.value[0]);
-				if (delta_distance_num<-1) {
-					delta_distance_="increasing";
+			if (f.predicate.size()>0) {
+				if (f.subject==observed_group_ && f.predicate[0]=="contains") {
+					agents_in_group=f.value;
 				}
-				else if (delta_distance_num>1) {
-					delta_distance_="decreasing";
+				if (f.subject==observed_group_ && f.predicate[0]=="delta_distance" && f.predicate[1]==robot_name_) {
+					double delta_distance_num=boost::lexical_cast<double>(f.value[0]);
+					if (delta_distance_num<-1) {
+						delta_distance_="increasing";
+					}
+					else if (delta_distance_num>1) {
+						delta_distance_="decreasing";
+					}
+					else {
+						delta_distance_="stable";
+					}
 				}
-				else {
-					delta_distance_="stable";
-				}
-			}
-			else if (f.subject==observed_group_ && f.predicate[0]=="distance" && f.predicate[1]==robot_name_) {
-				found_group=true;
+				else if (f.subject==observed_group_ && f.predicate[0]=="distance" && f.predicate[1]==robot_name_) {
+					found_group=true;
 
-				double distance_num=boost::lexical_cast<double>(f.value[0]);
-				if (distance_num<4) {
-					group_distance_="close";
-				}
-				else if (distance_num<10) {
-					group_distance_="far";
-				}
-				else group_distance_="outOfRange";
+					double distance_num=boost::lexical_cast<double>(f.value[0]);
+					if (distance_num<4) {
+						group_distance_="close";
+					}
+					else if (distance_num<10) {
+						group_distance_="far";
+					}
+					else group_distance_="outOfRange";
 
-				if (agents_in_group.size()>0) {
-					if (observed_group_==agents_in_group[0]) {
-						if (distance_num<1.5) {
-							num_sides++;
-							in_slow_area_="false";
-						}
-						else if (distance_num<3) {
-							num_behind++;
-							in_slow_area_="false";
-						}
-						else {
-							in_slow_area_="true";
+					if (agents_in_group.size()>0) {
+						if (observed_group_==agents_in_group[0]) {
+							if (distance_num<1.5) {
+								num_sides++;
+								in_slow_area_="false";
+							}
+							else if (distance_num<3) {
+								num_behind++;
+								in_slow_area_="false";
+							}
+							else {
+								in_slow_area_="true";
+							}
 						}
 					}
 				}
+				else if (std::find(agents_in_group.begin(),agents_in_group.end(),f.subject)!=agents_in_group.end() &&
+						 f.predicate[0]=="distance" && f.predicate[1]==robot_name_) {
+					double distance_num=boost::lexical_cast<double>(f.value[0]);
+					if (distance_num<1.5) {
+						num_sides++;
+						in_slow_area_="false";
+					}
+					else if (distance_num<3) {
+						num_behind++;
+						in_slow_area_="false";
+					}
+					else {
+						in_slow_area_="true";
+					}
+				}
+				else if (f.subject==observed_group_ && f.predicate[0]=="isMoving") {
+					if (f.value[0]=="0") {
+						group_is_moving_="notMoving";
+					}
+					else {
+						group_is_moving_="moving";
+					}
+				}
+				else if (f.subject==robot_name_ && f.predicate[0]=="isInArea") {
+					robot_location_=f.value[0];
+				}
 			}
-			else if (std::find(agents_in_group.begin(),agents_in_group.end(),f.subject)!=agents_in_group.end() &&
-					 f.predicate[0]=="distance" && f.predicate[1]==robot_name_) {
-				double distance_num=boost::lexical_cast<double>(f.value[0]);
-				if (distance_num<1.5) {
-					num_sides++;
-					in_slow_area_="false";
-				}
-				else if (distance_num<3) {
-					num_behind++;
-					in_slow_area_="false";
-				}
-				else {
-					in_slow_area_="true";
-				}
+			else {
+				ROS_ERROR("OBSERVATION_MANAGER predicate size is zero");
 			}
-			else if (f.subject==observed_group_ && f.predicate[0]=="isMoving") {
-				if (f.value[0]=="0") {
-					group_is_moving_="notMoving";
-				}
-				else {
-					group_is_moving_="moving";
-				}
-			}
-			else if (f.subject==robot_name_ && f.predicate[0]=="isInArea") {
-				robot_location_=f.value[0];
-			}
-
 		}
 	}
 	if (mode_=="normal") {
@@ -361,10 +382,15 @@ void ObservationManager::getComplexObservations(vector<situation_assessment_msgs
 	vector<string> agents_to_find;
 	BOOST_FOREACH(situation_assessment_msgs::Fact f, fact_list) {
 		if (f.subject!=robot_name_) {
-			if (f.predicate[0]=="isInArea") {
-				if (std::find(agents_in_group_.begin(),agents_in_group_.end(),f.subject)!=agents_in_group_.end() && std::find(f.value.begin(),f.value.end(),robot_name_)!=f.value.end())  {
-					agents_to_find.push_back(f.subject);
+			if (f.predicate.size()>0) {
+				if (f.predicate[0]=="isInArea") {
+					if (std::find(agents_in_group_.begin(),agents_in_group_.end(),f.subject)!=agents_in_group_.end() && std::find(f.value.begin(),f.value.end(),robot_name_)!=f.value.end())  {
+						agents_to_find.push_back(f.subject);
+					}
 				}
+			}
+			else {
+				ROS_ERROR("OBSERVATION_MANAGER predicate size is zero");
 			}
 		}
 	}	

@@ -141,23 +141,23 @@ void moveToFeedbackCb(const supervision_msgs::MoveToFeedbackConstPtr& feedback)
 
 vector<string> getAgentsInGroup() {
 	vector<string> result;
-	situation_assessment_msgs::QueryDatabase srv;
+	situation_assessment_msgs::QueryDatabase entity_query;
 
 	ROS_INFO("ROBOT_GUIDE ROBOT_GUIDE getting agents in group");
 
-	srv.request.query.model=robot_name;
-	srv.request.query.subject="";
-	srv.request.query.predicate.push_back("isInArea");
+	entity_query.request.query.model=robot_name;
+	entity_query.request.query.subject="";
+	entity_query.request.query.predicate.push_back("isInArea");
 
-	if (!database_client.call(srv)) {
+	if (!database_client.call(entity_query)) {
 		ROS_ERROR("Couldn't contact database");
 		return result;
 	}
 	vector<string> entities_in_area;
 	ROS_INFO("ROBOT_GUIDE ROBOT_GUIDE getting entities in area");
-	for (int i=0; i<srv.response.result.size();i++) {
-		string entity_name=srv.response.result[i].subject;
-		vector<string> areas=srv.response.result[i].value;
+	for (int i=0; i<entity_query.response.result.size();i++) {
+		string entity_name=entity_query.response.result[i].subject;
+		vector<string> areas=entity_query.response.result[i].value;
 		if (std::find(areas.begin(),areas.end(),robot_name)!=areas.end()) {
 			entities_in_area.push_back(entity_name);
 		}
@@ -165,19 +165,27 @@ vector<string> getAgentsInGroup() {
 	vector<string> humans_in_area;
 	ROS_INFO("ROBOT_GUIDE ROBOT_GUIDE getting humans in area");
 	for (int i=0; i<entities_in_area.size();i++) {
-		srv.request.query.subject=entities_in_area[i];
-		srv.request.query.predicate[0]="type";
-		if (!database_client.call(srv)) {
+		situation_assessment_msgs::QueryDatabase human_query;
+		human_query.request.query.subject=entities_in_area[i];
+		human_query.request.query.predicate.push_back("type");
+		if (!database_client.call(human_query)) {
 			ROS_ERROR("Couldn't connect to database");
 			return result;
 		}
-		if (srv.response.result[0].value[1]=="HUMAN") {
+		if (human_query.response.result.size()==0) {
+			ROS_ERROR("ROBOT_GUIDE error! no human returned!");
+			return result;
+		}
+		else if (human_query.response.result[0].value()<2) {
+			ROS_ERROR("ROBOT_GUIDE error! human class incomplete");
+			return result;
+		}
+		else if (human_query.response.result[0].value[1]=="HUMAN") {
 			humans_in_area.push_back(entities_in_area[i]);
 		}
 	}
 	result=humans_in_area;
 	return result;
-
 
 }
 
