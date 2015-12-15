@@ -201,13 +201,20 @@ void ObservationManager::getSimpleObservations(vector<situation_assessment_msgs:
 	vector<string> agents,agents_to_find;
 
 	BOOST_FOREACH(situation_assessment_msgs::Fact f, fact_list) {
-		if (f.predicate.size()>1) {
-			if (f.predicate[0]=="type" && f.value[0]=="agent" && f.value[1]=="HUMAN") {
-					agents.push_back(f.subject);
+		if (f.predicate.size()>0) {
+			if (f.predicate[0]=="type") {
+				if (f.value.size()>1) {
+					if (f.value[0]=="agent" && f.value[1]=="HUMAN") {
+							agents.push_back(f.subject);
+					}
+				}
+				else {
+					ROS_ERROR("OBSERVATION_MANAGER no class or type included");
+				}
 			}
 		}
 		else {
-			ROS_ERROR("OBSERVATION_MANAGER entity misses class or type");
+			ROS_ERROR("OBSERVATION_MANAGER no predicate included");
 		}
 
 	}

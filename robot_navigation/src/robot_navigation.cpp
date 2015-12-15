@@ -84,9 +84,13 @@ geometry_msgs::Pose getPose(string name) {
 	geometry_msgs::Pose pose;
 	if (simple_database_client_.call(srv)) {
 		if (srv.response.result.size()==0) {
-			ROS_ERROR("Couldn't fine pose for %s",name.c_str());
+			ROS_ERROR("ROBOT_NAVIGATION Couldn't fine pose for %s",name.c_str());
 		}
 		else {
+			if (srv.response.result[0].value.size()<6) {
+				ROS_ERROR("ROBOT_NAVIGATION returned value but missing pose"); 
+			}
+			else {
 			pose.position.x=boost::lexical_cast<double>(srv.response.result[0].value[0]);
 			pose.position.y=boost::lexical_cast<double>(srv.response.result[0].value[1]);
 			pose.position.z=boost::lexical_cast<double>(srv.response.result[0].value[2]);
@@ -94,6 +98,7 @@ geometry_msgs::Pose getPose(string name) {
 			pose.orientation.y=boost::lexical_cast<double>(srv.response.result[0].value[4]);
 			pose.orientation.z=boost::lexical_cast<double>(srv.response.result[0].value[5]);
 			pose.orientation.w=boost::lexical_cast<double>(srv.response.result[0].value[6]);
+			}
 		}
 	}
 	else {
@@ -134,7 +139,15 @@ string getEntityType(string name) {
 
 	if (simple_database_client_.call(srv)) {
 		if (srv.response.result.size()>0) {
-			return srv.response.result[0].value[0];
+			if (srv.response.result[0].value.size()>0) {
+				return srv.response.result[0].value[0];
+			}
+			else {
+				ROS_ERROR("ROBOT_NAVIGATION received response from db with no value");
+			}
+		}
+		else {
+			ROS_ERROR("ROBOT_NAVIGATION received response from db but no results");
 		}
 	}
 	else {
@@ -161,10 +174,15 @@ string getRobotLocation() {
 
 			if (simple_database_client_.call(srv)) {
 				if (srv.response.result.size()>0) {
-					// ROS_INFO("ROBOT_NAVIGATION %s area is type %s",robot_areas_[i].c_str(),srv.response.result[0].value[0].c_str());
-					if (srv.response.result[0].value[0]=="location") {
-						ROS_INFO("ROBOT_NAVIGATION found robot location");
-						return robot_areas_[i];
+					if (srv.response.result[0].value.size()>0) {
+						// ROS_INFO("ROBOT_NAVIGATION %s area is type %s",robot_areas_[i].c_str(),srv.response.result[0].value[0].c_str());
+						if (srv.response.result[0].value[0]=="location") {
+							ROS_INFO("ROBOT_NAVIGATION found robot location");
+							return robot_areas_[i];
+						}
+					}
+					else {
+						ROS_ERROR("ROBOT_NAVIGATION received result but no values");
 					}
 				}
 				else {
@@ -188,27 +206,40 @@ string getEntityLocation(string name) {
 	srv.request.query=fact;
 
 	if (simple_database_client_.call(srv)) {
-		entity_areas=srv.response.result[0].value;
 
-		for (int i=0; i<entity_areas.size();i++) {
-			if (entity_areas[i]!="this") {
-		 		fact.predicate.clear();
+		if (srv.response.result.size()>0) {
 
-				fact.model=robot_name_;
-				fact.subject=entity_areas[i];
-				fact.predicate.push_back("type");
-				srv.request.query=fact;
 
-				if (simple_database_client_.call(srv)) {
-					if (srv.response.result.size()>0) {
-						if (srv.response.result[0].value[0]=="location") return entity_areas[i];
+			entity_areas=srv.response.result[0].value;
+
+			for (int i=0; i<entity_areas.size();i++) {
+				if (entity_areas[i]!="this") {
+		 			fact.predicate.clear();
+
+					fact.model=robot_name_;
+					fact.subject=entity_areas[i];
+					fact.predicate.push_back("type");
+					srv.request.query=fact;
+
+					if (simple_database_client_.call(srv)) {
+						if (srv.response.result.size()>0) {
+							if (srv.response.result[0].value.size()>0) {
+								if (srv.response.result[0].value[0]=="location") return entity_areas[i];
+							}
+							else {
+								ROS_ERROR("ROBOT_NAVIGATION no values returned from db");
+							}
+						}
+					}
+					else {
+						ROS_ERROR("Could not contact database");
+						break;
 					}
 				}
-				else {
-					ROS_ERROR("Could not contact database");
-					break;
-				}
-			}
+			} 
+		}
+		else {
+			ROS_ERROR("ROBOT_NAVIGATION received response without results from db");
 		}
 	}
 	else {
@@ -469,6 +500,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 				if (!switch_map_error) { 
 					ROS_INFO("ROBOT_NAVIGATION Error when switching map");
 					got_error=true;
+					break;
 				}
 			}
 
@@ -589,20 +621,25 @@ void agentFactCallback(const situation_assessment_msgs::FactList::ConstPtr& msg)
 	boost::lock_guard<boost::mutex> lock(mutex_location_);
 
 	for (int i=0;i<fact_list.size();i++) {
-		if (fact_list[i].subject==robot_name_ && fact_list[i].predicate[0]=="isInArea") {
-			robot_areas_=fact_list[i].value;
-			for (int i=0; i<robot_areas_.size();i++) {
-				// ROS_INFO("ROBOT_NAVIGATION robot areas %s",robot_areas_[i].c_str());
+		if (fact_list[i].predicate.size()>0) {
+			if (fact_list[i].subject==robot_name_ && fact_list[i].predicate[0]=="isInArea") {
+				robot_areas_=fact_list[i].value;
+				for (int i=0; i<robot_areas_.size();i++) {
+					// ROS_INFO("ROBOT_NAVIGATION robot areas %s",robot_areas_[i].c_str());
+				}
+				// ROS_INFO("Next area is %s",next_area_.c_str());
+				if (std::find(robot_areas_.begin(),robot_areas_.end(),next_area_)!=robot_areas_.end()) {
+					// ROS_INFO("ROBOT_NAVIGATION Reached next area");
+					reached_next_area_=true;
+				}
+				break;
 			}
-			// ROS_INFO("Next area is %s",next_area_.c_str());
-			if (std::find(robot_areas_.begin(),robot_areas_.end(),next_area_)!=robot_areas_.end()) {
-				// ROS_INFO("ROBOT_NAVIGATION Reached next area");
-				reached_next_area_=true;
-			}
-			break;
+		}
+		else {
+			ROS_ERROR("ROBOT_NAVIGATION received fact with predicate size 0");
+			ROS_ERROR("Model %s and subject %s",fact_list[i].model.c_str(), fact_list[i].subject.c_str());
 		}
 	}
-
 }
 
 int main(int argc,char** argv) {
