@@ -317,6 +317,8 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 	if (destination!=location_destination) {
 		geometry_msgs::Pose pose=database_queries->getPose(destination);
 		node_poses.push_back(pose);
+		n_nodes++;
+		nodes.push_back(destination);
 	}
 	boost::thread t(boost::bind(&PathLength::startPublishingPath,path_length,node_poses));
 
@@ -333,8 +335,8 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 
 		while (!task_completed && !got_error && !move_to_action_server->isPreemptRequested()) {
 			if (
-				(current_node<n_nodes && destination==location_destination ||  //account for possible last node, which 
-				current_node<n_nodes-1 && destination!=location_destination)    // doesn't require map switch
+				(current_node<n_nodes-1 && destination==location_destination ||  //account for possible last node, which 
+				current_node<n_nodes-2 && destination!=location_destination)    // doesn't require map switch
 				&& symbolic_navigation==true) {
 				
 				ROS_INFO("ROBOT_NAVIGATION Switching to map %s %s",nodes[current_node].c_str(),nodes[current_node+1].c_str());
@@ -468,9 +470,7 @@ void agentFactCallback(const situation_assessment_msgs::FactList::ConstPtr& msg)
 			if (fact_list[i].subject==robot_name_ && fact_list[i].predicate[0]=="isInArea") {
 				robot_areas_=fact_list[i].value;
 				for (int i=0; i<robot_areas_.size();i++) {
-					// ROS_INFO("ROBOT_NAVIGATION robot areas %s",robot_areas_[i].c_str());
 				}
-				// ROS_INFO("Next area is %s",next_area_.c_str());
 				if (std::find(robot_areas_.begin(),robot_areas_.end(),next_area_)!=robot_areas_.end()) {
 					// ROS_INFO("ROBOT_NAVIGATION Reached next area");
 					reached_next_area_=true;

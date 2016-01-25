@@ -137,6 +137,7 @@ geometry_msgs::Pose DatabaseQueries::getRobotPose() {
 	situation_assessment_msgs::Fact fact;
 
 	fact.model=robot_name_;
+	fact.subject=robot_name_;
 	fact.predicate.push_back("pose");
 	srv.request.query=fact;
 	if (simple_database_client_.call(srv)) {
@@ -145,6 +146,7 @@ geometry_msgs::Pose DatabaseQueries::getRobotPose() {
 				robot_pose.position.x=boost::lexical_cast<double>(srv.response.result[0].value[0]);
 				robot_pose.position.y=boost::lexical_cast<double>(srv.response.result[0].value[1]);
 				robot_pose.position.z=boost::lexical_cast<double>(srv.response.result[0].value[2]);
+
 			}
 			else {
 				ROS_ERROR("ROBOT_NAVIGATION not enough values in pose");

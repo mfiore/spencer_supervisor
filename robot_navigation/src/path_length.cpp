@@ -31,12 +31,9 @@ void PathLength::startPublishingPath(vector<geometry_msgs::Pose> path) {
 		int new_index=getCurrentNode();
 		if (new_index<path.size()-1) {
 			robot_pose=database_queries_->getRobotPose();
-			ROS_INFO("robot pose is %f %f",robot_pose.position.x,robot_pose.position.y);
 			distance_to_next=dist2d(robot_pose,path[new_index+1]);
-			ROS_INFO("distance is %f",distance_to_next);
 		}
 		if (new_index!=path_index) {
-			ROS_INFO("here");
 			path_index=new_index;
 			remaining_length=calculateRemainingLength(path);
 		}
