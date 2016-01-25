@@ -290,6 +290,8 @@ void sendMoveBaseGoal(geometry_msgs::Pose pose,MoveBaseClient* move_base_client)
 //in the spencer project we use smaller grid maps for navigations associated to couples of symbolic nodes. This procedure
 //calls a service to switch grid map on two symbolic nodes.
 bool switchMap(string node1, string node2) {
+	ROS_INFO("Switching map to %s %s",node1.c_str(),node2.c_str());
+	if (use_map_switching_) {
 	annotated_mapping::SwitchMap srv;
 	srv.request.name_1=node1;
 	srv.request.name_2=node2;
@@ -298,6 +300,9 @@ bool switchMap(string node1, string node2) {
 	bool success=srv.response.success;
 
 	return success;
+
+	}
+	else return true;
 }
 
 bool moveToNext(geometry_msgs::Pose goal_pose, MoveBaseClient *move_base_client, MoveToServer* move_to_action_server,
@@ -489,8 +494,10 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 
 	got_error=hasSystemError(check_status_);
 
-	if (symbolic_navigation && nodes.size()>0 || poses.size()>0 && !symbolic_navigation) {
+	ROS_INFO("ROBOT_NAVIGATION Got error is %d",got_error);
 
+	if (symbolic_navigation && nodes.size()>0 || poses.size()>0 && !symbolic_navigation) {
+		ROS_INFO("ROBOT_NAVIGATION after first check");
 		//switch map to the first one, if we have symbolic navigation
 
 		while (!task_completed && !got_error && !move_to_action_server->isPreemptRequested()) {
@@ -503,7 +510,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 					break;
 				}
 			}
-
+			ROS_INFO("ROBOT_NAVIGATION going for next position");
 			geometry_msgs::Pose goal_pose;
 
 			//send the next goal, from the next node center or from the next coordinate.	
@@ -527,6 +534,8 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 
 			goal_pose.orientation.w=1.0;
 
+
+			ROS_INFO("ROBOT_NAVIGATION calling move to next");
 			bool move_status=moveToNext(goal_pose,move_base_client,move_to_action_server,next_area_,symbolic_navigation);
 			got_error=!move_status;
 			//when we arrive to the next node, if we use symbolic navigation we stop the robot and switch map.
@@ -552,8 +561,10 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		} 		
 	}
 	else {
+		ROS_INFO("ROBOT_NAVIGATION task completed because robot is already there")
 		task_completed=true; //if there are no nodes in the path we're already arrived
 	}
+	ROS_INFO("ROBOT_NAVIGATION task completed is %d",task_completed);
 	ROS_INFO("ROBOT_NAVIGATION checking for final location");
 	//if we're reaching an entity in a location
 	if (task_completed && destination!=location_destination) {
