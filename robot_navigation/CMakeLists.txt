@@ -4,9 +4,7 @@ project(robot_navigation)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS roscpp rospy 
-situation_assessment_msgs supervision_msgs spencer_status tf 
-geometry_msgs)
+find_package(catkin REQUIRED COMPONENTS roscpp rospy situation_assessment_msgs supervision_msgs spencer_status tf annotated_mapping  geometry_msgs)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -78,9 +76,9 @@ geometry_msgs)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+  INCLUDE_DIRS include
 #  LIBRARIES robot_navigation
-#  CATKIN_DEPENDS roscpp rospy situation_assessment_msgs supervision_msgs spencer_status geometry_msgs
+  CATKIN_DEPENDS roscpp rospy situation_assessment_msgs supervision_msgs spencer_status geometry_msgs annotated_mapping
 
 #  DEPENDS system_lib
 )
@@ -103,11 +101,11 @@ include_directories(
 # )
 
 ## Declare a cpp executable
- add_executable(robot_navigation src/robot_navigation.cpp )
+ add_executable(robot_navigation src/robot_navigation.cpp src/database_queries.cpp src/path_length.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-add_dependencies(robot_navigation supervision_msgs_generate_messages_cpp)
+add_dependencies(robot_navigation supervision_msgs_generate_messages_cpp annotated_mapping_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
  target_link_libraries(robot_navigation

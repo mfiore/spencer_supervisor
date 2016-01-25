@@ -44,6 +44,7 @@ add_message_files(
   FILES
   SupervisionStatus.msg
   SupervisionStopped.msg
+  PathInfo.msg
 )
 
 ## Generate services in the 'srv' folder
