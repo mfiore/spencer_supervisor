@@ -11,18 +11,17 @@ void PathLength::startPublishingPath(vector<geometry_msgs::Pose> path) {
 	should_publish_=true;
 	current_node_=0;
 	double tot_length=calculateRemainingLength(path);
+	double remaining_length=tot_length;
+
 	geometry_msgs::Pose robot_pose=database_queries_->getRobotPose();
-	robot_pose.database_queries_->getRobotPose();
-	distance_to_next=dist2d(robot_pose,path[1]);
+	double distance_to_next=dist2d(robot_pose,path[1]);
+	tot_length=tot_length+distance_to_next;
 	int tot_seconds=round(tot_length/robot_speed_);
-	int remaining_length=tot_length;
 	int remaining_seconds=tot_seconds;
 	int path_index=0;
 
 
 
-	ROS_INFO("remaining_length is %f",remaining_length);
-	ROS_INFO("total length is %f",tot_length);
 	double old_distance_to_next=0;
 	ros::Rate r(1);
 	while (shouldPublish()) {
@@ -30,19 +29,17 @@ void PathLength::startPublishingPath(vector<geometry_msgs::Pose> path) {
 
 
 		int new_index=getCurrentNode();
-		double distance_to_next=0;
 		if (new_index<path.size()-1) {
-			geometry_msgs::Pose robot_pose=database_queries_->getRobotPose();
-			ROS_INFO("robot pose %f %f",robot_pose.position.x,robot_pose.position.y);
-			ROS_INFO("next node pose %f %f",path[new_index+1].position.x,path[new_index+1].position.y);
+			robot_pose=database_queries_->getRobotPose();
+			ROS_INFO("robot pose is %f %f",robot_pose.position.x,robot_pose.position.y);
 			distance_to_next=dist2d(robot_pose,path[new_index+1]);
+			ROS_INFO("distance is %f",distance_to_next);
 		}
 		if (new_index!=path_index) {
 			ROS_INFO("here");
 			path_index=new_index;
 			remaining_length=calculateRemainingLength(path);
 		}
-		ROS_INFO("remaining %f distance %f old_distance_to_next %f",remaining_length,distance_to_next,old_distance_to_next);
 		remaining_length=remaining_length+distance_to_next-old_distance_to_next;
 		remaining_seconds=round(remaining_length/robot_speed_);
 
@@ -80,7 +77,6 @@ int PathLength::getCurrentNode() {
 double PathLength::calculatePathLength(vector<geometry_msgs::Pose> path) {
 	double tot=0;
 
-	ROS_INFO("Path size is %ld",path.size());
 	if (path.size()==1) return 0;
 	for (int i=0; i<path.size()-1;i++) {
 		tot=tot+dist2d(path[i],path[i+1]);
@@ -99,14 +95,12 @@ double PathLength::dist2d(geometry_msgs::Pose p1, geometry_msgs::Pose p2) {
 
 double PathLength::calculateRemainingLength(vector<geometry_msgs::Pose> path) {
 	int i=getCurrentNode();	
-	ROS_INFO("current node is %d",i);	
 	if (i==path.size()-1) return 0;
 	double tot=0;
 	if (i>=path.size()) {
 		ROS_WARN("ROBOT_NAVIGATION path index bigger than path size");
 		return 0;
 	}
-	ROS_INFO("Path size for remaining is %ld",path.size());
 	i++;
 	while (i<path.size()-1) {
 		tot=tot+dist2d(path[i],path[i+1]);

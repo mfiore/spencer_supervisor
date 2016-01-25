@@ -293,7 +293,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 				supervision_msgs::CalculatePath path_request;
 				path_request.request.source=database_queries->getRobotLocation(robot_areas_);
 				path_request.request.dest=location_destination;
-				if (calculate_path_client->call(path_request)) getEntityLoca{
+				if (calculate_path_client->call(path_request)) {
 					ROS_INFO("ROBOT_NAVIGATION calculated path to destination");
 					nodes=path_request.response.path;
 					n_nodes=nodes.size();
@@ -318,7 +318,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		geometry_msgs::Pose pose=database_queries->getPose(destination);
 		node_poses.push_back(pose);
 	}
-	path_length->startPublishingPath(node_poses);
+	boost::thread t(boost::bind(&PathLength::startPublishingPath,path_length,node_poses));
 
 	//control variables
 	bool task_completed=false;
