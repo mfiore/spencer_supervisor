@@ -1,15 +1,17 @@
 ---
 supervision:
     angular_velocity: 0.4
-    starting_speed: 0.7
+    starting_speed: 1.0
     min_speed: 0.4
     max_speed: 1.0
     simulation_mode: true
     test_mode: 0
     use_map_switching: false
     use_driving_direction: false
-    use_control_speed: false
+    use_control_speed: true
     wait_time: 10
+    speed_adaptation_time: 2
+    first_stop_time: 5
     guide_pomdp:
         appl_problem: /home/mfiore/pomdpModels/icsr/guide.pomdpx
         appl_policy: /home/mfiore/pomdpModels/icsr/guide.out
