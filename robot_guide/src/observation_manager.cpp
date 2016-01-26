@@ -388,12 +388,24 @@ void ObservationManager::getComplexObservations(vector<situation_assessment_msgs
 
 
 	vector<string> agents_to_find;
+	int n_group_agents_tracked=0;;
+
 	BOOST_FOREACH(situation_assessment_msgs::Fact f, fact_list) {
 		if (f.subject!=robot_name_) {
 			if (f.predicate.size()>0) {
 				if (f.predicate[0]=="isInArea") {
-					if (std::find(agents_in_group_.begin(),agents_in_group_.end(),f.subject)!=agents_in_group_.end() && std::find(f.value.begin(),f.value.end(),robot_name_)!=f.value.end())  {
+					if (std::find(agents_in_group_.begin(),agents_in_group_.end(),f.subject)!=agents_in_group_.end() 
+						&& std::find(f.value.begin(),f.value.end(),robot_name_)!=f.value.end())  {
 						agents_to_find.push_back(f.subject);
+					}
+				}
+				if (f.predicate[0]=="type") {
+					if (f.value.size()>1) {
+						if (f.value[1]=="human") {
+							if (std::find(agents_in_group_.begin(),agents_in_group_.end(),f.subject)!=agents_in_group_.end()) {
+								n_group_agents_tracked++;
+							}							
+						}
 					}
 				}
 			}
@@ -425,9 +437,11 @@ void ObservationManager::getComplexObservations(vector<situation_assessment_msgs
 		}
 	}
 	else {
-		if (true_mode!="simple") {
-		ROS_INFO("OBSERVATION_MANAGER ROBOT_GUIDE no agent of group around. Switching to simple_mode");
-		true_mode="simple";
+		if (true_mode!="simple" && n_group_agents_tracked==0) {
+		
+
+			ROS_INFO("OBSERVATION_MANAGER ROBOT_GUIDE no agent of group around. Switching to simple_mode");
+			true_mode="simple";
 		}
 		getSimpleObservations(fact_list);
 	}
