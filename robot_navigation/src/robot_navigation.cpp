@@ -518,7 +518,7 @@ int main(int argc,char** argv) {
 	//get useful parameters
 	n.getParam("/robot/name",robot_name_);
 	n.getParam("supervision/simulation_mode",simulation_mode_);
-	n.getParam("supervision/use_map_switching_",use_map_switching_);
+	n.getParam("supervision/use_map_switching",use_map_switching_);
 
 	ROS_INFO("ROBOT_NAVIGATION Parameters are:");
 	ROS_INFO("ROBOT_NAVIGATION robot name %s",robot_name_.c_str());
