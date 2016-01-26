@@ -164,6 +164,7 @@ vector<string> getAgentsInGroup() {
 			entities_in_area.push_back(entity_name);
 		}
 	}
+	ROS_INFO("entities in areas size %ld",entities_in_area.size());
 	vector<string> humans_in_area;
 	ROS_INFO("ROBOT_GUIDE ROBOT_GUIDE getting humans in area");
 	for (int i=0; i<entities_in_area.size();i++) {
@@ -185,6 +186,7 @@ vector<string> getAgentsInGroup() {
 		else if (human_query.response.result[0].value[1]=="human") {
 			humans_in_area.push_back(entities_in_area[i]);
 		}
+		ROS_INFO("query response size %ld",human_query.response.result.size());
 	}
 	result=humans_in_area;
 	return result;
