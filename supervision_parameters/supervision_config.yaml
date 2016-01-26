@@ -8,7 +8,7 @@ supervision:
     test_mode: 0
     use_map_switching: false
     use_driving_direction: false
-    use_control_speed: true
+    use_control_speed: false
     wait_time: 10
     speed_adaptation_time: 2
     first_stop_time: 5

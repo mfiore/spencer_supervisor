@@ -356,12 +356,14 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 		r.sleep();
 	}
 
-	
 	boost::thread first_time_thread(boost::bind(&SupervisionTimer::start,&stop_timer));
 
 	//check if there is already an error
 	got_error=check_status->isBatteryLow() || check_status->isBumperPressed() || check_status->isStopped();
     is_preempted=guide_action_server->isPreemptRequested();
+
+
+	switchSpeed(starting_speed,&control_speed_client);	//switch to starting speed
 	//the loop stops when the group abandons the task or we complete or we got an error or we are stopped from
 	//the outside
 	while (guide_action!="abandon" && !task_completed && !hasSystemError(check_status,is_moving,move_to_client) &&
@@ -529,6 +531,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 	//at the end of the task reset the driving direction to forward
 	if (!ros::ok()) return;
 	switchDrivingDirection(false,set_driving_direction_client);
+	switchSpeed(starting_speed,&control_speed_client);
 
 	//publish final status
 	if (task_completed) {
