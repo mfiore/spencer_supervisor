@@ -16,7 +16,9 @@ void SupervisionTimer::start() {
 	mutex_is_elapsed_.lock();
 	is_elapsed_=false;
 	mutex_is_elapsed_.unlock();
-
+	mutex_is_running_.lock();
+	is_running_=true;
+	mutex_is_running_.unlock();
 
 	double begin_time=ros::Time::now().toSec();
 	bool should_quit=false;
@@ -37,9 +39,19 @@ void SupervisionTimer::start() {
 			mutex_stop_.unlock();
 		}
 	}
+	mutex_is_running_.lock();
+	is_running_=false;
+	mutex_is_running_.unlock();
 }
 
 bool SupervisionTimer::isElapsed() {
 	boost::lock_guard<boost::mutex> lock(mutex_is_elapsed_);
 	return is_elapsed_;
+
+}
+
+bool SupervisionTimer::isRunning() {
+	boost::lock_guard<boost::mutex> lock(mutex_is_running_);
+	return is_running_;
+
 }

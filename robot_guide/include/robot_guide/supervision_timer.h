@@ -23,12 +23,15 @@ public:
 	void start();
 	//true when the timer has elapsed.
 	bool isElapsed();
+	bool isRunning();
 private:
 	double seconds_to_wait_;
 	bool is_elapsed_;
+	bool is_running_;
 	bool stop_;
 	boost::mutex mutex_is_elapsed_;
 	boost::mutex mutex_stop_;
+	boost::mutex mutex_is_running_;
 
 };
 

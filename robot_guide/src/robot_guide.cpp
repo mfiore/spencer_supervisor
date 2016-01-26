@@ -68,6 +68,8 @@ double actual_speed;
 
 //max time the robot will wait for users before abandoning
 double time_to_wait;
+double speed_adaptation_time_;
+double first_stop_time_;
 
 //explained in observation_manager.h
 string observations_mode;
@@ -180,7 +182,7 @@ vector<string> getAgentsInGroup() {
 			ROS_ERROR("ROBOT_GUIDE error! human class incomplete");
 			return result;
 		}
-		else if (human_query.response.result[0].value[1]=="HUMAN") {
+		else if (human_query.response.result[0].value[1]=="human") {
 			humans_in_area.push_back(entities_in_area[i]);
 		}
 	}
@@ -205,10 +207,13 @@ void switchDrivingDirection(bool backward, ros::ServiceClient* set_driving_direc
 }
 
 void switchSpeed(double newSpeed, ros::ServiceClient* control_speed_client) {
+	if (!simulation_mode) {
 	spencer_control_msgs::SetMaxVelocity srv;
-	srv.request.max_linear_velocity=actual_speed;
+	srv.request.max_linear_velocity=newSpeed;
 	srv.request.max_angular_velocity=angular_velocity;
 	control_speed_client->call(srv);
+	}
+	ROS_INFO("ROBOT_GUIDE switching speed to %f",newSpeed);
 }
 
 
@@ -226,7 +231,14 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 
 
 	SupervisionTimer wait_timer(time_to_wait); //timer used when waiting users (before aborting)
-	boost::thread timer_thread; //its thread
+	SupervisionTimer accelerate_timer(speed_adaptation_time_);
+	SupervisionTimer decelerate_timer(speed_adaptation_time_);
+	SupervisionTimer stop_timer(first_stop_time_);
+
+	//boost::thread timer_thread; //its thread
+	//boost::thread accelerate_timer_thread;
+	//boost::thread decelerate_timer_thread;
+	//boost::thread stop_timer_thread;
 
 
 	//get mission information
@@ -342,6 +354,9 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 		r.sleep();
 	}
 
+	
+	boost::thread first_time_thread(boost::bind(&SupervisionTimer::start,&stop_timer));
+
 	//check if there is already an error
 	got_error=check_status->isBatteryLow() || check_status->isBumperPressed() || check_status->isStopped();
     is_preempted=guide_action_server->isPreemptRequested();
@@ -402,29 +417,30 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 
 
 				if (speed_action=="accelerate"){
+					if (!accelerate_timer.isRunning()) {
+						boost::thread accelerate_timer_thread(boost::bind(&SupervisionTimer::start,&accelerate_timer));
+						 double new_speed=min(actual_speed+0.1,max_speed);
 
-					 double new_speed=min(actual_speed+0.1,max_speed);
+   	  					if (new_speed!=actual_speed) {
+						 	ROS_INFO("ROBOT_GUIDE Robot is accelerating");
+						 	actual_speed=new_speed;
+						 	switchSpeed(new_speed,&control_speed_client);
+							status_msg.details="Accelerating";
 
-   	  				if (new_speed!=actual_speed) {
-					 	ROS_INFO("ROBOT_GUIDE Switching speed to %f",new_speed);
-					 	actual_speed=new_speed;
-					 	switchSpeed(new_speed,&control_speed_client);
-						status_msg.details="Accelerating";
-
+						}
 					}
 				}
 
 				else if (speed_action=="decelerate") {
-				  ROS_INFO("ROBOT_GUIDE is decelerating");
-
-					 double new_speed=max(actual_speed-0.1,min_speed);
-					 ROS_INFO("New speed is %f while actual is %f",new_speed,actual_speed);
-					 if (new_speed!=actual_speed) {
-						ROS_INFO("ROBOT_GUIDE Switching speed to %f",new_speed);
-						switchSpeed(new_speed,&control_speed_client);
-						actual_speed=new_speed;
-						status_msg.details="decelerating";
-
+					if (!decelerate_timer.isRunning()) {
+						boost::thread decelerate_timer_thread(boost::bind(&SupervisionTimer::start,&decelerate_timer));
+						double new_speed=max(actual_speed-0.1,min_speed);
+						if (new_speed!=actual_speed) {
+	     					ROS_INFO("ROBOT_GUIDE is decelerating");
+								switchSpeed(new_speed,&control_speed_client);
+							actual_speed=new_speed;
+							status_msg.details="decelerating";
+						}
 					}
 				}
 				else if (speed_action=="continue") {
@@ -448,8 +464,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 			}
 		}
 		else if (guide_action=="wait") { //if the pomdp selects a wait stop move base and start the timer
-
-			if (is_moving==true) {
+			if (is_moving==true && stop_timer.isElapsed()) { //we also check the timer to disallow the robot to stop in the first seconds
 				status_msg.details="waiting for group";
 
 				//start timer
@@ -502,6 +517,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 				observation_manager->getOrientation(),
 				observation_manager->getGroupIsMoving());
 			if (guide_action=="abandon") {
+
 				ROS_INFO("ROBOT_GUIDE Abandoning task");
 			}
 		}
@@ -609,6 +625,8 @@ int main(int argc, char **argv) {
 	n.getParam("supervision/observations_mode",observations_mode);
 	n.getParam("supervision/wait_time",time_to_wait);
 	n.getParam("supervision/test_mode",test_mode);
+	n.getParam("supervision/speed_adaptation_time",speed_adaptation_time_);
+	n.getParam("supervision/first_stop_time",first_stop_time_);
 
 	ROS_INFO("ROBOT_GUIDE Parameters are:");
 	ROS_INFO("ROBOT_GUIDE robot name %s",robot_name.c_str());
@@ -622,6 +640,8 @@ int main(int argc, char **argv) {
 	ROS_INFO("ROBOT_GUIDE Use Control speed is %d",use_control_speed);
 	ROS_INFO("ROBOT_GUIDE Use driving direction is %d",use_driving_direction);
 	ROS_INFO("ROBOT_GUIDE Test mode of %f",test_mode);
+	ROS_INFO("ROBOT_GUIDE Speed adaptation time is of %f",speed_adaptation_time_);
+	ROS_INFO("ROBOT_GUIDE First stop time is  %f",first_stop_time_);
 
 	//create package objects
 	GuidePomdp guide_pomdp(n);
@@ -636,18 +656,16 @@ int main(int argc, char **argv) {
 	ROS_INFO("ROBOT_GUIDE Connecting to control speed");
 	control_speed_client=n.serviceClient<spencer_control_msgs::SetMaxVelocity>("/spencer/control/set_max_velocity",true);
 	if (use_control_speed) {
-		control_speed_client.waitForExistence();
-		ROS_INFO("Connected");
-
-		// set the starting speed of the robot
-		spencer_control_msgs::SetMaxVelocity srv;
-		srv.request.max_linear_velocity=starting_speed;
-		srv.request.max_angular_velocity=angular_velocity;
-		control_speed_client.call(srv);
 		ROS_INFO("ROBOT_GUIDE Starting speed is %f",starting_speed);
 		 actual_speed=starting_speed;
+
+        if (!simulation_mode) {
+			control_speed_client.waitForExistence();
+			ROS_INFO("Connected");
+			switchSpeed(starting_speed,&control_speed_client);
+		}
 	}
-	
+
 	if (!ros::ok()) {
 		ROS_INFO("ROBOT_GUIDE Shutdown request");
 		return 0;
