@@ -86,7 +86,12 @@ bool hasMoveBaseError(MoveBaseClient* move_base_client) {
 }
 
 bool hasSystemError(CheckStatus* check_status_) {
-	check_status_->isBatteryLow() || check_status_->isStopped() || !ros::ok();
+  if (check_status_->isBatteryLow() || check_status_->isStopped()) {
+     ROS_INFO("ROBOT_NAVIGATION battery low %d",check_status_->isBatteryLow());
+      ROS_INFO("ROBOT_NAVIGATION is stopped %d",check_status_->isStopped());
+  }
+  
+  return  check_status_->isBatteryLow() || check_status_->isStopped() || !ros::ok();
 }
 
 bool isPaused(CheckStatus* check_status_) {
@@ -117,6 +122,8 @@ void sendMoveBaseGoal(geometry_msgs::Pose pose,MoveBaseClient* move_base_client)
 //in the spencer project we use smaller grid maps for navigations associated to couples of symbolic nodes. This procedure
 //calls a service to switch grid map on two symbolic nodes.
 bool switchMap(string node1, string node2) {
+	ROS_INFO("Switching map to %s %s",node1.c_str(),node2.c_str());
+	if (use_map_switching_) {
 	annotated_mapping::SwitchMap srv;
 	srv.request.name_1=node1;
 	srv.request.name_2=node2;
@@ -125,6 +132,9 @@ bool switchMap(string node1, string node2) {
 	bool success=srv.response.success;
 
 	return success;
+
+	}
+	else return true;
 }
 
 bool moveToNext(geometry_msgs::Pose goal_pose, MoveBaseClient *move_base_client, MoveToServer* move_to_action_server,
@@ -213,7 +223,12 @@ bool moveToNext(geometry_msgs::Pose goal_pose, MoveBaseClient *move_base_client,
 			ROS_INFO("Not blocked anymore");
 		}
 		r.sleep();
-	}
+		 }
+	ROS_INFO("has system error is %d",hasSystemError(check_status_));
+	ROS_INFO("has move base error is %d",hasMoveBaseError(move_base_client));
+	ROS_INFO("move base arrived is %d",move_base_arrived);
+	ROS_INFO("robot arrived is %d",robot_arrived);
+	ROS_INFO("Preempt request is %d",move_to_action_server->isPreemptRequested());
 
 
 	return robot_arrived || move_base_arrived;
@@ -329,6 +344,8 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 
 	got_error=hasSystemError(check_status_);
 
+	ROS_INFO("ROBOT_NAVIGATION Got error is %d",got_error);
+
 	if (symbolic_navigation && nodes.size()>0 || poses.size()>0 && !symbolic_navigation) {
 
 		//switch map to the first one, if we have symbolic navigation
@@ -347,6 +364,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 					break;
 				}
 			}
+			ROS_INFO("ROBOT_NAVIGATION going for next position");
 			geometry_msgs::Pose goal_pose;
 
 			//send the next goal, from the next node center or from the next coordinate.	
@@ -393,21 +411,21 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 					task_completed=true;
 				}
 			}
+			else {
+			  if (!simulation_mode_) {
+			    move_base_client->cancelGoal();
+			  }
+			}
 		} 		
 	}
 	else {
+	  ROS_INFO("ROBOT_NAVIGATION task completed because robot is already there");
 		task_completed=true; //if there are no nodes in the path we're already arrived
 	}
-	// ROS_INFO("ROBOT_NAVIGATION checking for final location");
-	//if we're reaching an entity in a location
-	// if (task_completed && destination!=location_destination) {
-	// 	ROS_INFO("ROBOT_NAVIGATION We're in the final node. Now we're heading to the linked entity %s",destination.c_str());
-	// 	task_completed=false;
-
-	// 	geometry_msgs::Pose goal_pose=database_queries->getPose(destination);
-
-	// 	task_completed=moveToNext(goal_pose,move_base_client,move_to_action_server,destination,symbolic_navigation);
-	// }
+	
+    if (!simulation_mode_) {
+	move_base_client->cancelGoal();
+	}
 
 	//publish final task information
 	path_length->stopPublishingPath();
@@ -470,7 +488,9 @@ void agentFactCallback(const situation_assessment_msgs::FactList::ConstPtr& msg)
 			if (fact_list[i].subject==robot_name_ && fact_list[i].predicate[0]=="isInArea") {
 				robot_areas_=fact_list[i].value;
 				for (int i=0; i<robot_areas_.size();i++) {
+					// ROS_INFO("ROBOT_NAVIGATION robot areas %s",robot_areas_[i].c_str());
 				}
+				// ROS_INFO("Next area is %s",next_area_.c_str());
 				if (std::find(robot_areas_.begin(),robot_areas_.end(),next_area_)!=robot_areas_.end()) {
 					// ROS_INFO("ROBOT_NAVIGATION Reached next area");
 					reached_next_area_=true;

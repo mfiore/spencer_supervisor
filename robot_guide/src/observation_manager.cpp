@@ -107,10 +107,11 @@ void ObservationManager::setSymbolicObservations(AgentObservation agent) {
 	}
 
 
-	if (agent.distance<3) {
+	//original obs are <3 close <7 far <1.5 sides  <3 behind
+	if (agent.distance<6) {
 		group_distance_="close";
 	}
-	else if (agent.distance<7) {
+	else if (agent.distance<9) {
 		group_distance_="far";
 	}
 	else group_distance_="outOfRange";
