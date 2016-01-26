@@ -400,6 +400,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 					observation_manager->getHighestDensity(),
 					observation_manager->getInSlowArea());
 
+
 				if (speed_action=="accelerate"){
 
 					 double new_speed=min(actual_speed+0.1,max_speed);
@@ -414,9 +415,10 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 				}
 
 				else if (speed_action=="decelerate") {
+				  ROS_INFO("ROBOT_GUIDE is decelerating");
 
 					 double new_speed=max(actual_speed-0.1,min_speed);
-
+					 ROS_INFO("New speed is %f while actual is %f",new_speed,actual_speed);
 					 if (new_speed!=actual_speed) {
 						ROS_INFO("ROBOT_GUIDE Switching speed to %f",new_speed);
 						switchSpeed(new_speed,&control_speed_client);
@@ -525,14 +527,19 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 	}
 	else {
 		status_msg.status="FAILED";
-
-		if (guide_action_server->isPreemptRequested()) {
+		
+		if (guide_action=="abandon") {
+		    status_msg.details="Group Lost";
+		  }
+		
+		  else if (guide_action_server->isPreemptRequested()) {
 			ROS_INFO("ROBOT_GUIDE Guide preempted");
 			status_msg.details="Preempted";
 		}
 		else if (move_to_client->getState()==actionlib::SimpleClientGoalState::ABORTED || 	
 			 	 move_to_client->getState()==actionlib::SimpleClientGoalState::LOST ||
 			     move_to_client->getState()==actionlib::SimpleClientGoalState::PREEMPTED) {
+
 			status_msg.details="Navigation Error";
 		ROS_INFO("ROBOT_GUIDE Navigation Error");
 		}

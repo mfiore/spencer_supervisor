@@ -259,7 +259,12 @@ bool hasMoveBaseError(MoveBaseClient* move_base_client) {
 }
 
 bool hasSystemError(CheckStatus* check_status_) {
-	check_status_->isBatteryLow() || check_status_->isStopped() || !ros::ok();
+  if (check_status_->isBatteryLow() || check_status_->isStopped()) {
+     ROS_INFO("ROBOT_NAVIGATION battery low %d",check_status_->isBatteryLow());
+      ROS_INFO("ROBOT_NAVIGATION is stopped %d",check_status_->isStopped());
+  }
+  
+  return  check_status_->isBatteryLow() || check_status_->isStopped() || !ros::ok();
 }
 
 bool isPaused(CheckStatus* check_status_) {
@@ -391,7 +396,12 @@ bool moveToNext(geometry_msgs::Pose goal_pose, MoveBaseClient *move_base_client,
 			ROS_INFO("Not blocked anymore");
 		}
 		r.sleep();
-	}
+		 }
+	ROS_INFO("has system error is %d",hasSystemError(check_status_));
+	ROS_INFO("has move base error is %d",hasMoveBaseError(move_base_client));
+	ROS_INFO("move base arrived is %d",move_base_arrived);
+	ROS_INFO("robot arrived is %d",robot_arrived);
+	ROS_INFO("Preempt request is %d",move_to_action_server->isPreemptRequested());
 
 
 	return robot_arrived || move_base_arrived;
@@ -558,10 +568,15 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 					task_completed=true;
 				}
 			}
+			else {
+			  if (!simulation_mode_) {
+			    move_base_client->cancelGoal();
+			  }
+			}
 		} 		
 	}
 	else {
-		ROS_INFO("ROBOT_NAVIGATION task completed because robot is already there")
+	  ROS_INFO("ROBOT_NAVIGATION task completed because robot is already there");
 		task_completed=true; //if there are no nodes in the path we're already arrived
 	}
 	ROS_INFO("ROBOT_NAVIGATION task completed is %d",task_completed);
@@ -575,6 +590,9 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 
 		task_completed=moveToNext(goal_pose,move_base_client,move_to_action_server,destination,symbolic_navigation);
 	}
+
+	move_base_client->cancelGoal();
+	
 
 	//publish final task information
 	if (task_completed) {
