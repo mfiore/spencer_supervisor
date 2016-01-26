@@ -364,7 +364,8 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 
 
 	switchSpeed(starting_speed,&control_speed_client);	//switch to starting speed
-	//the loop stops when the group abandons the task or we complete or we got an error or we are stopped from
+    actual_speed=starting_speed;	
+//the loop stops when the group abandons the task or we complete or we got an error or we are stopped from
 	//the outside
 	while (guide_action!="abandon" && !task_completed && !hasSystemError(check_status,is_moving,move_to_client) &&
 	 !guide_action_server->isPreemptRequested()  && ros::ok()) {
@@ -531,7 +532,8 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 	//at the end of the task reset the driving direction to forward
 	if (!ros::ok()) return;
 	switchDrivingDirection(false,set_driving_direction_client);
-	switchSpeed(starting_speed,&control_speed_client);
+	switchSpeed(max_speed,&control_speed_client);
+	actual_speed=max_speed;
 
 	//publish final status
 	if (task_completed) {

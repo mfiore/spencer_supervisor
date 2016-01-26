@@ -39,25 +39,26 @@
   <!-- Use test_depend for packages you need only for testing: -->
   <!--   <test_depend>gtest</test_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
-    <build_depend>roscpp</build_depend>
+  <build_depend>roscpp</build_depend>
   <build_depend>rospy</build_depend>
+  <build_depend>annotated_mapping</build_depend>
   <build_depend>situation_assessment_msgs</build_depend>
   <build_depend>supervision_msgs</build_depend>
   <build_depend>spencer_status</build_depend>
   <build_depend>tf</build_depend>
   <build_depend>geometry_msgs</build_depend>
   <build_depend> sound_play </build_depend>
-  <build_depend> annotated_mapping </build_depend>
+
 
   <run_depend>roscpp</run_depend>
   <run_depend>rospy</run_depend>
+  <run_depend>annotated_mapping</run_depend>
   <run_depend>situation_assessment_msgs</run_depend>
   <run_depend>supervision_msgs</run_depend>
   <run_depend>spencer_status</run_depend>
   <run_depend>tf</run_depend>
   <run_depend>geometry_msgs</run_depend>
   <run_depend> sound_play </run_depend>
-  <run_depend> annotated_mapping </run_depend>
 
 
 

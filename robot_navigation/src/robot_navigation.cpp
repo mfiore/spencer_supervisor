@@ -347,7 +347,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 	ROS_INFO("ROBOT_NAVIGATION Got error is %d",got_error);
 
 	if (symbolic_navigation && nodes.size()>0 || poses.size()>0 && !symbolic_navigation) {
-
+		ROS_INFO("ROBOT_NAVIGATION after first check");
 		//switch map to the first one, if we have symbolic navigation
 
 		while (!task_completed && !got_error && !move_to_action_server->isPreemptRequested()) {
@@ -426,6 +426,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
     if (!simulation_mode_) {
 	move_base_client->cancelGoal();
 	}
+
 
 	//publish final task information
 	path_length->stopPublishingPath();
