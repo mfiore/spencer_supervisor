@@ -52,7 +52,7 @@ void CheckStatus::bumperCallback(const spencer_control_msgs::SystemStatus& msg) 
 }
 void CheckStatus::batteryCallback(const std_msgs::Float32& msg) {
 	boost::lock_guard<boost::mutex> guard(mutex_battery_low_);
-	if (msg.data<10) {
+	if (msg.data<35) {
 		if (battery_low_==false) {
 			battery_low_=true;
 			ROS_INFO("Battery level too low");

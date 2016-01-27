@@ -5,7 +5,7 @@ project(robot_navigation)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS roscpp rospy 
-situation_assessment_msgs supervision_msgs spencer_status tf 
+annotated_mapping situation_assessment_msgs supervision_msgs spencer_status tf 
 geometry_msgs)
 
 ## System dependencies are found with CMake's conventions

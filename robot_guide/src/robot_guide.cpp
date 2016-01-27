@@ -206,8 +206,9 @@ void switchDrivingDirection(bool backward, ros::ServiceClient* set_driving_direc
 
 void switchSpeed(double newSpeed, ros::ServiceClient* control_speed_client) {
 	spencer_control_msgs::SetMaxVelocity srv;
-	srv.request.max_linear_velocity=actual_speed;
+	srv.request.max_linear_velocity=newSpeed;
 	srv.request.max_angular_velocity=angular_velocity;
+	ROS_INFO("ROBOT_GUIDE switching to %f speed",newSpeed);
 	control_speed_client->call(srv);
 }
 
@@ -342,6 +343,9 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 		r.sleep();
 	}
 
+	switchSpeed(starting_speed,&control_speed_client);
+	actual_speed=starting_speed;
+
 	//check if there is already an error
 	got_error=check_status->isBatteryLow() || check_status->isBumperPressed() || check_status->isStopped();
     is_preempted=guide_action_server->isPreemptRequested();
@@ -406,7 +410,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 					 double new_speed=min(actual_speed+0.1,max_speed);
 
    	  				if (new_speed!=actual_speed) {
-					 	ROS_INFO("ROBOT_GUIDE Switching speed to %f",new_speed);
+					
 					 	actual_speed=new_speed;
 					 	switchSpeed(new_speed,&control_speed_client);
 						status_msg.details="Accelerating";
@@ -418,9 +422,9 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 				  ROS_INFO("ROBOT_GUIDE is decelerating");
 
 					 double new_speed=max(actual_speed-0.1,min_speed);
-					 ROS_INFO("New speed is %f while actual is %f",new_speed,actual_speed);
+					 
 					 if (new_speed!=actual_speed) {
-						ROS_INFO("ROBOT_GUIDE Switching speed to %f",new_speed);
+					
 						switchSpeed(new_speed,&control_speed_client);
 						actual_speed=new_speed;
 						status_msg.details="decelerating";
@@ -511,6 +515,8 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 	//at the end of the task reset the driving direction to forward
 	if (!ros::ok()) return;
 	switchDrivingDirection(false,set_driving_direction_client);
+	switchSpeed(max_speed,&control_speed_client);
+	actual_speed=max_speed;
 
 	//publish final status
 	if (task_completed) {
