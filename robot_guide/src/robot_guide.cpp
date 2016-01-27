@@ -151,6 +151,7 @@ vector<string> getAgentsInGroup() {
 	entity_query.request.query.subject="";
 	entity_query.request.query.predicate.push_back("isInArea");
 
+	if (!database_client.call(entity_query)) {
 		ROS_ERROR("Couldn't contact database");
 		return result;
 	}
