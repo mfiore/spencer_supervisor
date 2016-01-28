@@ -42,9 +42,9 @@ void PathLength::startPublishingPath(vector<geometry_msgs::Pose> path) {
 
 		old_distance_to_next=distance_to_next;
 		msg.total_length=tot_length;
-		msg.total_seconds=tot_seconds;
+		msg.total_seconds=tot_seconds-2;
 		msg.remaining_length=remaining_length;
-		msg.remaining_seconds=remaining_seconds;
+		msg.remaining_seconds=remaining_seconds-2;
 
 		path_info_publisher_.publish(msg);
 		r.sleep();

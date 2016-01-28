@@ -195,17 +195,24 @@ vector<string> getAgentsInGroup() {
 
 void switchDrivingDirection(bool backward, ros::ServiceClient* set_driving_direction_client) {
 	//when the robot guides people, it will move backward, so that they can see the screen
-	ROS_INFO("Setting driving direction to backward");
+	ROS_INFO("Setting driving direction to %d",backward);
 	spencer_nav_msgs::SetDrivingDirection set_driving_direction_srv;
-	set_driving_direction_srv.request.backward=true;
+	set_driving_direction_srv.request.backward=backward;
 	if (!simulation_mode && use_driving_direction) {
 		if (set_driving_direction_client->call(set_driving_direction_srv)){
 			ROS_INFO("Done");
-		}
+		
+			
+	}
 		else {
 			ROS_WARN("Couldn't switch driving direction");
 		}
 	}
+	situation_assessment_msgs::SwitchOrientation srv_switch_orientation;
+	srv_switch_orientation.request.backward=backward;
+			if(!switch_orientation_client.call(srv_switch_orientation)){
+			  ROS_ERROR("ROBOT_GUIDE couldn't call switch orientation");
+			}
 }
 
 void switchSpeed(double newSpeed, ros::ServiceClient* control_speed_client) {
@@ -437,9 +444,13 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 				}
 
 				else if (speed_action=="decelerate") {
+				  //	  ROS_INFO("action is decelerate");
+				  //  ROS_INFO("timer is running %d",decelerate_timer.isRunning());
 					if (!decelerate_timer.isRunning()) {
+					  //	  ROS_INFO("thread is running");
 						boost::thread decelerate_timer_thread(boost::bind(&SupervisionTimer::start,&decelerate_timer));
 						double new_speed=max(actual_speed-0.1,min_speed);
+					//	ROS_INFO("new speed %f actual speed %f",new_speed,actual_speed);
 						if (new_speed!=actual_speed) {
 	     					ROS_INFO("ROBOT_GUIDE is decelerating");
 								switchSpeed(new_speed,&control_speed_client);
@@ -528,6 +539,11 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 		}
 	}
 	wait_timer.stop();
+	
+	accelerate_timer.stop();
+	decelerate_timer.stop();
+	stop_timer.stop();
+
 	
 	//at the end of the task reset the driving direction to forward
 	if (!ros::ok()) return;
@@ -679,7 +695,7 @@ int main(int argc, char **argv) {
 	}
 
 	ROS_INFO("ROBOT_GUIDE Connecting to set driving direction service\n");
-	ros::ServiceClient set_driving_direction_client=n.serviceClient<spencer_nav_msgs::SetDrivingDirection>("/spencer/navigation/set_driving_direction",true);
+	ros::ServiceClient set_driving_direction_client=n.serviceClient<spencer_nav_msgs::SetDrivingDirection>("/spencer/nav/set_driving_direction",true);
 	if (!simulation_mode && use_driving_direction) {
 		set_driving_direction_client.waitForExistence();
 		ROS_INFO("ROBOT_GUIDE Connected\n");
@@ -695,11 +711,13 @@ int main(int argc, char **argv) {
 	switch_orientation_client.waitForExistence();
 	ROS_INFO("ROBOT_GUIDE Connected\n");
 
-	situation_assessment_msgs::SwitchOrientation srv_switch_orientation;
-	srv_switch_orientation.request.backward=true;
-	if(!switch_orientation_client.call(srv_switch_orientation)){
-		ROS_ERROR("ROBOT_GUIDE couldn't call switch orientation");
-	}
+	//		situation_assessment_msgs::SwitchOrientation srv_switch_orientation;
+	//		srv_switch_orientation.request.backward=false;
+	//if(!switch_orientation_client.call(srv_switch_orientation)){
+	//		ROS_ERROR("ROBOT_GUIDE couldn't call switch orientation");
+	//}
+	switchDrivingDirection(false,&set_driving_direction_client);
+	
 
 
 	ROS_INFO("ROBOT_GUIDE Connecting to query database service\n");

@@ -205,7 +205,7 @@ void ObservationManager::getSimpleObservations(vector<situation_assessment_msgs:
 		if (f.predicate.size()>0) {
 			if (f.predicate[0]=="type") {
 				if (f.value.size()>1) {
-					if (f.value[0]=="agent" && f.value[1]=="HUMAN") {
+					if (f.value[0]=="agent" && f.value[1]=="human") {
 							agents.push_back(f.subject);
 					}
 				}
@@ -238,6 +238,7 @@ void ObservationManager::getSimpleObservations(vector<situation_assessment_msgs:
 
 
 	map<string,AgentObservation> agent_observations=createAgentObservations(fact_list,agents_to_find);
+	//	ROS_INFO("ROBOT_GUIDE simple observation size is %ld",agent_observations.size());
 	if (agent_observations.size()>0) {
 		AgentObservation best_agent=getBestAgent(agent_observations);
 	
@@ -418,6 +419,7 @@ void ObservationManager::getComplexObservations(vector<situation_assessment_msgs
 
 	map<string,AgentObservation> agent_observations=createAgentObservations(fact_list,agents_to_find);
 	// ROS_INFO("OBSERVATION_MANAGER ROBOT_GUIDE agent observations size %ld",agent_observations.size());
+	// ROS_INFO("OBSERVATION_MANAGER true mode is %s",true_mode.c_str());
 	if (agent_observations.size()>0) {
 		if (true_mode!="complex") {
 			ROS_INFO("OBSERVATION_MANAGER ROBOT_GUIDE using complex mode");
@@ -443,6 +445,7 @@ void ObservationManager::getComplexObservations(vector<situation_assessment_msgs
 			ROS_INFO("OBSERVATION_MANAGER ROBOT_GUIDE no agent of group around. Switching to simple_mode");
 			true_mode="simple";
 		}
+
 		getSimpleObservations(fact_list);
 	}
 	mutex_agents_in_group.unlock();

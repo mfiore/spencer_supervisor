@@ -4,6 +4,7 @@ SupervisionTimer::SupervisionTimer(double seconds_to_wait) {
 	seconds_to_wait_=seconds_to_wait;
 	stop_=false;
 	is_elapsed_=false;
+	is_running_=false;
 }
 void SupervisionTimer::stop() {
 	boost::lock_guard<boost::mutex> lock(mutex_stop_);

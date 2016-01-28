@@ -331,8 +331,12 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 	}
 	if (destination!=location_destination) {
 		geometry_msgs::Pose pose=database_queries->getPose(destination);
+		if (nodes.size()==0) {
+		  geometry_msgs::Pose starting_pose; //fake pose for starting condition (since we move to the next node usually)
+		  node_poses.push_back(starting_pose);
+		  nodes.push_back(robot_location_);
+		}
 		node_poses.push_back(pose);
-		n_nodes++;
 		nodes.push_back(destination);
 	}
 	boost::thread t(boost::bind(&PathLength::startPublishingPath,path_length,node_poses));
@@ -343,12 +347,14 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 	bool is_moving=false;
 
 	got_error=hasSystemError(check_status_);
+	n_nodes=node_poses.size();
 
 	ROS_INFO("ROBOT_NAVIGATION Got error is %d",got_error);
 
 	if (symbolic_navigation && nodes.size()>0 || poses.size()>0 && !symbolic_navigation) {
 		ROS_INFO("ROBOT_NAVIGATION after first check");
 		//switch map to the first one, if we have symbolic navigation
+		ROS_INFO("ROBOT_NAVIGATION number of nodes is %d, current node is %d vector size is %ld",n_nodes,current_node,nodes.size());
 
 		while (!task_completed && !got_error && !move_to_action_server->isPreemptRequested()) {
 			if (
