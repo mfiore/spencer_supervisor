@@ -60,6 +60,10 @@ bool use_map_switching_;
 boost::mutex mutex_location_;
 
 
+vector<string> old_path_;
+double old_path_length_;
+
+
 //parameters
 string robot_name_;
 bool simulation_mode_;
@@ -135,6 +139,17 @@ bool switchMap(string node1, string node2) {
 
 	}
 	else return true;
+}
+
+
+bool isSamePath(vector<string> path) {
+	int i,j;
+	if (old_path_.size()==0) return false;
+	for (i=path.size()-1, j=old_path_.size()-1; i>=0 && j>=0; i--, j--) {
+		ROS_INFO("ROBOT_NAVIGATION %s %s",path[i].c_str(),old_path_[j].c_str());
+		if (path[i]!=old_path_[j]) return false;
+	}
+	return true;
 }
 
 bool moveToNext(geometry_msgs::Pose goal_pose, MoveBaseClient *move_base_client, MoveToServer* move_to_action_server,
@@ -292,6 +307,13 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 	else {
 		string destination_type=database_queries->getEntityType(destination);
 		ROS_INFO("ROBOT_NAVIGATION got entity type"); 
+		if (destination_type=="") {
+			ROS_INFO("ROBOT_NAVIGATION destination not found");
+			result.status="FAILED";
+			result.details="destination not found";
+			move_to_action_server->setAborted(result);
+			return;
+		}
 		if (destination_type!="location") {
 			ROS_INFO("ROBOT_NAVIGATION destination is not location"); 
 			location_destination=database_queries->getEntityLocation(destination);
@@ -339,7 +361,17 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		node_poses.push_back(pose);
 		nodes.push_back(destination);
 	}
-	boost::thread t(boost::bind(&PathLength::startPublishingPath,path_length,node_poses));
+	double previous_length;
+	if (isSamePath(nodes)) {
+		ROS_INFO("Path is the same. Using again old length %f",old_path_length_);
+		previous_length=old_path_length_;
+	}
+	else {
+		ROS_INFO("Previous length is -1");
+		previous_length=-1;
+	}
+
+	boost::thread t(boost::bind(&PathLength::startPublishingPath,path_length,node_poses,previous_length));
 
 	//control variables
 	bool task_completed=false;
@@ -433,9 +465,12 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 	move_base_client->cancelGoal();
 	}
 
-
+	old_path_=nodes;
+	old_path_length_=path_length->getTotalLength();
+	ROS_INFO("old path length is %f",old_path_length_);
 	//publish final task information
 	path_length->stopPublishingPath();
+	t.join();
 	if (task_completed) {
 		status_msg.status="COMPLETED";
 		status_msg.details="";

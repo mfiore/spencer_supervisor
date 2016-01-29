@@ -15,20 +15,27 @@ using namespace std;
 class PathLength {
 public:
 	PathLength(ros::NodeHandle node_handle, DatabaseQueries *database_queries);
-	void startPublishingPath(vector<geometry_msgs::Pose> path);
+	void startPublishingPath(vector<geometry_msgs::Pose> path,double previous_length);
 	void stopPublishingPath();
 	void updateCurrentNode(int i);
 	bool shouldPublish();
 	int getCurrentNode();
 	geometry_msgs::Pose getRobotLocation();
+	double getTotalLength();
+
 
 private:
 	double calculatePathLength(vector<geometry_msgs::Pose> path) ;
 	double dist2d(geometry_msgs::Pose p1, geometry_msgs::Pose p2);
 	double calculateRemainingLength(vector<geometry_msgs::Pose> path);
 
+	void setTotalLength(double length);
+	boost::mutex mutex_length_;
+	double total_length_;
+
 	bool should_publish_;
 	boost::mutex mutex_should_publish_;
+
 
 	ros::NodeHandle node_handle_;
 	ros::Publisher path_info_publisher_;

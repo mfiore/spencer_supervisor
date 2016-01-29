@@ -208,11 +208,13 @@ void switchDrivingDirection(bool backward, ros::ServiceClient* set_driving_direc
 			ROS_WARN("Couldn't switch driving direction");
 		}
 	}
+	if (use_driving_direction) {
 	situation_assessment_msgs::SwitchOrientation srv_switch_orientation;
 	srv_switch_orientation.request.backward=backward;
 			if(!switch_orientation_client.call(srv_switch_orientation)){
 			  ROS_ERROR("ROBOT_GUIDE couldn't call switch orientation");
 			}
+	}
 }
 
 void switchSpeed(double newSpeed, ros::ServiceClient* control_speed_client) {
@@ -495,12 +497,15 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 		}
 		if (isPaused(check_status)) {
 			ROS_INFO("Robot is paused");
-			while (isPaused(check_status) && !hasSystemError(check_status,is_moving,move_to_client)) {
+			while (isPaused(check_status) && !hasSystemError(check_status,is_moving,move_to_client) && !guide_action_server->isPreemptRequested()) {
 				is_moving=false;
 				status_msg.status="supervision is paused";
 				status_msg.details="";
 				status_pub.publish(status_msg);
 				r.sleep();
+			}
+			if (guide_action_server->isPreemptRequested() || hasSystemError(check_status,is_moving,move_to_client)) {
+				move_to_client->cancelGoal();
 			}
 		}
 		if (is_moving) {
@@ -550,6 +555,8 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 	switchDrivingDirection(false,set_driving_direction_client);
 	switchSpeed(max_speed,&control_speed_client);
 	actual_speed=max_speed;
+
+	move_to_client->cancelGoal();
 
 	//publish final status
 	if (task_completed) {

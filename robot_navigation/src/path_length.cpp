@@ -7,22 +7,28 @@ database_queries_(database_queries) {
 	robot_speed_=0.7;
 }
 
-void PathLength::startPublishingPath(vector<geometry_msgs::Pose> path) {
+void PathLength::startPublishingPath(vector<geometry_msgs::Pose> path, double previous_length) {
 	should_publish_=true;
 	current_node_=0;
-	double tot_length=calculateRemainingLength(path);
-	double remaining_length=tot_length;
-
+	double tot_length=0;
+	
 	geometry_msgs::Pose robot_pose=database_queries_->getRobotPose();
 	double distance_to_next=dist2d(robot_pose,path[1]);
-	tot_length=tot_length+distance_to_next;
+	
+	if (previous_length==-1){
+	   tot_length=calculateRemainingLength(path);
+	   tot_length=tot_length+distance_to_next;
+	}
+	else {
+		tot_length=previous_length;
+	}
+
 	int tot_seconds=round(tot_length/robot_speed_);
-	int remaining_seconds=tot_seconds;
-	int path_index=0;
+	setTotalLength(tot_length);
 
 
-
-	double old_distance_to_next=0;
+	int path_index=-1;
+	double remaining_path_length;	
 	ros::Rate r(1);
 	while (shouldPublish()) {
 		supervision_msgs::PathInfo msg;
@@ -32,15 +38,16 @@ void PathLength::startPublishingPath(vector<geometry_msgs::Pose> path) {
 		if (new_index<path.size()-1) {
 			robot_pose=database_queries_->getRobotPose();
 			distance_to_next=dist2d(robot_pose,path[new_index+1]);
+			ROS_INFO("Distance to next is %f",distance_to_next);
 		}
 		if (new_index!=path_index) {
 			path_index=new_index;
-			remaining_length=calculateRemainingLength(path);
+			remaining_path_length=calculateRemainingLength(path);
+			ROS_INFO("Remaining length is %f",remaining_path_length);
 		}
-		remaining_length=remaining_length+distance_to_next-old_distance_to_next;
-		remaining_seconds=round(remaining_length/robot_speed_);
+		double remaining_length=remaining_path_length+distance_to_next;
+		int remaining_seconds=round(remaining_length/robot_speed_);
 
-		old_distance_to_next=distance_to_next;
 		msg.total_length=tot_length;
 		msg.total_seconds=tot_seconds-2;
 		msg.remaining_length=remaining_length;
@@ -106,3 +113,12 @@ double PathLength::calculateRemainingLength(vector<geometry_msgs::Pose> path) {
 	return tot;
 }
 
+double PathLength::getTotalLength() {
+	boost::lock_guard<boost::mutex> lock(mutex_length_);
+	return total_length_;
+}
+void PathLength::setTotalLength(double length) {
+	boost::lock_guard<boost::mutex> lock(mutex_length_);
+	ROS_INFO("Setting total length as %f",length);
+	total_length_=length;
+}
