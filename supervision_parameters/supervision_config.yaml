@@ -12,6 +12,7 @@ supervision:
     wait_time: 10
     speed_adaptation_time: 2
     first_stop_time: 5
+    max_move_base_errors: 3
     guide_pomdp:
         appl_problem: /home/mfiore/pomdpModels/icsr/guide.pomdpx
         appl_policy: /home/mfiore/pomdpModels/icsr/guide.out

@@ -37,8 +37,6 @@
 #include <situation_assessment_msgs/EmptyRequest.h>
 
 
-#include <robot_navigation/path_length.h>
-
 //libraries
 #include <spencer_status/check_status.h>
 
@@ -48,6 +46,7 @@ typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseCl
 
 //services
 ros::ServiceClient switch_map_client_;
+ros::ServiceClient simple_database_client_;
 
 //location of the robot
 vector<string> robot_areas_;
@@ -58,10 +57,6 @@ bool reached_next_area_=false;
 bool use_map_switching_;
 
 boost::mutex mutex_location_;
-
-
-vector<string> old_path_;
-double old_path_length_;
 
 
 //parameters
@@ -75,9 +70,184 @@ ros::Publisher status_pub_;
 
 map<string,geometry_msgs::Point> node_centers_; //includes the centers of each symbolic node
 
-vector<geometry_msgs::Pose> pose_nodes;
+int max_move_base_errors_;
+
+geometry_msgs::Pose getPose(string name) {
+	situation_assessment_msgs::QueryDatabase srv;
+
+	situation_assessment_msgs::Fact fact;
+
+	fact.model=robot_name_;
+	fact.subject=name;
+	fact.predicate.push_back("pose");
+	srv.request.query=fact;
+
+	geometry_msgs::Pose pose;
+	if (simple_database_client_.call(srv)) {
+		if (srv.response.result.size()==0) {
+			ROS_ERROR("ROBOT_NAVIGATION Couldn't fine pose for %s",name.c_str());
+		}
+		else {
+			if (srv.response.result[0].value.size()<6) {
+				ROS_ERROR("ROBOT_NAVIGATION returned value but missing pose"); 
+			}
+			else {
+			pose.position.x=boost::lexical_cast<double>(srv.response.result[0].value[0]);
+			pose.position.y=boost::lexical_cast<double>(srv.response.result[0].value[1]);
+			pose.position.z=boost::lexical_cast<double>(srv.response.result[0].value[2]);
+			pose.orientation.x=boost::lexical_cast<double>(srv.response.result[0].value[3]);
+			pose.orientation.y=boost::lexical_cast<double>(srv.response.result[0].value[4]);
+			pose.orientation.z=boost::lexical_cast<double>(srv.response.result[0].value[5]);
+			pose.orientation.w=boost::lexical_cast<double>(srv.response.result[0].value[6]);
+			}
+		}
+	}
+	else {
+		ROS_ERROR("Could not contact database");
+	}
+	return pose;
+}
+
+bool hasArea(string name) {
+	situation_assessment_msgs::QueryDatabase srv;
+	situation_assessment_msgs::Fact fact;
+
+	fact.model=robot_name_;
+	fact.subject=name;
+	fact.predicate.push_back("hasArea");
+	srv.request.query=fact;;
 
 
+	if (simple_database_client_.call(srv)) {
+		if (srv.response.result.size()>0) {
+			return true;
+		}
+	}
+	else {
+		ROS_ERROR("Could not contact database");
+	}
+	return false;
+}
+
+string getEntityType(string name) {
+	situation_assessment_msgs::QueryDatabase srv;
+	situation_assessment_msgs::Fact fact;
+
+	fact.model=robot_name_;
+	fact.subject=name;
+	fact.predicate.push_back("type");
+	srv.request.query=fact;
+
+	if (simple_database_client_.call(srv)) {
+		if (srv.response.result.size()>0) {
+			if (srv.response.result[0].value.size()>0) {
+				return srv.response.result[0].value[0];
+			}
+			else {
+				ROS_ERROR("ROBOT_NAVIGATION received response from db with no value");
+			}
+		}
+		else {
+			ROS_ERROR("ROBOT_NAVIGATION received response from db but no results");
+		}
+	}
+	else {
+		ROS_ERROR("Could not contact database");
+	}
+	return "";	
+}
+
+string getRobotLocation() {
+	boost::lock_guard<boost::mutex> lock(mutex_location_);
+	// ROS_INFO("ROBOT_NAVIGATION Robot areas size %ld",robot_areas_.size());
+	for (int i=0; i<robot_areas_.size();i++) {
+		if (robot_areas_[i]!="this") {
+
+			situation_assessment_msgs::QueryDatabase srv;
+
+			situation_assessment_msgs::Fact fact;
+
+			fact.model=robot_name_;
+			fact.subject=robot_areas_[i];
+			fact.predicate.push_back("type");
+			srv.request.query=fact;
+
+
+			if (simple_database_client_.call(srv)) {
+				if (srv.response.result.size()>0) {
+					if (srv.response.result[0].value.size()>0) {
+						// ROS_INFO("ROBOT_NAVIGATION %s area is type %s",robot_areas_[i].c_str(),srv.response.result[0].value[0].c_str());
+						if (srv.response.result[0].value[0]=="location") {
+							ROS_INFO("ROBOT_NAVIGATION found robot location");
+							return robot_areas_[i];
+						}
+					}
+					else {
+						ROS_ERROR("ROBOT_NAVIGATION received result but no values");
+					}
+				}
+				else {
+					ROS_ERROR("Could not contact database");
+				}
+			}
+		}	
+	}
+	return "this";			
+}
+
+string getEntityLocation(string name) {
+	vector<string> entity_areas;
+	situation_assessment_msgs::QueryDatabase srv;
+
+	situation_assessment_msgs::Fact fact;
+
+	fact.model=robot_name_;
+	fact.subject=name;
+	fact.predicate.push_back("isInArea");
+	srv.request.query=fact;
+
+	if (simple_database_client_.call(srv)) {
+
+		if (srv.response.result.size()>0) {
+
+
+			entity_areas=srv.response.result[0].value;
+
+			for (int i=0; i<entity_areas.size();i++) {
+				if (entity_areas[i]!="this") {
+		 			fact.predicate.clear();
+
+					fact.model=robot_name_;
+					fact.subject=entity_areas[i];
+					fact.predicate.push_back("type");
+					srv.request.query=fact;
+
+					if (simple_database_client_.call(srv)) {
+						if (srv.response.result.size()>0) {
+							if (srv.response.result[0].value.size()>0) {
+								if (srv.response.result[0].value[0]=="location") return entity_areas[i];
+							}
+							else {
+								ROS_ERROR("ROBOT_NAVIGATION no values returned from db");
+							}
+						}
+					}
+					else {
+						ROS_ERROR("Could not contact database");
+						break;
+					}
+				}
+			} 
+		}
+		else {
+			ROS_ERROR("ROBOT_NAVIGATION received response without results from db");
+		}
+	}
+	else {
+		ROS_ERROR("Could not contact database");
+	}
+	return "this";
+}
 
 //returns true if there is a move base error. 
 bool hasMoveBaseError(MoveBaseClient* move_base_client) {
@@ -141,19 +311,8 @@ bool switchMap(string node1, string node2) {
 	else return true;
 }
 
-
-bool isSamePath(vector<string> path) {
-	int i,j;
-	if (old_path_.size()==0) return false;
-	for (i=path.size()-1, j=old_path_.size()-1; i>=0 && j>=0; i--, j--) {
-		ROS_INFO("ROBOT_NAVIGATION %s %s",path[i].c_str(),old_path_[j].c_str());
-		if (path[i]!=old_path_[j]) return false;
-	}
-	return true;
-}
-
 bool moveToNext(geometry_msgs::Pose goal_pose, MoveBaseClient *move_base_client, MoveToServer* move_to_action_server,
-	string destination, bool symbolic_navigation, DatabaseQueries *database_queries) {
+	string destination, bool symbolic_navigation) {
 	supervision_msgs::SupervisionStatus status_msg; 
 	ros::Rate r(3); 
 
@@ -180,7 +339,7 @@ bool moveToNext(geometry_msgs::Pose goal_pose, MoveBaseClient *move_base_client,
 	bool node_has_area=false;
 	//if the node has a semantic area associated, we will move until we reach the area and not just it.
 	if (symbolic_navigation) {
-		node_has_area=database_queries->hasArea(destination);
+		node_has_area=hasArea(destination);
 		if (node_has_area) {
 			mutex_location_.lock();
 			reached_next_area_=false;
@@ -252,8 +411,7 @@ bool moveToNext(geometry_msgs::Pose goal_pose, MoveBaseClient *move_base_client,
  
 //moves to: can have a symbolic destination (will plan to reach it), a given symbolic path or a list of coordinates
 void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_to_action_server,
-	MoveBaseClient* move_base_client, ros::ServiceClient* calculate_path_client, DatabaseQueries* database_queries,
-	PathLength* path_length) {
+	MoveBaseClient* move_base_client, ros::ServiceClient* calculate_path_client) {
 	//supervision will publish on a status topic as well as giving feedback for the actionn	
 
 	supervision_msgs::MoveToFeedback feedback;
@@ -305,30 +463,23 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		current_node=-1;
 	}
 	else {
-		string destination_type=database_queries->getEntityType(destination);
+		string destination_type=getEntityType(destination);
 		ROS_INFO("ROBOT_NAVIGATION got entity type"); 
-		if (destination_type=="") {
-			ROS_INFO("ROBOT_NAVIGATION destination not found");
-			result.status="FAILED";
-			result.details="destination not found";
-			move_to_action_server->setAborted(result);
-			return;
-		}
 		if (destination_type!="location") {
 			ROS_INFO("ROBOT_NAVIGATION destination is not location"); 
-			location_destination=database_queries->getEntityLocation(destination);
+			location_destination=getEntityLocation(destination);
 			ROS_INFO("ROBOT_NAVIGATION location is %s",location_destination.c_str());
 		}
 		else {
 			ROS_INFO("ROBOT_NAVIGATION destination is a location");
 			location_destination=destination;
 		}
-		robot_location_=database_queries->getRobotLocation(robot_areas_);
+		robot_location_=getRobotLocation();
 		ROS_INFO("ROBOT_NAVIGATION robot location is %s",robot_location_.c_str());
 			if (robot_location_!=location_destination) {
 				ROS_INFO("ROBOT_NAVIGATION location different from destination"); 
 				supervision_msgs::CalculatePath path_request;
-				path_request.request.source=database_queries->getRobotLocation(robot_areas_);
+				path_request.request.source=getRobotLocation();
 				path_request.request.dest=location_destination;
 				if (calculate_path_client->call(path_request)) {
 					ROS_INFO("ROBOT_NAVIGATION calculated path to destination");
@@ -344,34 +495,8 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 			}
 		}
 	}
-	vector<geometry_msgs::Pose> node_poses;
 
-	//calculate position of nodes
-	for (int i=0; i<nodes.size();i++) {
-		geometry_msgs::Pose pose=database_queries->getPose(nodes[i]);
-		node_poses.push_back(pose);
-	}
-	if (destination!=location_destination) {
-		geometry_msgs::Pose pose=database_queries->getPose(destination);
-		if (nodes.size()==0) {
-		  geometry_msgs::Pose starting_pose; //fake pose for starting condition (since we move to the next node usually)
-		  node_poses.push_back(starting_pose);
-		  nodes.push_back(robot_location_);
-		}
-		node_poses.push_back(pose);
-		nodes.push_back(destination);
-	}
-	double previous_length;
-	if (isSamePath(nodes)) {
-		ROS_INFO("Path is the same. Using again old length %f",old_path_length_);
-		previous_length=old_path_length_;
-	}
-	else {
-		ROS_INFO("Previous length is -1");
-		previous_length=-1;
-	}
 
-	boost::thread t(boost::bind(&PathLength::startPublishingPath,path_length,node_poses,previous_length));
 
 	//control variables
 	bool task_completed=false;
@@ -379,21 +504,15 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 	bool is_moving=false;
 
 	got_error=hasSystemError(check_status_);
-	n_nodes=node_poses.size();
 
 	ROS_INFO("ROBOT_NAVIGATION Got error is %d",got_error);
 
 	if (symbolic_navigation && nodes.size()>0 || poses.size()>0 && !symbolic_navigation) {
 		ROS_INFO("ROBOT_NAVIGATION after first check");
 		//switch map to the first one, if we have symbolic navigation
-		ROS_INFO("ROBOT_NAVIGATION number of nodes is %d, current node is %d vector size is %ld",n_nodes,current_node,nodes.size());
-
+		int n_move_base_errors=0;
 		while (!task_completed && !got_error && !move_to_action_server->isPreemptRequested()) {
-			if (
-				(current_node<n_nodes-1 && destination==location_destination ||  //account for possible last node, which 
-				current_node<n_nodes-2 && destination!=location_destination)    // doesn't require map switch
-				&& symbolic_navigation==true) {
-				
+			if (current_node<n_nodes && symbolic_navigation==true) {
 				ROS_INFO("ROBOT_NAVIGATION Switching to map %s %s",nodes[current_node].c_str(),nodes[current_node+1].c_str());
 				bool switch_map_error=switchMap(nodes[current_node],nodes[current_node+1]);
 				if (!switch_map_error) { 
@@ -408,7 +527,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 			//send the next goal, from the next node center or from the next coordinate.	
 			double goal_x,goal_y;
 			if (symbolic_navigation==true) {
-				geometry_msgs::Pose node_pose=node_poses[current_node+1];
+				geometry_msgs::Pose node_pose=getPose(nodes[current_node+1]);
 				goal_x=node_pose.position.x;
 				goal_y=node_pose.position.y;
 
@@ -426,7 +545,9 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 
 			goal_pose.orientation.w=1.0;
 
-			bool move_status=moveToNext(goal_pose,move_base_client,move_to_action_server,next_area_,symbolic_navigation,database_queries);
+
+			ROS_INFO("ROBOT_NAVIGATION calling move to next");
+			bool move_status=moveToNext(goal_pose,move_base_client,move_to_action_server,next_area_,symbolic_navigation);
 			got_error=!move_status;
 			//when we arrive to the next node, if we use symbolic navigation we stop the robot and switch map.
 			if (move_status) {
@@ -435,7 +556,6 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 				}
 				is_moving=false;
 				current_node++;
-				path_length->updateCurrentNode(current_node);
 				if (symbolic_navigation) {
 					ROS_INFO("ROBOT_NAVIGATION Reached node %s",nodes[current_node].c_str());
 				}
@@ -450,9 +570,15 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 				}
 			}
 			else {
-			  if (!simulation_mode_) {
-			    move_base_client->cancelGoal();
-			  }
+				if (hasMoveBaseError(move_base_client)) {
+					if (n_move_base_errors<max_move_base_errors_) {
+						got_error=false;
+					}
+					ROS_INFO("ROBOT_NAVIGATION received move base error: %d of %d maximum errors",n_move_base_errors,max_move_base_errors_);
+				}
+				if (!simulation_mode_) {
+			   		 move_base_client->cancelGoal();
+			  	}
 			}
 		} 		
 	}
@@ -460,17 +586,22 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 	  ROS_INFO("ROBOT_NAVIGATION task completed because robot is already there");
 		task_completed=true; //if there are no nodes in the path we're already arrived
 	}
-	
-    if (!simulation_mode_) {
-	move_base_client->cancelGoal();
+	ROS_INFO("ROBOT_NAVIGATION task completed is %d",task_completed);
+	ROS_INFO("ROBOT_NAVIGATION checking for final location");
+	//if we're reaching an entity in a location
+	if (task_completed && destination!=location_destination) {
+		ROS_INFO("ROBOT_NAVIGATION We're in the final node. Now we're heading to the linked entity %s",destination.c_str());
+		task_completed=false;
+
+		geometry_msgs::Pose goal_pose=getPose(destination);
+
+		task_completed=moveToNext(goal_pose,move_base_client,move_to_action_server,destination,symbolic_navigation);
 	}
 
-	old_path_=nodes;
-	old_path_length_=path_length->getTotalLength();
-	ROS_INFO("old path length is %f",old_path_length_);
+	move_base_client->cancelGoal();
+	
+
 	//publish final task information
-	path_length->stopPublishingPath();
-	t.join();
 	if (task_completed) {
 		status_msg.status="COMPLETED";
 		status_msg.details="";
@@ -559,12 +690,14 @@ int main(int argc,char** argv) {
 	//get useful parameters
 	n.getParam("/robot/name",robot_name_);
 	n.getParam("supervision/simulation_mode",simulation_mode_);
-	n.getParam("supervision/use_map_switching",use_map_switching_);
+	n.getParam("supervision/use_map_switching_",use_map_switching_);
+	n.getParam("supervision/max_move_base_errors",max_move_base_errors_);
 
 	ROS_INFO("ROBOT_NAVIGATION Parameters are:");
 	ROS_INFO("ROBOT_NAVIGATION robot name %s",robot_name_.c_str());
 	ROS_INFO("ROBOT_NAVIGATION simulation_mode %d",simulation_mode_);
 	ROS_INFO("ROBOT_NAVIGATION use map switching %d",use_map_switching_);
+	ROS_INFO("ROBOT_NAVIGATION max move base errors %d",max_move_base_errors_);
 
 
 
@@ -584,7 +717,11 @@ int main(int argc,char** argv) {
 	calculate_path_client.waitForExistence();
 	ROS_INFO("ROBOT_NAVIGATION Connected\n");
 
-	DatabaseQueries database_queries(n,robot_name_);
+
+	ROS_INFO("ROBOT_NAVIGATION Connecting to the simple database service");
+	simple_database_client_=n.serviceClient<situation_assessment_msgs::QueryDatabase>("situation_assessment/query_database",true);
+	simple_database_client_.waitForExistence();
+	ROS_INFO("ROBOT_NAVIGATION Connected");
 
 
 	ROS_INFO("ROBOT_NAVIGATION Waiting for move_base");
@@ -604,13 +741,11 @@ int main(int argc,char** argv) {
 	}
 
 
-	PathLength path_length(n,&database_queries);
 
 	status_pub_=n.advertise<supervision_msgs::SupervisionStatus>("supervision/navigation/status",1000);
 
 	MoveToServer move_to_action_server(n,"supervision/move_to",
-		boost::bind(&moveTo,_1,&move_to_action_server,&move_base_client, &calculate_path_client,&database_queries,
-			&path_length),false);
+		boost::bind(&moveTo,_1,&move_to_action_server,&move_base_client, &calculate_path_client),false);
 	move_to_action_server.start();
 	ROS_INFO("ROBOT_NAVIGATION Started action server MoveTo");
 	
