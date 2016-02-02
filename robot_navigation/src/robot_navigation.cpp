@@ -32,7 +32,7 @@
 #include <boost/lexical_cast.hpp>
 
 //services
-#include <annotated_mapping/SwitchMap.h>
+#include <annotated_mapping/SwitchMap3.h>
 #include <situation_assessment_msgs/QueryDatabase.h>
 #include <situation_assessment_msgs/EmptyRequest.h>
 
@@ -47,6 +47,7 @@ typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseCl
 //services
 ros::ServiceClient switch_map_client_;
 ros::ServiceClient simple_database_client_;
+ros::ServiceClient get_connected_nodes_client_;
 
 //location of the robot
 vector<string> robot_areas_;
@@ -295,12 +296,13 @@ void sendMoveBaseGoal(geometry_msgs::Pose pose,MoveBaseClient* move_base_client)
 
 //in the spencer project we use smaller grid maps for navigations associated to couples of symbolic nodes. This procedure
 //calls a service to switch grid map on two symbolic nodes.
-bool switchMap(string node1, string node2) {
+bool switchMap(string node1, string node2, string node3) {
 	ROS_INFO("Switching map to %s %s",node1.c_str(),node2.c_str());
 	if (use_map_switching_) {
-	annotated_mapping::SwitchMap srv;
+	annotated_mapping::SwitchMap3 srv;
 	srv.request.name_1=node1;
 	srv.request.name_2=node2;
+	srv.request.name_3=node3;
 	switch_map_client_.call(srv);
 	
 	bool success=srv.response.success;
@@ -309,6 +311,71 @@ bool switchMap(string node1, string node2) {
 
 	}
 	else return true;
+}
+
+string getOtherLinkedNode(string node, string different_node ) {
+	supervision_msgs::GetConnectedNodes srv;
+	srv.request.node=current_node;
+	if (get_connected_nodes_client_.call(srv)) {
+		vector<string> connected_nodes=srv.response.connected_nodes;
+		for (int i=0; i<connected_nodes.size();i++) {
+			if (connected_nodes[i]!=different_node) return connected_nodes[i];
+		}
+	}
+	else {
+		ROS_ERROR("ROBOT_NAVIGATION can't contact get connected nodes");
+		return "";
+	}
+	return "";
+}
+
+bool switchMapHelper(vector<string> path, int current_node) {
+	//try to get previous node
+	string previous_node;
+	if (path.size()<2) return false;
+	string node1,node2,node3;
+	//if it's the first node of the path, take the previous, if it exists, and the following.
+	//If the previous doesn't exist 
+	if (path.size()>=3) { 	//there are enough nodes in the path for a map switch
+		if (current_node!=0) {   //we simply take the three nodes in the path
+			node1=path[current_node-1];
+			node2=path[current_node];
+			node3=path[current_node+1]
+		}
+		else { //we look if there is a previous node than current. If there isn't we take a big map starting from the first node to the 
+			//others
+			string previous_node=getOtherLinkedNode(path[current_node],path[current_node+1]);
+			if (previous_node!="") { 
+				node1=previous_node;
+				node2=path[current_node];
+				node3=path[current_node+1]
+			}
+			else {
+				node1=path[current_node];
+				node2=path[current_node+1];
+				node3=path[current_node+2];
+			}
+		}
+	}
+	else { //2 nodes path
+		string previous_node=getOtherLinkedNode(path[current_node],path[current_node+1]);
+		if (previous_node!="") {
+			node1=previous_node;
+			node2=path[current_node];
+			node3=path[current_node+1]
+		}
+		else {
+			string next_node=getOtherLinkedNode(path[current_node+1],path[current_node]);
+			if (next_node!="") {
+				node1=path[current_node];
+				node2=path[current_node+1];
+				node3=next_node;
+			}
+			else return false;
+		}
+	}
+	switchMap(node1,node2,node3);
+
 }
 
 bool moveToNext(geometry_msgs::Pose goal_pose, MoveBaseClient *move_base_client, MoveToServer* move_to_action_server,
@@ -514,7 +581,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		while (!task_completed && !got_error && !move_to_action_server->isPreemptRequested()) {
 			if (current_node<n_nodes && symbolic_navigation==true) {
 				ROS_INFO("ROBOT_NAVIGATION Switching to map %s %s",nodes[current_node].c_str(),nodes[current_node+1].c_str());
-				bool switch_map_error=switchMap(nodes[current_node],nodes[current_node+1]);
+				bool switch_map_error=switchMapHelper(nodes,current_node);
 				if (!switch_map_error) { 
 					ROS_INFO("ROBOT_NAVIGATION Error when switching map");
 					got_error=true;
@@ -705,7 +772,7 @@ int main(int argc,char** argv) {
 	check_status_=new CheckStatus(n);
 
 	ROS_INFO("ROBOT_NAVIGATION Connecting for switch map client");
-	switch_map_client_=n.serviceClient<annotated_mapping::SwitchMap>("switch_map");
+	switch_map_client_=n.serviceClient<annotated_mapping::SwitchMap3>("switch_map");
 	if (use_map_switching_) {
 		switch_map_client_.waitForExistence();
 		ROS_INFO("ROBOT_NAVIGATION Connected");
@@ -741,6 +808,9 @@ int main(int argc,char** argv) {
 	}
 
 
+	get_connected_nodes_client_=n.serviceClient<supervision_msgs::GetConnectedNodes>("supervision_msgs/get_connected_nodes",true);
+	get_connected_nodes_client_.waitForExistence();
+	ROS_INFO("ROBOT_NAVIGATION connected to get connected nodes");
 
 	status_pub_=n.advertise<supervision_msgs::SupervisionStatus>("supervision/navigation/status",1000);
 

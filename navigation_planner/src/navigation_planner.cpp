@@ -14,6 +14,7 @@
 #include <situation_assessment_msgs/GetMap.h>
 
 #include <supervision_msgs/CalculatePath.h>
+#include <supervision_msgs/GetConnectedNodes.h>
 
 #include <string>
 #include <vector>
@@ -105,6 +106,23 @@ bool getMap() {
 	}
 }
 
+bool getConnectedNodes(supervision_msgs::GetConnectedNodes::Request &req, supervision_msgs::GetConnectedNodes::Response &res) {
+	int source_node=label_to_index[req.node];
+	vector<string> connected_nodes;
+// 
+
+	IndexMap index;
+
+	boost::graph_traits<Graph>::adjacency_iterator ai;
+	boost::graph_traits<Graph>::adjacency_iterator ai_end;
+	for (tie(ai, ai_end) = boost::adjacent_vertices(source_node, *symbolic_map); 
+	           ai != ai_end; ++ai) {
+	         connected_nodes.push_back(labels[index[*ai]]);
+	}
+	res.connected_nodes=connected_nodes;
+	return true;
+}
+
 //calculates  a path in the map. Every node has a distance of one at the moment.
 bool calculatePath(supervision_msgs::CalculatePath::Request &req, supervision_msgs::CalculatePath::Response &res) {
 	int source_node=label_to_index[req.source];
@@ -186,7 +204,8 @@ int main(int argc, char** argv) {
 		ros::shutdown();
 	}
 	
- 	ros::ServiceServer path_server=node_handle.advertiseService("supervision/calculate_path",calculatePath);
+	ros::ServiceServer path_server=node_handle.advertiseService("supervision/calculate_path",calculatePath);
+	ros::ServiceServer connected_nodes_server=node_handle.advertiseService("supervision/get_connected_nodes",getConnectedNodes);
 
 	ROS_INFO(" NAVIGATION_PLANNER Advertising calculate path");
 	ROS_INFO(" NAVIGATION_PLANNER Ready");

@@ -53,6 +53,7 @@ add_message_files(
     EmptyRequest.srv
     SetRobotSimStatus.srv
     CalculatePath.srv
+    GetConnectedNodes.srv
  )
 
 # Generate actions in the 'action' folder
