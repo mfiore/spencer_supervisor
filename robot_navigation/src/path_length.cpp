@@ -38,7 +38,6 @@ void PathLength::startPublishingPath(vector<geometry_msgs::Pose> path, double pr
 		if (new_index<path.size()-1) {
 			robot_pose=database_queries_->getRobotPose();
 			distance_to_next=dist2d(robot_pose,path[new_index+1]);
-			ROS_INFO("Distance to next is %f",distance_to_next);
 		}
 		if (new_index!=path_index) {
 			path_index=new_index;
