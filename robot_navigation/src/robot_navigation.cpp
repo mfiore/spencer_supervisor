@@ -320,8 +320,15 @@ bool moveToNext(geometry_msgs::Pose goal_pose, MoveBaseClient *move_base_client,
 
 bool isSamePath(vector<string> path) {
 	int j=old_path_.size()-1;
-	for (int i=path.size()-1;i>=0, j>=0;i++, j--) {
+	int i=path.size()-1;
+	ROS_INFO("Path and old path size %ld %ld",path.size(),old_path_.size());
+	if (old_path_.size()==0) return false;
+
+	while (i>=0 && j>=0) {
+		ROS_INFO("path and old path indexes %d %d",i,j);
 		if (path[i]!=old_path_[j]) return false;
+		i--;
+		j--;
 	}
 	return true;
 }
