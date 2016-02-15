@@ -76,6 +76,10 @@ map<string,geometry_msgs::Point> node_centers_; //includes the centers of each s
 
 int max_move_base_errors_;
 
+double previous_length_;
+
+
+vector<string> old_path_;
 
 
 //returns true if there is a move base error. 
@@ -214,6 +218,7 @@ bool switchMapHelper(vector<string> path, int current_node) {
 
 }
 
+
 bool moveToNext(geometry_msgs::Pose goal_pose, MoveBaseClient *move_base_client, MoveToServer* move_to_action_server,
 	string destination, bool symbolic_navigation, DatabaseQueries *database_queries) {
 	supervision_msgs::SupervisionStatus status_msg; 
@@ -312,6 +317,15 @@ bool moveToNext(geometry_msgs::Pose goal_pose, MoveBaseClient *move_base_client,
 		
 }
  
+
+bool isSamePath(vector<string> path) {
+	int j=old_path_.size()-1;
+	for (int i=path.size()-1;i>=0, j>=0;i++, j--) {
+		if (path[i]!=old_path_[j]) return false;
+	}
+	return true;
+}
+
 //moves to: can have a symbolic destination (will plan to reach it), a given symbolic path or a list of coordinates
 void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_to_action_server,
 	MoveBaseClient* move_base_client, ros::ServiceClient* calculate_path_client, DatabaseQueries* database_queries,
@@ -401,11 +415,15 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 	}
 	vector<geometry_msgs::Pose> node_poses;
 
+
+	ROS_INFO("Before calculate positions");
 	//calculate position of nodes
 	for (int i=0; i<nodes.size();i++) {
 		geometry_msgs::Pose pose=database_queries->getPose(nodes[i]);
 		node_poses.push_back(pose);
 	}
+
+	ROS_INFO("Before check destination");
 	if (destination!=location_destination) {
 		geometry_msgs::Pose pose=database_queries->getPose(destination);
 		if (nodes.size()==0) {
@@ -416,7 +434,14 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		node_poses.push_back(pose);
 		nodes.push_back(destination);
 	}
-	boost::thread t(boost::bind(&PathLength::startPublishingPath,path_length,node_poses));
+
+	ROS_INFO("Before same path");
+	if (!isSamePath(nodes)) {
+		previous_length_=-1;
+	}
+
+	ROS_INFO("Before thread");
+	boost::thread t(boost::bind(&PathLength::startPublishingPath,path_length,node_poses,previous_length_));
 
 	//control variables
 	bool task_completed=false;
@@ -515,6 +540,8 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 	}
 
 
+	previous_length_=path_length->getTotalLength();
+	old_path_=nodes;
 
 	//publish final task information
 	path_length->stopPublishingPath();
