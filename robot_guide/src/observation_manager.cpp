@@ -201,6 +201,8 @@ void ObservationManager::getSimpleObservations(vector<situation_assessment_msgs:
 	//at the moment we aren't so this works. If this changes, the procedure needs to read the list of agents.
 	vector<string> agents,agents_to_find;
 
+	vector<string> still_following;
+
 	BOOST_FOREACH(situation_assessment_msgs::Fact f, fact_list) {
 		if (f.predicate.size()>0) {
 			if (f.predicate[0]=="type") {
@@ -227,6 +229,8 @@ void ObservationManager::getSimpleObservations(vector<situation_assessment_msgs:
 					if (std::find(agents.begin(),agents.end(),f.subject)!=agents.end() 
 						&& std::find(f.value.begin(),f.value.end(),robot_name_)!=f.value.end())  {
 						agents_to_find.push_back(f.subject);
+
+						still_following.push_back(f.subject);
 					}
 				}
 			}
@@ -235,7 +239,7 @@ void ObservationManager::getSimpleObservations(vector<situation_assessment_msgs:
 			}
 		}
 	}	
-
+	setFollowers(still_following);
 
 	map<string,AgentObservation> agent_observations=createAgentObservations(fact_list,agents_to_find);
 	//	ROS_INFO("ROBOT_GUIDE simple observation size is %ld",agent_observations.size());
@@ -383,14 +387,17 @@ void ObservationManager::agentFactCallback(const situation_assessment_msgs::Fact
 	}
 }
 
+
+
 void ObservationManager::getComplexObservations(vector<situation_assessment_msgs::Fact> fact_list) {
 
 	mutex_agents_in_group.lock();
 
 
 	vector<string> agents_to_find;
-	int n_group_agents_tracked=0;;
+	int n_group_agents_tracked=0;
 
+	vector<string> still_following;
 	BOOST_FOREACH(situation_assessment_msgs::Fact f, fact_list) {
 		if (f.subject!=robot_name_) {
 			if (f.predicate.size()>0) {
@@ -398,6 +405,7 @@ void ObservationManager::getComplexObservations(vector<situation_assessment_msgs
 					if (std::find(agents_in_group_.begin(),agents_in_group_.end(),f.subject)!=agents_in_group_.end() 
 						&& std::find(f.value.begin(),f.value.end(),robot_name_)!=f.value.end())  {
 						agents_to_find.push_back(f.subject);
+						still_following.push_back(f.subject);
 					}
 				}
 				if (f.predicate[0]=="type") {
@@ -416,7 +424,7 @@ void ObservationManager::getComplexObservations(vector<situation_assessment_msgs
 		}
 	}	
 
-
+	setFollowers(still_following);
 	map<string,AgentObservation> agent_observations=createAgentObservations(fact_list,agents_to_find);
 	// ROS_INFO("OBSERVATION_MANAGER ROBOT_GUIDE agent observations size %ld",agent_observations.size());
 	// ROS_INFO("OBSERVATION_MANAGER true mode is %s",true_mode.c_str());
@@ -437,6 +445,7 @@ void ObservationManager::getComplexObservations(vector<situation_assessment_msgs
 			has_observed_group_=true;
 			condition_has_observed_group_.notify_one();
 		}
+		setFollowers(still_following);
 	}
 	else {
 		if (true_mode!="simple" && n_group_agents_tracked==0) {
@@ -460,3 +469,12 @@ void ObservationManager::setAgentsInGroup(vector<string> agents_in_group) {
 	}
 }
 
+void ObservationManager::setFollowers(vector<string> f) {
+	boost::lock_guard<boost::mutex> lock(mutex_followers_);
+	followers_=f;
+}
+
+vector<string> ObservationManager::getFollowers() {
+	boost::lock_guard<boost::mutex> lock(mutex_followers_);
+	return followers_;
+}

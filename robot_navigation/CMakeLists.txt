@@ -6,7 +6,7 @@ project(robot_navigation)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS roscpp rospy 
 annotated_mapping situation_assessment_msgs supervision_msgs spencer_status tf 
-geometry_msgs)
+geometry_msgs spencer_control_msgs nav_msgs)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -81,6 +81,7 @@ catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES robot_navigation
   CATKIN_DEPENDS roscpp rospy situation_assessment_msgs supervision_msgs spencer_status geometry_msgs annotated_mapping
+  spencer_control_msgs nav_msgs
 
 #  DEPENDS system_lib
 )
@@ -107,7 +108,8 @@ include_directories(
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-add_dependencies(robot_navigation supervision_msgs_generate_messages_cpp annotated_mapping_generate_messages_cpp)
+add_dependencies(robot_navigation supervision_msgs_generate_messages_cpp annotated_mapping_generate_messages_cpp
+spencer_control_msgs_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
  target_link_libraries(robot_navigation

@@ -51,6 +51,7 @@ public:
 	//when we need to observe a particular group, we can set this parameter in the observation manager.
 	void setObservedGroup(string group);
 	void setAgentsInGroup(vector<string> agents_in_group);
+	vector<string> getFollowers();
 	//the robot waits for the observed group to be present.
 	void waitForGroup();
 	//getters for the observations.
@@ -70,6 +71,11 @@ private:
 	boost::mutex mutex_has_observed_group_;
 	boost::condition_variable condition_has_observed_group_;
 	boost::mutex mutex_agents_in_group;
+	boost::mutex mutex_followers_;
+
+	void setFollowers(vector<string> f);
+
+	vector<string> followers_;
 
 	bool has_observed_group_;
 

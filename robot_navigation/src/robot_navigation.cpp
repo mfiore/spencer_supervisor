@@ -26,6 +26,11 @@
 #include <supervision_msgs/CalculatePath.h>
 #include <supervision_msgs/GetConnectedNodes.h>
 
+#include <spencer_control_msgs/SetMaxVelocity.h>
+
+
+#include <nav_msgs/Path.h>
+
 
 
 #include <boost/thread/mutex.hpp>
@@ -51,6 +56,9 @@ typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseCl
 ros::ServiceClient switch_map_client_;
 ros::ServiceClient simple_database_client_;
 ros::ServiceClient get_connected_nodes_client_;
+ros::ServiceClient control_speed_client_;
+
+
 
 //location of the robot
 vector<string> robot_areas_;
@@ -66,11 +74,14 @@ boost::mutex mutex_location_;
 //parameters
 string robot_name_;
 bool simulation_mode_;
+double switch_map_sleep_;
+bool use_control_speed_;
 
 CheckStatus *check_status_; //contains the symbolic status of the robot's system (batteries, bumper, emergency switch..)
 
 //publishers
 ros::Publisher status_pub_;
+ros::Publisher path_pub_;
 
 map<string,geometry_msgs::Point> node_centers_; //includes the centers of each symbolic node
 
@@ -140,6 +151,7 @@ bool switchMap(string node1, string node2, string node3) {
 			if (!success) {
 				ROS_ERROR("ROBOT_NAVIGATION failed to switch map");
 			} 
+			ros::Duration(switch_map_sleep_).sleep();
 			return success;
 		}
 		else {
@@ -229,6 +241,7 @@ bool moveToNext(geometry_msgs::Pose goal_pose, MoveBaseClient *move_base_client,
 	bool is_moving=true;
 	if (symbolic_navigation) {
 		ROS_INFO("ROBOT_NAVIGATION Starting to move to %s",destination.c_str());
+		ROS_INFO("ROBOT_NAVIGATION Goal pose is %f %f",goal_pose.position.x,goal_pose.position.y);
 		status_msg.details="Moving to "+destination;
 	}
 	else {
@@ -321,17 +334,41 @@ bool moveToNext(geometry_msgs::Pose goal_pose, MoveBaseClient *move_base_client,
 bool isSamePath(vector<string> path) {
 	int j=old_path_.size()-1;
 	int i=path.size()-1;
-	ROS_INFO("Path and old path size %ld %ld",path.size(),old_path_.size());
+
 	if (old_path_.size()==0) return false;
 
 	while (i>=0 && j>=0) {
-		ROS_INFO("path and old path indexes %d %d",i,j);
+
 		if (path[i]!=old_path_[j]) return false;
 		i--;
 		j--;
 	}
 	return true;
 }
+
+void slowAndStop(MoveBaseClient* move_base_client) {
+	ROS_INFO("ROBOT_NAVIGATION slowing down and stopping");
+	double time=0.5;
+	if (!simulation_mode_) {
+		if (use_control_speed_) {
+			spencer_control_msgs::SetMaxVelocity srv;
+			srv.request.max_linear_velocity=0.3;
+			srv.request.max_angular_velocity=0.4;
+
+			control_speed_client_.call(srv);
+			ros::Duration(time).sleep();
+			srv.request.max_linear_velocity=0.1;
+
+			control_speed_client_.call(srv);
+			ros::Duration(time).sleep();
+		}
+		move_base_client->cancelGoal();
+
+	}
+}
+
+
+
 
 //moves to: can have a symbolic destination (will plan to reach it), a given symbolic path or a list of coordinates
 void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_to_action_server,
@@ -430,6 +467,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		node_poses.push_back(pose);
 	}
 
+
 	ROS_INFO("Before check destination");
 	if (destination!=location_destination) {
 		geometry_msgs::Pose pose=database_queries->getPose(destination);
@@ -441,6 +479,19 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		node_poses.push_back(pose);
 		nodes.push_back(destination);
 	}
+
+	//publish path
+	nav_msgs::Path path_msg;
+	path_msg.header.frame_id="map";
+	path_msg.header.stamp=ros::Time::now();
+	for (int i=0;i<node_poses.size();i++) {
+		geometry_msgs::PoseStamped pose_stamped;
+		pose_stamped.header.frame_id="map";
+		pose_stamped.header.stamp=ros::Time::now();
+		pose_stamped.pose=node_poses[i];
+		path_msg.poses.push_back(pose_stamped);
+	}
+	path_pub_.publish(path_msg);
 
 	ROS_INFO("Before same path");
 	if (!isSamePath(nodes)) {
@@ -505,8 +556,13 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 			got_error=!move_status;
 			//when we arrive to the next node, if we use symbolic navigation we stop the robot and switch map.
 			if (move_status) {
-				if (!simulation_mode_) {
-					move_base_client->cancelGoal();
+				if (!simulation_mode_ ) {
+					if (current_node==n_nodes-2) {
+						slowAndStop(move_base_client);
+					}
+					else {
+						move_base_client->cancelGoal();
+					}
 				}
 				is_moving=false;
 				current_node++;
@@ -542,9 +598,10 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		task_completed=true; //if there are no nodes in the path we're already arrived
 	}
 	
-    if (!simulation_mode_) {
-	move_base_client->cancelGoal();
-	}
+	slowAndStop(move_base_client);
+    //if (!simulation_mode_) {
+//		move_base_client->cancelGoal();
+//	}
 
 
 	previous_length_=path_length->getTotalLength();
@@ -628,6 +685,7 @@ void agentFactCallback(const situation_assessment_msgs::FactList::ConstPtr& msg)
 	}
 }
 
+
 int main(int argc,char** argv) {
 	ros::init(argc,argv,"robot_navigation");
 	ros::NodeHandle n;
@@ -642,12 +700,17 @@ int main(int argc,char** argv) {
 	n.getParam("supervision/simulation_mode",simulation_mode_);
 	n.getParam("supervision/use_map_switching",use_map_switching_);
 	n.getParam("supervision/max_move_base_errors",max_move_base_errors_);
+	n.getParam("supervision/switch_map_sleep",switch_map_sleep_);
+	n.getParam("supervision/use_control_speed",use_control_speed_);
+
 
 	ROS_INFO("ROBOT_NAVIGATION Parameters are:");
 	ROS_INFO("ROBOT_NAVIGATION robot name %s",robot_name_.c_str());
 	ROS_INFO("ROBOT_NAVIGATION simulation_mode %d",simulation_mode_);
 	ROS_INFO("ROBOT_NAVIGATION use map switching %d",use_map_switching_);
 	ROS_INFO("ROBOT_NAVIGATION max move base errors %d",max_move_base_errors_);
+	ROS_INFO("ROBOT_NAVIGATION use control speed is %d",use_control_speed_);
+	ROS_INFO("ROBOT_NAVIGATION switch map sleep is %f",use_control_speed_);
 
 
 
@@ -660,6 +723,14 @@ int main(int argc,char** argv) {
 		switch_map_client_.waitForExistence();
 		ROS_INFO("ROBOT_NAVIGATION Connected");
 	}
+
+	ROS_INFO("ROBOT_NAVIGATION Connecting to control speed");
+	control_speed_client_=n.serviceClient<spencer_control_msgs::SetMaxVelocity>("/spencer/control/set_max_velocity",true);
+	if (use_control_speed_ && !simulation_mode_) {
+		control_speed_client_.waitForExistence();
+	}
+
+
 
 
 	ROS_INFO("ROBOT_NAVIGATION Connecting to calculate path service");
@@ -694,6 +765,7 @@ int main(int argc,char** argv) {
 	PathLength path_length(n,&database_queries);
 
 	status_pub_=n.advertise<supervision_msgs::SupervisionStatus>("supervision/navigation/status",1000);
+	path_pub_=n.advertise<nav_msgs::Path>("supervision/navigation/path",1000);
 
 	MoveToServer move_to_action_server(n,"supervision/move_to",
 		boost::bind(&moveTo,_1,&move_to_action_server,&move_base_client, &calculate_path_client,&database_queries,

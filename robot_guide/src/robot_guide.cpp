@@ -19,6 +19,7 @@ Main file for the spencer supervisor, which guides groups of passengers to a des
 
 //messages
 #include <supervision_msgs/SupervisionStatus.h>
+#include <supervision_msgs/GuideFollowers.h>
 #include <situation_assessment_msgs/FactList.h>
 
 //services
@@ -36,6 +37,7 @@ Main file for the spencer supervisor, which guides groups of passengers to a des
 #include <robot_guide/observation_manager.h>
 #include <spencer_status/check_status.h>
 #include <robot_guide/supervision_timer.h>
+
 
 
 //other
@@ -89,6 +91,7 @@ ros::ServiceClient database_client;
 
 //publishers
 ros::Publisher status_pub;
+ros::Publisher followers_pub;
 
 CheckStatus* check_status; //gets information about robot components
 
@@ -519,6 +522,13 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 		}
 
 		if (!hasSystemError(check_status,is_moving,move_to_client) && !guide_action_server->isPreemptRequested()) {
+			vector<string> followers=observation_manager->getFollowers();
+			supervision_msgs::GuideFollowers followers_msg;
+			followers_msg.ids=followers;
+			followers_msg.number=followers.size();
+			followers_pub.publish(followers_msg);
+
+
 			status_pub.publish(status_msg);
 			r.sleep();
 
@@ -744,6 +754,7 @@ int main(int argc, char **argv) {
 	ROS_INFO("ROBOT_GUIDE Started services to stop and restart supervisor");
 
 	status_pub=n.advertise<supervision_msgs::SupervisionStatus>("supervision/robot_guide/status",1000);
+	followers_pub=n.advertise<supervision_msgs::GuideFollowers>("supervision/robot_guide/followers",1000);
 
 	ApproachServer approach_action_server(n,"supervision/approach",
 		boost::bind(&approach,_1,&approach_action_server,
