@@ -141,17 +141,17 @@ bool calculatePath(supervision_msgs::CalculatePath::Request &req, supervision_ms
 
 	 IndexMap index;
 
-	 ROS_INFO(" NAVIGATION_PLANNER distances from start vertex:");
+	 // ROS_INFO(" NAVIGATION_PLANNER distances from start vertex:");
 	 boost::graph_traits<Graph>::vertex_iterator vi;
 	 for(vi = vertices(*symbolic_map).first; vi != vertices(*symbolic_map).second; ++vi)
-	   ROS_INFO(" NAVIGATION_PLANNER distance(%ld) = %d",index(*vi),d[*vi]);
+	   // ROS_INFO(" NAVIGATION_PLANNER distance(%ld) = %d",index(*vi),d[*vi]);
 
-	 ROS_INFO(" NAVIGATION_PLANNER parents in the tree of shortest paths:");
+	 // ROS_INFO(" NAVIGATION_PLANNER parents in the tree of shortest paths:");
 	   for(vi = boost::vertices(*symbolic_map).first; vi != boost::vertices(*symbolic_map).second; ++vi) {
 	     if (p[*vi] == boost::graph_traits<Graph>::null_vertex())
-	       ROS_INFO(" NAVIGATION_PLANNER Parent(%ld) = no parent",index(*vi)); 
+	       // ROS_INFO(" NAVIGATION_PLANNER Parent(%ld) = no parent",index(*vi)); 
 	     else 
-	       ROS_INFO(" NAVIGATION_PLANNER Parent(%ld) = %ld",index(*vi),p[*vi]);
+	       //ROS_INFO(" NAVIGATION_PLANNER Parent(%ld) = %ld",index(*vi),p[*vi]);
 	   }
 
    boost::graph_traits<Graph>::vertex_iterator v_start=boost::vertices(*symbolic_map).first+source_node;
