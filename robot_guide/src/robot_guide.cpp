@@ -88,6 +88,7 @@ int current_node_in_plan;
 ros::ServiceClient control_speed_client;
 ros::ServiceClient switch_orientation_client;
 ros::ServiceClient database_client;
+ros::ServiceClient set_driving_direction_client;
 
 //publishers
 ros::Publisher status_pub;
@@ -196,17 +197,16 @@ vector<string> getAgentsInGroup() {
 
 }
 
-void switchDrivingDirection(bool backward, ros::ServiceClient* set_driving_direction_client) {
+void switchDrivingDirection(bool backward) {
 	//when the robot guides people, it will move backward, so that they can see the screen
 	ROS_INFO("Setting driving direction to %d",backward);
 	spencer_nav_msgs::SetDrivingDirection set_driving_direction_srv;
 	set_driving_direction_srv.request.backward=backward;
 	if (!simulation_mode && use_driving_direction) {
-		if (set_driving_direction_client->call(set_driving_direction_srv)){
+		if (set_driving_direction_client.call(set_driving_direction_srv)){
 			ROS_INFO("Done");
-		
-			
-	}
+				
+		}
 		else {
 			ROS_WARN("Couldn't switch driving direction");
 		}
@@ -237,7 +237,7 @@ void switchSpeed(double newSpeed, ros::ServiceClient* control_speed_client) {
 void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer* guide_action_server,
 	MoveToClient* move_to_client, ObservationManager* observation_manager,
 	GuidePomdp* guide_pomdp, ControlSpeedPomdp* control_speed_pomdp, 
-	ros::ServiceClient* set_driving_direction_client, ros::ServiceClient* calculate_path_client) {
+	 ros::ServiceClient* calculate_path_client) {
 	//supervision will publish on a status topic as well as giving feedback for the actionn	
 	supervision_msgs::GuideGroupFeedback feedback;
 	supervision_msgs::GuideGroupResult result;
@@ -293,7 +293,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 			last_pose.position.y);
 	}
 	//when the robot guides people, it will move backward, so that they can see the screen
-	switchDrivingDirection(true,set_driving_direction_client);
+	switchDrivingDirection(true);
 
 	if (test_mode>0) {
 		ROS_INFO("ROBOT_GUIDE sleeping %f seconds for test mode",test_mode);
@@ -562,7 +562,7 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 	
 	//at the end of the task reset the driving direction to forward
 	if (!ros::ok()) return;
-	switchDrivingDirection(false,set_driving_direction_client);
+	switchDrivingDirection(false);
 	switchSpeed(max_speed,&control_speed_client);
 	actual_speed=max_speed;
 
@@ -627,13 +627,13 @@ void guideGroup(const supervision_msgs::GuideGroupGoalConstPtr &goal,GuideServer
 
 //approaches a group. Still needs to be interfaced with Omar software so at the moment this is a stub
 void approach(const supervision_msgs::ApproachGoalConstPtr &goal, ApproachServer* approach_action_server,
-	MoveBaseClient* move_base_client, ros::ServiceClient* set_driving_direction_client) {
+	MoveBaseClient* move_base_client) {
 
 	ROS_INFO("ROBOT_GUIDE Setting driving direction to forward");
 	spencer_nav_msgs::SetDrivingDirection set_driving_direction_srv;
 	set_driving_direction_srv.request.backward=false;
 	if (!simulation_mode) {
-		if (set_driving_direction_client->call(set_driving_direction_srv)){
+		if (set_driving_direction_client.call(set_driving_direction_srv)){
 			ROS_INFO("ROBOT_GUIDE Done");
 		}
 		else {
@@ -712,7 +712,7 @@ int main(int argc, char **argv) {
 	}
 
 	ROS_INFO("ROBOT_GUIDE Connecting to set driving direction service\n");
-	ros::ServiceClient set_driving_direction_client=n.serviceClient<spencer_nav_msgs::SetDrivingDirection>("/spencer/nav/set_driving_direction",true);
+	set_driving_direction_client=n.serviceClient<spencer_nav_msgs::SetDrivingDirection>("/spencer/nav/set_driving_direction",true);
 	if (!simulation_mode && use_driving_direction) {
 		set_driving_direction_client.waitForExistence();
 		ROS_INFO("ROBOT_GUIDE Connected\n");
@@ -733,7 +733,7 @@ int main(int argc, char **argv) {
 	//if(!switch_orientation_client.call(srv_switch_orientation)){
 	//		ROS_ERROR("ROBOT_GUIDE couldn't call switch orientation");
 	//}
-	switchDrivingDirection(false,&set_driving_direction_client);
+	switchDrivingDirection(false);
 	
 
 
@@ -758,7 +758,7 @@ int main(int argc, char **argv) {
 
 	ApproachServer approach_action_server(n,"supervision/approach",
 		boost::bind(&approach,_1,&approach_action_server,
-			&move_base_client,&set_driving_direction_client),false);
+			&move_base_client),false);
 	approach_action_server.start();
 	ROS_INFO("ROBOT_GUIDE Started action server Approach");
 
@@ -767,7 +767,7 @@ int main(int argc, char **argv) {
 
 	GuideServer guide_action_server(n,"supervision/guide_group",
 		boost::bind(&guideGroup,_1,&guide_action_server,&move_to_client, &observation_manager,
-			&guide_pomdp,&control_speed_pomdp, &set_driving_direction_client,&calculate_path_client),false);
+			&guide_pomdp,&control_speed_pomdp,&calculate_path_client),false);
 	guide_action_server.start();
 
 	ROS_INFO("ROBOT_GUIDE Started action server GuideGroup");

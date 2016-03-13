@@ -76,6 +76,8 @@ string robot_name_;
 bool simulation_mode_;
 double switch_map_sleep_;
 bool use_control_speed_;
+double starting_speed_;
+double angular_velocity_;
 
 CheckStatus *check_status_; //contains the symbolic status of the robot's system (batteries, bumper, emergency switch..)
 
@@ -363,6 +365,13 @@ void slowAndStop(MoveBaseClient* move_base_client) {
 			ros::Duration(time).sleep();
 		}
 		move_base_client->cancelGoal();
+		if (use_control_speed_) {
+			spencer_control_msgs::SetMaxVelocity srv;
+			srv.request.max_linear_velocity=starting_speed_;
+			srv.request.max_angular_velocity=angular_velocity_;
+
+			control_speed_client_.call(srv);
+		}
 
 	}
 }
@@ -467,11 +476,12 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 		node_poses.push_back(pose);
 	}
 
-
+	bool no_locations=false;
 	ROS_INFO("Before check destination");
 	if (destination!=location_destination) {
 		geometry_msgs::Pose pose=database_queries->getPose(destination);
 		if (nodes.size()==0) {
+		  no_locations=true;
 		  geometry_msgs::Pose starting_pose; //fake pose for starting condition (since we move to the next node usually)
 		  node_poses.push_back(starting_pose);
 		  nodes.push_back(robot_location_);
@@ -485,6 +495,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 	path_msg.header.frame_id="map";
 	path_msg.header.stamp=ros::Time::now();
 	for (int i=0;i<node_poses.size();i++) {
+		if (i==0 && no_locations) continue;
 		geometry_msgs::PoseStamped pose_stamped;
 		pose_stamped.header.frame_id="map";
 		pose_stamped.header.stamp=ros::Time::now();
@@ -702,6 +713,8 @@ int main(int argc,char** argv) {
 	n.getParam("supervision/max_move_base_errors",max_move_base_errors_);
 	n.getParam("supervision/switch_map_sleep",switch_map_sleep_);
 	n.getParam("supervision/use_control_speed",use_control_speed_);
+	n.getParam("/supervision/starting_speed",starting_speed_);
+	n.getParam("/supervision/angular_velocity",angular_velocity_);
 
 
 	ROS_INFO("ROBOT_NAVIGATION Parameters are:");
@@ -710,7 +723,9 @@ int main(int argc,char** argv) {
 	ROS_INFO("ROBOT_NAVIGATION use map switching %d",use_map_switching_);
 	ROS_INFO("ROBOT_NAVIGATION max move base errors %d",max_move_base_errors_);
 	ROS_INFO("ROBOT_NAVIGATION use control speed is %d",use_control_speed_);
-	ROS_INFO("ROBOT_NAVIGATION switch map sleep is %f",use_control_speed_);
+	ROS_INFO("ROBOT_NAVIGATION switch map sleep is %f", switch_map_sleep_);
+	ROS_INFO("ROBOT_NAVIGATION starting speed is %f",starting_speed_);
+	ROS_INFO("ROBOT_NAVIGATION angular velocity is %f",angular_velocity_);
 
 
 
