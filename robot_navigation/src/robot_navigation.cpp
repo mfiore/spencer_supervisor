@@ -44,6 +44,7 @@
 
 
 #include <robot_navigation/path_length.h>
+#include <robot_navigation/path_publisher.h>
 
 //libraries
 #include <spencer_status/check_status.h>
@@ -433,7 +434,7 @@ int getFurthestNode(vector<geometry_msgs::Pose> node_poses) {
 //moves to: can have a symbolic destination (will plan to reach it), a given symbolic path or a list of coordinates
 void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_to_action_server,
 	MoveBaseClient* move_base_client, ros::ServiceClient* calculate_path_client, DatabaseQueries* database_queries,
-	PathLength* path_length) {
+	PathLength* path_length, PathPublisher* path_publisher) {
 	//supervision will publish on a status topic as well as giving feedback for the actionn	
 
 	supervision_msgs::MoveToFeedback feedback;
@@ -542,18 +543,8 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 	}
 
 	//publish path
-	nav_msgs::Path path_msg;
-	path_msg.header.frame_id="map";
-	path_msg.header.stamp=ros::Time::now();
-	for (int i=0;i<node_poses.size();i++) {
-		if (i==0 && no_locations) continue;
-		geometry_msgs::PoseStamped pose_stamped;
-		pose_stamped.header.frame_id="map";
-		pose_stamped.header.stamp=ros::Time::now();
-		pose_stamped.pose=node_poses[i];
-		path_msg.poses.push_back(pose_stamped);
-	}
-	path_pub_.publish(path_msg);
+
+	boost::thread t_path(boost::bind(&PathPublisher::publishPath,path_publisher,node_poses,no_locations));
 
 	ROS_INFO("Before same path");
 	if (!isSamePath(nodes)) {
@@ -561,7 +552,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 	}
 
 	ROS_INFO("Before thread");
-	boost::thread t(boost::bind(&PathLength::startPublishingPath,path_length,node_poses,previous_length_));
+	boost::thread t_length(boost::bind(&PathLength::startPublishingPath,path_length,node_poses,previous_length_));
 
 	//control variables
 	bool task_completed=false;
@@ -697,7 +688,9 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 
 	//publish final task information
 	path_length->stopPublishingPath();
-	t.join();
+	path_publisher->setShouldPublish(false);
+	t_length.join();
+	t_path.join();
 
 	if (task_completed) {
 		status_msg.status="COMPLETED";
@@ -753,6 +746,7 @@ void moveTo(const supervision_msgs::MoveToGoalConstPtr &goal,MoveToServer* move_
 //used to get the location of the robot
 void agentFactCallback(const situation_assessment_msgs::FactList::ConstPtr& msg) {
 	vector<situation_assessment_msgs::Fact> fact_list=msg->fact_list;
+
 	for (int i=0;i<fact_list.size();i++) {
 		if (fact_list[i].predicate.size()>0) {
 			if (fact_list[i].subject==robot_name_ && fact_list[i].predicate[0]=="isInArea") {
@@ -865,13 +859,15 @@ int main(int argc,char** argv) {
 	get_connected_nodes_client_.waitForExistence();
 	ROS_INFO("ROBOT_NAVIGATION connected to get connected nodes");
 	PathLength path_length(n,&database_queries);
+	PathPublisher path_publisher(n);
 
 	status_pub_=n.advertise<supervision_msgs::SupervisionStatus>("supervision/navigation/status",1000);
-	path_pub_=n.advertise<nav_msgs::Path>("supervision/navigation/path",1000);
+
+
 
 	MoveToServer move_to_action_server(n,"supervision/move_to",
 		boost::bind(&moveTo,_1,&move_to_action_server,&move_base_client, &calculate_path_client,&database_queries,
-			&path_length),false);
+			&path_length,&path_publisher),false);
 	move_to_action_server.start();
 	ROS_INFO("ROBOT_NAVIGATION Started action server MoveTo");
 	

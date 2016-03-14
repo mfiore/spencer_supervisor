@@ -104,7 +104,8 @@ include_directories(
 # )
 
 ## Declare a cpp executable
- add_executable(robot_navigation src/robot_navigation.cpp src/database_queries.cpp src/path_length.cpp)
+ add_executable(robot_navigation src/robot_navigation.cpp src/database_queries.cpp src/path_length.cpp
+ src/path_publisher.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
